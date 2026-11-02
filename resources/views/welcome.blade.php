@@ -206,7 +206,7 @@
                     <div>
                         <div class="relative aspect-video overflow-hidden">
                             <img 
-                                src="https://images.unsplash.com/photo-1529900240041-22f114d18e40?auto=format&fit=crop&w=600&q=80" 
+                                src="{{ asset('images/courts/futsal.jpg') }}" 
                                 alt="Lapangan Futsal A"
                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                             >
@@ -253,7 +253,7 @@
                     <div>
                         <div class="relative aspect-video overflow-hidden">
                             <img 
-                                src="https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?auto=format&fit=crop&w=600&q=80" 
+                                src="{{ asset('images/courts/badminton.jpg') }}" 
                                 alt="Badminton Court 1-4"
                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                             >
@@ -300,7 +300,7 @@
                     <div>
                         <div class="relative aspect-video overflow-hidden">
                             <img 
-                                src="https://images.unsplash.com/photo-1551958219-acbc608c6377?auto=format&fit=crop&w=600&q=80" 
+                                src="{{ asset('images/courts/minisoccer.jpg') }}" 
                                 alt="Mini Soccer 7v7"
                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                             >
@@ -347,7 +347,7 @@
                     <div>
                         <div class="relative aspect-video overflow-hidden">
                             <img 
-                                src="https://images.unsplash.com/photo-1554068865-24cecd4e34b8?auto=format&fit=crop&w=600&q=80" 
+                                src="{{ asset('images/courts/padel.jpg') }}" 
                                 alt="Padel Court Glass"
                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                             >

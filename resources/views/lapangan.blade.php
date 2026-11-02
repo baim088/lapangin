@@ -96,18 +96,19 @@
                 <!-- Court 1: Futsal -->
                 <div 
                     x-show="selectedCategory === 'all' || selectedCategory === 'futsal'"
-                    class="bg-surface-white rounded-3xl overflow-hidden border border-slate-200 shadow-md grid grid-cols-1 lg:grid-cols-12 transition-all hover:shadow-xl"
+                    class="group bg-surface-white rounded-3xl overflow-hidden border border-slate-200 shadow-md grid grid-cols-1 lg:grid-cols-12 transition-all hover:shadow-xl"
                 >
-                    <div class="lg:col-span-5 relative aspect-video lg:aspect-auto">
+                    <div class="lg:col-span-5 relative min-h-[280px] sm:min-h-[340px] lg:min-h-full bg-slate-900 overflow-hidden">
                         <img 
-                            src="https://images.unsplash.com/photo-1529900240041-22f114d18e40?auto=format&fit=crop&w=800&q=80" 
+                            src="{{ asset('images/courts/futsal.jpg') }}" 
                             alt="Lapangan Futsal A Lapangin"
-                            class="w-full h-full object-cover"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 min-h-[280px] sm:min-h-[340px] lg:min-h-full"
                         >
-                        <span class="absolute top-4 left-4 bg-pitch-deep text-surface-white text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider shadow">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20 pointer-events-none"></div>
+                        <span class="absolute top-4 left-4 bg-pitch-deep text-surface-white text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider shadow-lg border border-pitch-light/30">
                             Futsal Arena
                         </span>
-                        <span class="absolute bottom-4 right-4 bg-surface-white/95 text-on-surface text-xs font-bold px-2.5 py-1 rounded-md backdrop-blur-sm">
+                        <span class="absolute bottom-4 right-4 bg-surface-white/95 text-on-surface text-xs font-bold px-3 py-1 rounded-md backdrop-blur-md shadow">
                             25 × 15 Meter
                         </span>
                     </div>
@@ -170,18 +171,19 @@
                 <!-- Court 2: Badminton -->
                 <div 
                     x-show="selectedCategory === 'all' || selectedCategory === 'badminton'"
-                    class="bg-surface-white rounded-3xl overflow-hidden border border-slate-200 shadow-md grid grid-cols-1 lg:grid-cols-12 transition-all hover:shadow-xl"
+                    class="group bg-surface-white rounded-3xl overflow-hidden border border-slate-200 shadow-md grid grid-cols-1 lg:grid-cols-12 transition-all hover:shadow-xl"
                 >
-                    <div class="lg:col-span-5 relative aspect-video lg:aspect-auto">
+                    <div class="lg:col-span-5 relative min-h-[280px] sm:min-h-[340px] lg:min-h-full bg-slate-900 overflow-hidden">
                         <img 
-                            src="https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?auto=format&fit=crop&w=800&q=80" 
+                            src="{{ asset('images/courts/badminton.jpg') }}" 
                             alt="Badminton Court 1-4 Lapangin"
-                            class="w-full h-full object-cover"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 min-h-[280px] sm:min-h-[340px] lg:min-h-full"
                         >
-                        <span class="absolute top-4 left-4 bg-pitch-deep text-surface-white text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider shadow">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20 pointer-events-none"></div>
+                        <span class="absolute top-4 left-4 bg-pitch-deep text-surface-white text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider shadow-lg border border-pitch-light/30">
                             Badminton Hall
                         </span>
-                        <span class="absolute bottom-4 right-4 bg-surface-white/95 text-on-surface text-xs font-bold px-2.5 py-1 rounded-md backdrop-blur-sm">
+                        <span class="absolute bottom-4 right-4 bg-surface-white/95 text-on-surface text-xs font-bold px-3 py-1 rounded-md backdrop-blur-md shadow">
                             13.4 × 6.1 Meter
                         </span>
                     </div>
@@ -244,18 +246,19 @@
                 <!-- Court 3: Mini Soccer -->
                 <div 
                     x-show="selectedCategory === 'all' || selectedCategory === 'minisoccer'"
-                    class="bg-surface-white rounded-3xl overflow-hidden border border-slate-200 shadow-md grid grid-cols-1 lg:grid-cols-12 transition-all hover:shadow-xl"
+                    class="group bg-surface-white rounded-3xl overflow-hidden border border-slate-200 shadow-md grid grid-cols-1 lg:grid-cols-12 transition-all hover:shadow-xl"
                 >
-                    <div class="lg:col-span-5 relative aspect-video lg:aspect-auto">
+                    <div class="lg:col-span-5 relative min-h-[280px] sm:min-h-[340px] lg:min-h-full bg-slate-900 overflow-hidden">
                         <img 
-                            src="https://images.unsplash.com/photo-1551958219-acbc608c6377?auto=format&fit=crop&w=800&q=80" 
+                            src="{{ asset('images/courts/minisoccer.jpg') }}" 
                             alt="Mini Soccer 7v7 Lapangin"
-                            class="w-full h-full object-cover"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 min-h-[280px] sm:min-h-[340px] lg:min-h-full"
                         >
-                        <span class="absolute top-4 left-4 bg-pitch-deep text-surface-white text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider shadow">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20 pointer-events-none"></div>
+                        <span class="absolute top-4 left-4 bg-pitch-deep text-surface-white text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider shadow-lg border border-pitch-light/30">
                             Mini Soccer Outdoor
                         </span>
-                        <span class="absolute bottom-4 right-4 bg-surface-white/95 text-on-surface text-xs font-bold px-2.5 py-1 rounded-md backdrop-blur-sm">
+                        <span class="absolute bottom-4 right-4 bg-surface-white/95 text-on-surface text-xs font-bold px-3 py-1 rounded-md backdrop-blur-md shadow">
                             50 × 30 Meter
                         </span>
                     </div>
@@ -318,18 +321,19 @@
                 <!-- Court 4: Padel Court -->
                 <div 
                     x-show="selectedCategory === 'all' || selectedCategory === 'padel'"
-                    class="bg-surface-white rounded-3xl overflow-hidden border border-slate-200 shadow-md grid grid-cols-1 lg:grid-cols-12 transition-all hover:shadow-xl"
+                    class="group bg-surface-white rounded-3xl overflow-hidden border border-slate-200 shadow-md grid grid-cols-1 lg:grid-cols-12 transition-all hover:shadow-xl"
                 >
-                    <div class="lg:col-span-5 relative aspect-video lg:aspect-auto">
+                    <div class="lg:col-span-5 relative min-h-[280px] sm:min-h-[340px] lg:min-h-full bg-slate-900 overflow-hidden">
                         <img 
-                            src="https://images.unsplash.com/photo-1554068865-24cecd4e34b8?auto=format&fit=crop&w=800&q=80" 
+                            src="{{ asset('images/courts/padel.jpg') }}" 
                             alt="Padel Court Glass Lapangin"
-                            class="w-full h-full object-cover"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 min-h-[280px] sm:min-h-[340px] lg:min-h-full"
                         >
-                        <span class="absolute top-4 left-4 bg-pitch-deep text-surface-white text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider shadow">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20 pointer-events-none"></div>
+                        <span class="absolute top-4 left-4 bg-pitch-deep text-surface-white text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider shadow-lg border border-pitch-light/30">
                             Padel Tennis
                         </span>
-                        <span class="absolute bottom-4 right-4 bg-surface-white/95 text-on-surface text-xs font-bold px-2.5 py-1 rounded-md backdrop-blur-sm">
+                        <span class="absolute bottom-4 right-4 bg-surface-white/95 text-on-surface text-xs font-bold px-3 py-1 rounded-md backdrop-blur-md shadow">
                             20 × 10 Meter
                         </span>
                     </div>
