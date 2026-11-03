@@ -197,13 +197,13 @@
 
         <!-- PANDUAN KEDATANGAN & PARKIR -->
         <section class="w-full bg-surface-white py-16 border-t border-slate-200">
-            <div class="w-full max-w-7xl mx-auto px-4 sm:px-8">
+            <div class="w-full max-w-5xl mx-auto px-4 sm:px-8">
                 <div class="text-center max-w-xl mx-auto mb-10">
                     <span class="text-xs text-pitch-emerald uppercase tracking-wider font-bold block mb-1">Panduan Pengunjung</span>
                     <h2 class="font-headline text-2xl sm:text-3xl font-bold text-on-surface tracking-tight uppercase">Akses & Petunjuk Arah</h2>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div class="bg-surface-container-low p-6 rounded-2xl border border-slate-100">
                         <div class="w-10 h-10 rounded-xl bg-pitch-deep text-surface-white flex items-center justify-center mb-3 font-bold">
                             <span class="material-symbols-outlined text-[22px]">directions_car</span>
@@ -224,15 +224,6 @@
                         </p>
                     </div>
 
-                    <div class="bg-surface-container-low p-6 rounded-2xl border border-slate-100">
-                        <div class="w-10 h-10 rounded-xl bg-pitch-emerald text-surface-white flex items-center justify-center mb-3 font-bold">
-                            <span class="material-symbols-outlined text-[22px]">qr_code_scanner</span>
-                        </div>
-                        <h4 class="font-bold text-sm text-on-surface mb-1">Check-in di Resepsionis</h4>
-                        <p class="text-xs text-on-surface-variant leading-relaxed">
-                            Cukup tunjukkan kode booking unik (mis. BK-20261103-0001) dari email ke kasir untuk masuk ke lapangan.
-                        </p>
-                    </div>
                 </div>
             </div>
         </section>

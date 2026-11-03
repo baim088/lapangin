@@ -33,9 +33,6 @@
         <section class="w-full bg-arena-night text-surface-white py-16 px-4 sm:px-8 border-b border-pitch-light/20 relative overflow-hidden">
             <div class="absolute -right-20 -top-20 w-80 h-80 rounded-full bg-pitch-emerald/20 blur-3xl pointer-events-none"></div>
             <div class="w-full max-w-7xl mx-auto text-center relative z-10">
-                <span class="inline-flex items-center gap-2 bg-pitch-surface/10 text-pitch-light border border-pitch-light/30 px-3.5 py-1 rounded-full text-xs font-semibold uppercase tracking-wider mb-4">
-                    Standar Turnamen Internasional
-                </span>
                 <h1 class="font-headline text-3xl sm:text-5xl font-bold uppercase tracking-tight text-surface-white mb-4">
                     Koleksi Arena Olahraga
                 </h1>

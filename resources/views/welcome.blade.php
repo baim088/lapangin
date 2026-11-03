@@ -839,8 +839,37 @@
             </div>
         </section>
 
+         <!-- CTA KE BERANDA / BOOKING -->
+        <section class="w-full max-w-7xl mx-auto px-4 sm:px-8 py-20 text-center">
+            <div class="bg-arena-night text-surface-white rounded-3xl p-10 sm:p-14 border border-pitch-light/20 relative overflow-hidden shadow-2xl">
+                <div class="absolute -left-10 -bottom-10 w-64 h-64 rounded-full bg-action-orange/20 blur-3xl"></div>
+                <div class="relative z-10 max-w-2xl mx-auto">
+                    <h2 class="font-headline text-3xl sm:text-4xl font-bold uppercase tracking-tight mb-4">
+                        Siap Bertanding Bersama Tim Anda?
+                    </h2>
+                    <p class="text-sm sm:text-base text-surface-container-highest mb-8 leading-relaxed">
+                        Cek jadwal ketersediaan arena sekarang dan amankan slot terbaik Anda sebelum kehabisan.
+                    </p>
+                    <div class="flex flex-wrap items-center justify-center gap-4">
+                        <a 
+                            href="{{ route('beranda') }}#jadwal-interaktif" 
+                            class="bg-action-orange hover:bg-tertiary-container text-surface-white font-bold text-sm px-8 py-3.5 rounded-xl shadow-lg transition-all transform hover:-translate-y-0.5"
+                        >
+                            Pilih Jam Main Sekarang
+                        </a>
+                        <a 
+                            href="{{ route('lapangan') }}" 
+                            class="bg-surface-white/10 hover:bg-surface-white/20 text-surface-white font-bold text-sm px-6 py-3.5 rounded-xl transition-colors border border-surface-white/20"
+                        >
+                            Lihat Katalog Lapangan
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- SECTION 9: INTERACTIVE FAQ ACCORDION (SESUAI PRD ATURAN BISNIS) -->
-        <section id="faq" class="w-full max-w-7xl mx-auto px-4 sm:px-8 py-16">
+        <section id="faq" class="w-full max-w-7xl mx-auto px-4 sm:px-8 py-16 bg-surface-white">
             <div class="text-center max-w-xl mx-auto mb-12">
                 <span class="text-xs text-pitch-emerald uppercase tracking-wider font-bold block mb-1">Bantuan & Aturan Main</span>
                 <h2 class="font-headline text-3xl text-on-surface tracking-tight uppercase font-bold">Pertanyaan Sering Diajukan</h2>
@@ -973,6 +1002,7 @@
 
             </div>
         </section>
+        
 
         <!-- FLOATING QUICK WHATSAPP BUTTON -->
         <div class="fixed bottom-6 right-6 z-40">
@@ -985,6 +1015,7 @@
                 <span class="material-symbols-outlined text-[26px]">chat</span>
             </a>
         </div>
+        
 
     </main>
 

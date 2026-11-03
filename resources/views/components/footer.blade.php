@@ -52,9 +52,9 @@
             <div class="flex flex-col gap-3">
                 <h4 class="text-sm font-bold text-surface-white uppercase tracking-wider">Navigasi Utama</h4>
                 <ul class="flex flex-col gap-2 text-xs text-surface-container-highest">
-                    <li><a href="{{ route('beranda') }}" class="hover:text-surface-white transition-colors">Beranda Utama</a></li>
-                    <li><a href="{{ route('lapangan') }}" class="hover:text-surface-white transition-colors">Katalog & Jadwal Lapangan</a></li>
-                    <li><a href="{{ route('tentang') }}" class="hover:text-surface-white transition-colors">Profil Tentang Lapangin</a></li>
+                    <li><a href="{{ route('beranda') }}" class="hover:text-surface-white transition-colors">Beranda</a></li>
+                    <li><a href="{{ route('lapangan') }}" class="hover:text-surface-white transition-colors">Katalog Lapangan</a></li>
+                    <li><a href="{{ route('tentang') }}" class="hover:text-surface-white transition-colors">Tentang Lapangin</a></li>
                     <li><a href="{{ route('kontak') }}" class="hover:text-surface-white transition-colors">Hubungi Pusat Layanan</a></li>
                     <li><a href="{{ route('beranda') }}#jadwal-interaktif" class="hover:text-surface-white transition-colors">Cek Ketersediaan Jam</a></li>
                 </ul>
@@ -81,7 +81,7 @@
         <div class="mt-12 pt-6 border-t border-surface-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-surface-container-highest text-xs">
             <div class="flex items-center gap-2">
                 <span class="material-symbols-outlined text-pitch-light text-[18px]">sports</span>
-                <span>&copy; {{ date('Y') }} <strong>Lapangin</strong> - Sistem Booking Lapangan Olahraga. Dilindungi UU PDP.</span>
+                <span>&copy; {{ date('Y') }} <strong>Lapangin</strong> - Sistem Booking Lapangan Olahraga.</span>
             </div>
             <div class="flex items-center gap-4">
                 <a href="{{ route('tentang') }}" class="hover:text-surface-white transition-colors">Kebijakan Privasi</a>
