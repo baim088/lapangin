@@ -92,7 +92,7 @@
                     </p>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     
                     <div class="bg-surface-container-low p-6 rounded-2xl border border-slate-100 flex flex-col justify-between">
                         <div>
@@ -124,20 +124,7 @@
                         </div>
                     </div>
 
-                    <div class="bg-surface-container-low p-6 rounded-2xl border border-slate-100 flex flex-col justify-between">
-                        <div>
-                            <div class="w-12 h-12 rounded-xl bg-pitch-emerald text-surface-white flex items-center justify-center mb-4">
-                                <span class="material-symbols-outlined text-[26px]">stadium</span>
-                            </div>
-                            <h3 class="font-headline text-lg font-bold text-on-surface mb-2">Standar Turnamen</h3>
-                            <p class="text-xs text-on-surface-variant leading-relaxed">
-                                Rumput monofilament 5cm, karpet vinyl BWF, kaca panoramic tempered, dan sistem pencahayaan 800 Lux anti-silau di seluruh sudut.
-                            </p>
-                        </div>
-                        <div class="pt-4 mt-4 border-t border-slate-200/60 text-xs font-bold text-pitch-emerald">
-                            Kualitas Premium
-                        </div>
-                    </div>
+
 
                     <div class="bg-surface-container-low p-6 rounded-2xl border border-slate-100 flex flex-col justify-between">
                         <div>

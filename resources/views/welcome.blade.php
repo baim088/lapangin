@@ -622,62 +622,6 @@
             </div>
         </section>
 
-        <!-- SECTION 5: FASILITAS PREMIUM SECTION (PRD ALIGNED) -->
-        <section id="fasilitas" class="w-full max-w-7xl mx-auto px-4 sm:px-8 py-16">
-            <div class="text-center max-w-xl mx-auto mb-12">
-                <span class="text-xs text-pitch-emerald uppercase tracking-wider font-bold block mb-1">Kenyamanan Maksimal</span>
-                <h2 class="font-headline text-3xl text-on-surface tracking-tight uppercase font-bold">Bukan Cuma Lapangan</h2>
-                <p class="text-sm text-on-surface-variant mt-2">
-                    Fasilitas penunjang lengkap kelas profesional disiapkan agar tim Anda bermain nyaman, aman, dan siap tempur.
-                </p>
-            </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                <!-- Fac 1 -->
-                <div class="bg-surface-white p-6 rounded-2xl shadow-sm hover:shadow-md transition-shadow border border-slate-200 flex flex-col gap-2">
-                    <div class="w-12 h-12 rounded-xl bg-pitch-surface text-pitch-deep flex items-center justify-center mb-2">
-                        <span class="material-symbols-outlined text-[28px]">local_parking</span>
-                    </div>
-                    <h3 class="font-headline text-lg font-bold text-on-surface">Parkir Luas & Aman</h3>
-                    <p class="text-xs text-on-surface-variant leading-relaxed">
-                        Kapasitas hingga 60 mobil dan 200 motor dengan pantauan CCTV 24 jam serta penjaga resmi bebas pungli liar.
-                    </p>
-                </div>
-
-                <!-- Fac 2 -->
-                <div class="bg-surface-white p-6 rounded-2xl shadow-sm hover:shadow-md transition-shadow border border-slate-200 flex flex-col gap-2">
-                    <div class="w-12 h-12 rounded-xl bg-pitch-surface text-pitch-deep flex items-center justify-center mb-2">
-                        <span class="material-symbols-outlined text-[28px]">shower</span>
-                    </div>
-                    <h3 class="font-headline text-lg font-bold text-on-surface">Shower & Loker Digital</h3>
-                    <p class="text-xs text-on-surface-variant leading-relaxed">
-                        Kamar bilas air hangat higienis, pengering rambut, dan fasilitas loker digital gratis untuk seluruh pemain.
-                    </p>
-                </div>
-
-                <!-- Fac 3 -->
-                <div class="bg-surface-white p-6 rounded-2xl shadow-sm hover:shadow-md transition-shadow border border-slate-200 flex flex-col gap-2">
-                    <div class="w-12 h-12 rounded-xl bg-pitch-surface text-pitch-deep flex items-center justify-center mb-2">
-                        <span class="material-symbols-outlined text-[28px]">restaurant</span>
-                    </div>
-                    <h3 class="font-headline text-lg font-bold text-on-surface">Kantin & Musala Bersih</h3>
-                    <p class="text-xs text-on-surface-variant leading-relaxed">
-                        Penyedia hidrasi isotonik, kopi artisan, area santai pasca-tanding, serta musala ber-AC yang nyaman.
-                    </p>
-                </div>
-
-                <!-- Fac 4 -->
-                <div class="bg-surface-white p-6 rounded-2xl shadow-sm hover:shadow-md transition-shadow border border-slate-200 flex flex-col gap-2">
-                    <div class="w-12 h-12 rounded-xl bg-pitch-surface text-pitch-deep flex items-center justify-center mb-2">
-                        <span class="material-symbols-outlined text-[28px]">lightbulb</span>
-                    </div>
-                    <h3 class="font-headline text-lg font-bold text-on-surface">Lampu LED 800 Lux</h3>
-                    <p class="text-xs text-on-surface-variant leading-relaxed">
-                        Pencahayaan broadcast-grade anti-silau di seluruh sudut. Pengalaman tanding malam hari terasa seperti siang hari.
-                    </p>
-                </div>
-            </div>
-        </section>
 
         <!-- SECTION 6: ALUR BOOKING 4 LANGKAH (SESUAI PRD WORKFLOW) -->
         <section id="cara-booking" class="w-full bg-surface-white py-16 border-y border-slate-200">
