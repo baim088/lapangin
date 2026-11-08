@@ -64,7 +64,13 @@
             </div>
 
             <div class="w-full max-w-sm">
-                <div class="mb-8">
+                {{-- Reservation notice banner --}}
+                <div class="mb-6 p-3.5 bg-pitch-surface border border-pitch-light/30 rounded-xl flex items-center gap-3 text-xs text-pitch-deep">
+                    <span class="material-symbols-outlined text-pitch-emerald text-[20px] shrink-0">verified_user</span>
+                    <span>Daftar gratis dalam 1 menit untuk mengamankan slot dan menerima e-tiket kode QR resmi.</span>
+                </div>
+
+                <div class="mb-6">
                     <h2 class="font-headline text-2xl font-bold text-on-surface">Buat Akun Baru</h2>
                     <p class="text-sm text-on-surface-variant mt-1">Sudah punya akun?
                         <a href="{{ route('login') }}" class="text-pitch-deep font-semibold hover:underline">Masuk sekarang</a>

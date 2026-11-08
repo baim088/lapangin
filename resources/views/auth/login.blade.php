@@ -74,7 +74,13 @@
             </div>
 
             <div class="w-full max-w-sm">
-                <div class="mb-8">
+                {{-- Reservation notice banner --}}
+                <div class="mb-6 p-3.5 bg-pitch-surface border border-pitch-light/30 rounded-xl flex items-center gap-3 text-xs text-pitch-deep">
+                    <span class="material-symbols-outlined text-pitch-emerald text-[20px] shrink-0">lock</span>
+                    <span>Masuk ke akun Anda untuk melanjutkan proses booking dan mengunci slot lapangan.</span>
+                </div>
+
+                <div class="mb-6">
                     <h2 class="font-headline text-2xl font-bold text-on-surface">Masuk ke Akun</h2>
                     <p class="text-sm text-on-surface-variant mt-1">Belum punya akun?
                         <a href="{{ route('register') }}" class="text-pitch-deep font-semibold hover:underline">Daftar gratis</a>

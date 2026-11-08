@@ -595,10 +595,10 @@
                                 type="button"
                                 :disabled="selectedSlots.length === 0"
                                 @click="proceedBooking()"
-                                class="w-full bg-action-orange disabled:opacity-40 disabled:cursor-not-allowed hover:bg-tertiary-container text-surface-white font-bold text-sm py-3.5 rounded-xl flex items-center justify-center gap-2 transition-all shadow-md transform active:scale-95 whitespace-nowrap"
+                                class="w-full bg-action-orange disabled:opacity-40 disabled:cursor-not-allowed hover:bg-tertiary-container text-surface-white font-bold text-sm py-3.5 rounded-xl flex items-center justify-center gap-2 transition-all shadow-md transform active:scale-95 whitespace-nowrap cursor-pointer"
                             >
-                                <span class="material-symbols-outlined text-[20px]">flash_on</span>
-                                Kunci Slot & Bayar Otomatis
+                                <span class="material-symbols-outlined text-[20px]">lock</span>
+                                Kunci Slot & Booking
                             </button>
 
                             <a 
@@ -611,8 +611,9 @@
                             </a>
                         </div>
 
-                        <p class="text-[11px] text-on-surface-variant text-center mt-3 leading-relaxed">
-                            Sistem secara otomatis mengamankan slot Anda selama 10 menit agar tidak diambil pengguna lain saat proses checkout.
+                        <p class="text-[11px] text-on-surface-variant text-center mt-3 leading-relaxed flex items-center justify-center gap-1.5">
+                            <span class="material-symbols-outlined text-[14px] text-pitch-emerald">verified_user</span>
+                            Slot dikunci 10 menit anti double-booking setelah masuk/daftar.
                         </p>
                     </div>
 
@@ -1018,6 +1019,74 @@
 
     </main>
 
+    <!-- AUTH INTERCEPT MODAL (Untuk Tamu/Guest yang ingin booking) -->
+    <div 
+        x-show="showAuthModal" 
+        x-transition.opacity
+        class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+        style="display: none;"
+    >
+        <div 
+            @click.away="showAuthModal = false"
+            class="bg-surface-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl border border-surface-container-high relative flex flex-col gap-5 text-left"
+        >
+            <button 
+                @click="showAuthModal = false"
+                class="absolute top-5 right-5 text-on-surface-variant hover:text-on-surface p-1 rounded-full hover:bg-surface-container-low transition-colors"
+                aria-label="Tutup"
+            >
+                <span class="material-symbols-outlined text-[22px]">close</span>
+            </button>
+
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-2xl bg-pitch-surface border border-pitch-light/30 flex items-center justify-center text-pitch-deep shrink-0">
+                    <span class="material-symbols-outlined text-[26px]">lock_person</span>
+                </div>
+                <div>
+                    <h3 class="font-headline text-lg font-bold text-on-surface">Masuk untuk Booking</h3>
+                    <p class="text-xs text-on-surface-variant">Slot aman & anti double-booking</p>
+                </div>
+            </div>
+
+            <div class="bg-surface-container-low rounded-2xl p-4 border border-surface-container-high text-xs flex flex-col gap-2">
+                <div class="flex justify-between items-center text-on-surface font-semibold">
+                    <span>Slot Dipilih (<span x-text="selectedSlots.length"></span> jam):</span>
+                    <span class="text-pitch-deep font-bold" x-text="formatCurrency(totalPrice)"></span>
+                </div>
+                <p class="text-on-surface-variant leading-relaxed">
+                    Untuk mengunci slot selama <strong>10 menit</strong> dan menerima e-tiket kode QR serta konfirmasi WhatsApp resmi, silakan masuk ke akun Anda atau daftar gratis.
+                </p>
+            </div>
+
+            <div class="flex flex-col gap-2.5">
+                <a 
+                    href="{{ route('login') }}" 
+                    class="w-full bg-pitch-deep hover:bg-pitch-emerald text-surface-white font-bold text-sm py-3.5 rounded-xl flex items-center justify-center gap-2 shadow-sm transition-all"
+                >
+                    <span class="material-symbols-outlined text-[18px]">login</span>
+                    Masuk ke Akun Saya
+                </a>
+
+                <a 
+                    href="{{ route('register') }}" 
+                    class="w-full bg-action-orange hover:bg-tertiary-container text-surface-white font-bold text-sm py-3.5 rounded-xl flex items-center justify-center gap-2 shadow-sm transition-all"
+                >
+                    <span class="material-symbols-outlined text-[18px]">person_add</span>
+                    Daftar Akun Baru (Gratis)
+                </a>
+            </div>
+
+            <div class="pt-2 border-t border-surface-container-high text-center">
+                <a 
+                    href="{{ route('booking.checkout', 'futsal-arena-a') }}" 
+                    class="text-xs text-on-surface-variant hover:text-pitch-deep font-medium inline-flex items-center gap-1 hover:underline"
+                >
+                    <span>(Uji Coba: Lanjut ke Halaman Checkout &rarr;)</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
     <!-- FOOTER COMPONENT -->
     <x-footer />
 
@@ -1026,6 +1095,8 @@
         function bookingApp() {
             return {
                 mobileMenuOpen: false,
+                showAuthModal: false,
+                isLoggedIn: false,
                 currentSport: 'futsal',
                 selectedDate: '2026-11-03',
                 filterTimeType: 'all',
@@ -1162,8 +1233,11 @@
 
                 proceedBooking() {
                     if (this.selectedSlots.length === 0) return;
-                    const sport = this.sportCatalog[this.currentSport] || this.sportCatalog['futsal'];
-                    alert(`Slot berhasil dikunci selama 10 menit!\n\nDetail:\n- Arena: ${sport.name}\n- Tanggal: ${this.selectedDate}\n- Durasi: ${this.selectedSlots.length} Jam\n- Total Bayar: ${this.formatCurrency(this.totalPrice)}\n\nLanjut ke alur pembayaran otomatis (Midtrans/Xendit Sandbox)...`);
+                    if (!this.isLoggedIn) {
+                        this.showAuthModal = true;
+                    } else {
+                        window.location.href = "{{ route('booking.checkout', 'futsal-arena-a') }}";
+                    }
                 }
             };
         }

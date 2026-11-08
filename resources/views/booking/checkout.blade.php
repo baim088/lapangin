@@ -78,10 +78,28 @@
 
                     {{-- Section: Data Pemesan --}}
                     <div class="bg-surface-white rounded-2xl border border-surface-container-high p-6 flex flex-col gap-5">
-                        <h2 class="font-headline text-lg font-bold text-on-surface flex items-center gap-2">
-                            <span class="material-symbols-outlined text-pitch-deep text-[22px]">person</span>
-                            Data Pemesan
-                        </h2>
+                        <div class="flex items-center justify-between">
+                            <h2 class="font-headline text-lg font-bold text-on-surface flex items-center gap-2">
+                                <span class="material-symbols-outlined text-pitch-deep text-[22px]">person</span>
+                                Data Pemesan
+                            </h2>
+                            <span class="inline-flex items-center gap-1.5 bg-pitch-surface text-pitch-deep text-xs font-bold px-3 py-1 rounded-full border border-pitch-light/30">
+                                <span class="w-2 h-2 rounded-full bg-pitch-emerald"></span>
+                                Akun Terverifikasi
+                            </span>
+                        </div>
+
+                        {{-- Logged in badge --}}
+                        <div class="flex items-center justify-between p-3.5 bg-surface-container-low rounded-xl border border-surface-container-high">
+                            <div class="flex items-center gap-3">
+                                <div class="w-9 h-9 rounded-full bg-pitch-surface flex items-center justify-center font-bold text-pitch-deep text-sm">AF</div>
+                                <div>
+                                    <p class="text-xs font-bold text-on-surface">Ahmad Fauzi (Penyewa)</p>
+                                    <p class="text-[11px] text-on-surface-variant">Data reservasi & e-tiket akan otomatis tersimpan di Dashboard Anda</p>
+                                </div>
+                            </div>
+                            <a href="{{ route('login') }}" class="text-xs font-semibold text-pitch-deep hover:underline shrink-0 ml-2">Ganti Akun</a>
+                        </div>
 
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div class="flex flex-col gap-1.5">
