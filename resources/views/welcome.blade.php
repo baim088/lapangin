@@ -189,9 +189,6 @@
                     <h2 class="font-headline text-3xl text-on-surface tracking-tight uppercase font-bold">Pilih Lapanganmu</h2>
                 </div>
                 <div class="flex items-center gap-3">
-                    <p class="text-sm text-on-surface-variant max-w-md hidden sm:block">
-                        Spesifikasi standar turnamen nasional & internasional. Lengkap dengan pencahayaan LED anti-glare.
-                    </p>
                     <a href="{{ route('lapangan') }}" class="text-xs font-bold text-pitch-deep hover:text-pitch-emerald flex items-center gap-1 underline underline-offset-4 whitespace-nowrap">
                         Lihat Detail Semua Lapangan &rarr;
                     </a>
@@ -495,34 +492,36 @@
                         <!-- Slot Matrix Time Grid (Multi-slot selection with alpine.js) -->
                         <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-2.5">
                             <template x-for="slot in activeCourtSlots" :key="slot.id">
-                                <!-- Booked Slot -->
-                                <div 
-                                    x-show="slot.status === 'booked'"
-                                    class="p-2.5 rounded-xl text-center bg-court-booked-surface text-court-booked cursor-not-allowed border border-slate-200 select-none"
-                                >
-                                    <span class="text-sm font-bold block line-through whitespace-nowrap" x-text="slot.time"></span>
-                                    <span class="text-xs">Terisi</span>
-                                </div>
+                                <div>
+                                    <!-- Booked Slot -->
+                                    <div 
+                                        x-show="slot.status === 'booked'"
+                                        class="p-2.5 rounded-xl text-center bg-court-booked-surface text-court-booked cursor-not-allowed border border-slate-200 select-none"
+                                    >
+                                        <span class="text-sm font-bold block line-through whitespace-nowrap" x-text="slot.time"></span>
+                                        <span class="text-xs">Terisi</span>
+                                    </div>
 
-                                <!-- Available or Selected Slot -->
-                                <button 
-                                    x-show="slot.status !== 'booked'"
-                                    type="button"
-                                    @click="toggleSlot(slot)"
-                                    :class="{
-                                        'bg-action-orange text-surface-white ring-2 ring-action-orange shadow-md transform scale-[1.02]': isSlotSelected(slot),
-                                        'bg-action-glow text-on-surface hover:bg-action-amber/30 border border-action-amber/40': !isSlotSelected(slot) && slot.isPrime,
-                                        'bg-pitch-surface text-pitch-deep hover:bg-secondary-container border border-pitch-light/30': !isSlotSelected(slot) && !slot.isPrime
-                                    }"
-                                    class="p-2.5 rounded-xl text-center transition-all cursor-pointer font-body flex flex-col items-center justify-center"
-                                >
-                                    <span class="text-sm font-bold block whitespace-nowrap" x-text="slot.time"></span>
-                                    <span 
-                                        :class="isSlotSelected(slot) ? 'text-surface-white' : (slot.isPrime ? 'text-action-orange font-bold' : 'text-pitch-deep font-medium')"
-                                        class="text-xs mt-0.5 whitespace-nowrap"
-                                        x-text="formatCurrency(slot.price)"
-                                    ></span>
-                                </button>
+                                    <!-- Available or Selected Slot -->
+                                    <button 
+                                        x-show="slot.status !== 'booked'"
+                                        type="button"
+                                        @click="toggleSlot(slot)"
+                                        :class="{
+                                            'bg-action-orange text-surface-white ring-2 ring-action-orange shadow-md transform scale-[1.02]': isSlotSelected(slot),
+                                            'bg-action-glow text-on-surface hover:bg-action-amber/30 border border-action-amber/40': !isSlotSelected(slot) && slot.isPrime,
+                                            'bg-pitch-surface text-pitch-deep hover:bg-secondary-container border border-pitch-light/30': !isSlotSelected(slot) && !slot.isPrime
+                                        }"
+                                        class="w-full p-2.5 rounded-xl text-center transition-all cursor-pointer font-body flex flex-col items-center justify-center"
+                                    >
+                                        <span class="text-sm font-bold block whitespace-nowrap" x-text="slot.time"></span>
+                                        <span 
+                                            :class="isSlotSelected(slot) ? 'text-surface-white' : (slot.isPrime ? 'text-action-orange font-bold' : 'text-pitch-deep font-medium')"
+                                            class="text-xs mt-0.5 whitespace-nowrap"
+                                            x-text="formatCurrency(slot.price)"
+                                        ></span>
+                                    </button>
+                                </div>
                             </template>
                         </div>
                     </div>
