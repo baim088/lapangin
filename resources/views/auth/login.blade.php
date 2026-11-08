@@ -15,13 +15,13 @@
     <div class="min-h-screen grid lg:grid-cols-2">
 
         {{-- Left Panel: Branding --}}
-        <div class="hidden lg:flex flex-col justify-between bg-arena-night p-12 relative overflow-hidden">
+        <div class="hidden lg:flex flex-col bg-arena-night p-12 relative overflow-hidden">
             {{-- Ambient glows --}}
             <div class="absolute -top-20 -left-20 w-72 h-72 rounded-full bg-pitch-emerald/20 blur-3xl pointer-events-none"></div>
             <div class="absolute bottom-10 right-0 w-96 h-96 rounded-full bg-action-orange/10 blur-3xl pointer-events-none"></div>
 
             {{-- Logo --}}
-            <a href="{{ route('beranda') }}" class="flex items-center relative z-10">
+            <a href="{{ route('beranda') }}" class="flex items-center relative z-10 mb-12">
                 <img src="{{ asset('images/logo.png') }}" alt="Lapangin" class="h-10 w-auto brightness-0 invert opacity-95">
             </a>
 
@@ -37,7 +37,7 @@
                     dengan mudah.
                 </h1>
                 <p class="text-sm text-surface-container-highest max-w-sm leading-relaxed">
-                    Sistem anti double-booking dengan slot lock 10 menit. Futsal, Badminton, Mini Soccer, dan Padel tersedia 08:00 – 23:00 WIB.
+                    Daftar gratis, booking langsung. Nikmati kemudahan reservasi lapangan dengan konfirmasi otomatis dan jaminan slot aman.
                 </p>
 
                 {{-- Stats --}}
@@ -58,7 +58,7 @@
             </div>
 
             {{-- Footer quote --}}
-            <div class="relative z-10 text-xs text-surface-container-high">
+            <div class="relative z-10 text-xs text-surface-container-high mt-auto pt-8">
                 "Ajak Tim, Pilih Jam, Langsung Main!"
             </div>
         </div>
@@ -83,28 +83,8 @@
                 <div class="mb-6">
                     <h2 class="font-headline text-2xl font-bold text-on-surface">Masuk ke Akun</h2>
                     <p class="text-sm text-on-surface-variant mt-1">Belum punya akun?
-                        <a href="{{ route('register') }}" class="text-pitch-deep font-semibold hover:underline">Daftar gratis</a>
+                        <a href="{{ route('register') }}" class="text-pitch-deep font-semibold hover:underline">Daftar</a>
                     </p>
-                </div>
-
-                {{-- Social / Quick Login --}}
-                <button type="button" class="w-full flex items-center justify-center gap-3 border border-surface-container-high bg-surface-white hover:bg-surface-container-low text-on-surface text-sm font-semibold py-3 px-4 rounded-lg transition-colors mb-6">
-                    <svg class="w-5 h-5" viewBox="0 0 24 24">
-                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-                    </svg>
-                    Lanjutkan dengan Google
-                </button>
-
-                <div class="relative mb-6">
-                    <div class="absolute inset-0 flex items-center">
-                        <div class="w-full border-t border-surface-container-high"></div>
-                    </div>
-                    <div class="relative flex justify-center text-xs text-on-surface-variant">
-                        <span class="bg-canvas-bg px-3">atau masuk dengan email</span>
-                    </div>
                 </div>
 
                 {{-- Form --}}
@@ -154,7 +134,7 @@
                     {{-- Remember --}}
                     <label class="flex items-center gap-2.5 cursor-pointer">
                         <input type="checkbox" name="remember" class="w-4 h-4 rounded border-surface-container-high text-pitch-emerald focus:ring-pitch-emerald">
-                        <span class="text-sm text-on-surface-variant">Ingat saya di perangkat ini</span>
+                        <span class="text-sm text-on-surface-variant">Ingat saya</span>
                     </label>
 
                     {{-- Submit --}}
@@ -163,9 +143,31 @@
                         class="w-full flex items-center justify-center gap-2 bg-pitch-deep hover:bg-pitch-emerald text-surface-white font-bold text-sm py-3.5 rounded-lg shadow-sm transition-all mt-2"
                     >
                         <span class="material-symbols-outlined text-[20px]">login</span>
-                        Masuk ke Akun
+                        Masuk
                     </button>
                 </form>
+
+                <div class="relative my-6">
+                    <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-surface-container-high"></div>
+                    </div>
+                    <div class="relative flex justify-center text-xs text-on-surface-variant">
+                        <span class="bg-canvas-bg px-3">atau</span>
+                    </div>
+                </div>
+
+                {{-- Social / Quick Login --}}
+                <button type="button" class="w-full flex items-center justify-center gap-3 border border-surface-container-high bg-surface-white hover:bg-surface-container-low text-on-surface text-sm font-semibold py-3 px-4 rounded-lg transition-colors mb-6">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24">
+                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                    </svg>
+                    Lanjutkan dengan Google
+                </button>
+
+                
 
                 {{-- Register link --}}
                 <p class="text-center text-xs text-on-surface-variant mt-6">
