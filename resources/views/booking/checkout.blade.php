@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="scroll-smooth">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout Booking - {{ config('app.name', 'Lapangin') }}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+</head>
+<body
+    class="bg-canvas-bg font-body text-on-surface antialiased"
+    x-data="checkoutApp()"
+>
+    <x-navbar active="lapangan" />
+
+    <main class="w-full pt-20 pb-24">
+
+        {{-- Header: Countdown Lock Bar --}}
+        <div class="bg-action-orange text-surface-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-8 py-2.5 flex items-center justify-between gap-4">
+                <div class="flex items-center gap-2 text-sm">
+                    <span class="material-symbols-outlined text-[18px] animate-pulse">timer</span>
+                    <span class="font-semibold">Slot Anda dikunci! Selesaikan pembayaran dalam:</span>
+                </div>
+                <div class="font-headline font-bold text-lg" x-text="formatTime(countdown)">09:59</div>
+            </div>
+        </div>
+
+        {{-- Breadcrumb --}}
+        <div class="bg-surface-white border-b border-surface-container-high">
+            <div class="max-w-7xl mx-auto px-4 sm:px-8 py-3 flex items-center gap-2 text-xs text-on-surface-variant">
+                <a href="{{ route('beranda') }}" class="hover:text-pitch-deep">Beranda</a>
+                <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+                <a href="{{ route('lapangan') }}" class="hover:text-pitch-deep">Lapangan</a>
+                <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+                <a href="{{ route('lapangan.detail', 'futsal-arena-a') }}" class="hover:text-pitch-deep">Futsal Arena A</a>
+                <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+                <span class="text-on-surface font-medium">Checkout</span>
+            </div>
+        </div>
+
+        {{-- Steps --}}
+        <div class="bg-surface-white border-b border-surface-container-high">
+            <div class="max-w-7xl mx-auto px-4 sm:px-8 py-4">
+                <div class="flex items-center gap-0">
+                    @php $steps = ['Detail Pemesanan', 'Pembayaran', 'Konfirmasi']; @endphp
+                    @foreach($steps as $i => $step)
+                        <div class="flex items-center gap-2 {{ $i < count($steps)-1 ? 'flex-1' : '' }}">
+                            <div class="flex items-center gap-2 shrink-0">
+                                <div @class([
+                                    'w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0',
+                                    'bg-pitch-deep text-surface-white' => $i === 0,
+                                    'bg-surface-container-high text-on-surface-variant' => $i > 0,
+                                ])>{{ $i + 1 }}</div>
+                                <span @class([
+                                    'text-sm hidden sm:block',
+                                    'font-bold text-pitch-deep' => $i === 0,
+                                    'text-on-surface-variant' => $i > 0,
+                                ])>{{ $step }}</span>
+                            </div>
+                            @if($i < count($steps) - 1)
+                                <div class="flex-1 h-px bg-surface-container-high mx-2"></div>
+                            @endif
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-8 py-8">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+                {{-- LEFT: Form --}}
+                <div class="lg:col-span-2 flex flex-col gap-6">
+
+                    {{-- Section: Data Pemesan --}}
+                    <div class="bg-surface-white rounded-2xl border border-surface-container-high p-6 flex flex-col gap-5">
+                        <h2 class="font-headline text-lg font-bold text-on-surface flex items-center gap-2">
+                            <span class="material-symbols-outlined text-pitch-deep text-[22px]">person</span>
+                            Data Pemesan
+                        </h2>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="flex flex-col gap-1.5">
+                                <label class="text-sm font-semibold text-on-surface">Nama Lengkap <span class="text-error">*</span></label>
+                                <input type="text" placeholder="Nama lengkap" value="Ahmad Fauzi"
+                                    class="w-full px-4 py-3 rounded-lg border border-surface-container-high bg-surface-white text-sm focus:outline-none focus:ring-2 focus:ring-pitch-emerald transition-all">
+                            </div>
+                            <div class="flex flex-col gap-1.5">
+                                <label class="text-sm font-semibold text-on-surface">Nomor WhatsApp <span class="text-error">*</span></label>
+                                <input type="tel" placeholder="08xx-xxxx-xxxx" value="0812-3456-7890"
+                                    class="w-full px-4 py-3 rounded-lg border border-surface-container-high bg-surface-white text-sm focus:outline-none focus:ring-2 focus:ring-pitch-emerald transition-all">
+                                <p class="text-xs text-on-surface-variant">Konfirmasi booking akan dikirim via WhatsApp</p>
+                            </div>
+                            <div class="flex flex-col gap-1.5 sm:col-span-2">
+                                <label class="text-sm font-semibold text-on-surface">Email</label>
+                                <input type="email" placeholder="email@domain.com" value="ahmad@email.com"
+                                    class="w-full px-4 py-3 rounded-lg border border-surface-container-high bg-surface-white text-sm focus:outline-none focus:ring-2 focus:ring-pitch-emerald transition-all">
+                            </div>
+                            <div class="flex flex-col gap-1.5 sm:col-span-2">
+                                <label class="text-sm font-semibold text-on-surface">Catatan untuk Operator (opsional)</label>
+                                <textarea rows="2" placeholder="Contoh: butuh rompi, bawa peralatan sendiri..."
+                                    class="w-full px-4 py-3 rounded-lg border border-surface-container-high bg-surface-white text-sm focus:outline-none focus:ring-2 focus:ring-pitch-emerald transition-all resize-none"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Section: Metode Pembayaran --}}
+                    <div class="bg-surface-white rounded-2xl border border-surface-container-high p-6 flex flex-col gap-5">
+                        <h2 class="font-headline text-lg font-bold text-on-surface flex items-center gap-2">
+                            <span class="material-symbols-outlined text-pitch-deep text-[22px]">payments</span>
+                            Metode Pembayaran
+                        </h2>
+
+                        <div class="flex flex-col gap-3">
+                            @php
+                                $methods = [
+                                    ['qris', 'QRIS', 'Bayar dengan scan QR dari semua e-wallet & m-banking', true],
+                                    ['gopay', 'GoPay / OVO / Dana', 'Transfer e-wallet langsung', false],
+                                    ['bank', 'Virtual Account Bank', 'BCA, Mandiri, BNI, BRI', false],
+                                    ['transfer', 'Transfer Manual', 'Konfirmasi otomatis via bukti transfer', false],
+                                ];
+                            @endphp
+                            @foreach($methods as $m)
+                            <label
+                                class="flex items-center gap-4 p-4 rounded-xl border cursor-pointer transition-all"
+                                :class="paymentMethod === '{{ $m[0] }}' ? 'border-pitch-emerald bg-pitch-surface' : 'border-surface-container-high bg-surface-white hover:border-pitch-light/40'"
+                            >
+                                <input type="radio" name="payment" value="{{ $m[0] }}" x-model="paymentMethod" class="sr-only">
+                                <div class="w-10 h-10 rounded-lg bg-surface-container-low flex items-center justify-center shrink-0">
+                                    <span class="material-symbols-outlined text-pitch-deep text-[20px]">{{ match($m[0]) {
+                                        'qris' => 'qr_code_scanner',
+                                        'gopay' => 'account_balance_wallet',
+                                        'bank' => 'account_balance',
+                                        default => 'receipt_long'
+                                    } }}</span>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="text-sm font-semibold text-on-surface">{{ $m[1] }}</p>
+                                    <p class="text-xs text-on-surface-variant mt-0.5">{{ $m[2] }}</p>
+                                </div>
+                                <div
+                                    class="w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-all"
+                                    :class="paymentMethod === '{{ $m[0] }}' ? 'border-pitch-emerald' : 'border-surface-container-high'"
+                                >
+                                    <div class="w-2.5 h-2.5 rounded-full bg-pitch-emerald transition-all" :class="paymentMethod === '{{ $m[0] }}' ? 'opacity-100' : 'opacity-0'"></div>
+                                </div>
+                            </label>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    {{-- SOP / Ketentuan --}}
+                    <div class="bg-surface-container-low rounded-xl border border-surface-container-high p-5 flex flex-col gap-3">
+                        <h3 class="text-sm font-bold text-on-surface flex items-center gap-2">
+                            <span class="material-symbols-outlined text-pitch-deep text-[18px]">policy</span>
+                            Syarat & Kebijakan
+                        </h3>
+                        <ul class="flex flex-col gap-2 text-xs text-on-surface-variant">
+                            @foreach([
+                                'Pembatalan lebih dari 24 jam sebelum jadwal: refund 90%',
+                                'Pembatalan kurang dari 24 jam: refund 50%',
+                                'No-show tanpa konfirmasi: tidak ada refund',
+                                'Pemain diwajibkan hadir maksimal 10 menit sebelum jadwal',
+                                'Lapangan luar ruang: booking batal otomatis jika hujan lebat, refund penuh',
+                            ] as $rule)
+                            <li class="flex items-start gap-2">
+                                <span class="material-symbols-outlined text-[14px] text-pitch-emerald mt-0.5 shrink-0">info</span>
+                                {{ $rule }}
+                            </li>
+                            @endforeach
+                        </ul>
+                    </div>
+
+                </div>
+
+                {{-- RIGHT: Order Summary --}}
+                <div class="flex flex-col gap-4">
+                    <div class="sticky top-28 flex flex-col gap-4">
+
+                        {{-- Booking Detail Card --}}
+                        <div class="bg-surface-white rounded-2xl border border-surface-container-high p-6 flex flex-col gap-5">
+                            <h3 class="font-headline text-base font-bold text-on-surface">Ringkasan Pesanan</h3>
+
+                            {{-- Court info --}}
+                            <div class="flex items-start gap-3 pb-4 border-b border-surface-container-high">
+                                <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-pitch-deep to-pitch-emerald flex items-center justify-center shrink-0">
+                                    <span class="material-symbols-outlined text-surface-white text-[28px]">sports_soccer</span>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-bold text-on-surface">Futsal Arena A</p>
+                                    <p class="text-xs text-on-surface-variant mt-0.5">Lapangin Sports Center</p>
+                                    <span class="inline-block bg-pitch-surface text-pitch-deep text-[10px] font-bold px-2 py-0.5 rounded mt-1">Karpet Vinyl</span>
+                                </div>
+                            </div>
+
+                            {{-- Booking time --}}
+                            <div class="flex flex-col gap-2.5 text-sm">
+                                <div class="flex items-center justify-between">
+                                    <span class="flex items-center gap-1.5 text-on-surface-variant"><span class="material-symbols-outlined text-[16px]">calendar_today</span> Tanggal</span>
+                                    <span class="font-semibold">Senin, 11 Nov 2026</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="flex items-center gap-1.5 text-on-surface-variant"><span class="material-symbols-outlined text-[16px]">schedule</span> Jam</span>
+                                    <span class="font-semibold">09:00 – 11:00</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="flex items-center gap-1.5 text-on-surface-variant"><span class="material-symbols-outlined text-[16px]">timer</span> Durasi</span>
+                                    <span class="font-semibold">2 Jam</span>
+                                </div>
+                            </div>
+
+                            {{-- Price breakdown --}}
+                            <div class="flex flex-col gap-2 border-t border-surface-container-high pt-4 text-sm">
+                                <div class="flex items-center justify-between text-on-surface-variant">
+                                    <span>09:00 – 10:00</span>
+                                    <span>Rp 120.000</span>
+                                </div>
+                                <div class="flex items-center justify-between text-on-surface-variant">
+                                    <span>10:00 – 11:00</span>
+                                    <span>Rp 120.000</span>
+                                </div>
+                                <div class="flex items-center justify-between text-on-surface-variant">
+                                    <span>Biaya platform</span>
+                                    <span class="text-pitch-emerald font-semibold">Gratis</span>
+                                </div>
+                                <div class="flex items-center justify-between font-bold text-base text-on-surface border-t border-surface-container-high pt-3 mt-1">
+                                    <span>Total Pembayaran</span>
+                                    <span>Rp 240.000</span>
+                                </div>
+                            </div>
+
+                            {{-- CTA --}}
+                            <label class="flex items-start gap-2.5 cursor-pointer">
+                                <input type="checkbox" x-model="agreed" class="w-4 h-4 mt-0.5 rounded border-surface-container-high text-pitch-emerald focus:ring-pitch-emerald flex-shrink-0">
+                                <span class="text-xs text-on-surface-variant leading-relaxed">
+                                    Saya menyetujui syarat, ketentuan, dan kebijakan pembatalan Lapangin
+                                </span>
+                            </label>
+
+                            <button
+                                type="button"
+                                :disabled="!agreed"
+                                :class="agreed ? 'bg-action-orange hover:bg-tertiary-container shadow-action-orange/20 cursor-pointer' : 'bg-surface-container-high text-on-surface-variant cursor-not-allowed'"
+                                class="w-full flex items-center justify-center gap-2 text-surface-white font-bold text-sm py-3.5 rounded-xl shadow-sm transition-all"
+                                @click="agreed && (window.location = '{{ route('booking.konfirmasi') }}')"
+                            >
+                                <span class="material-symbols-outlined text-[20px]">lock</span>
+                                Bayar Rp 240.000
+                            </button>
+
+                            <p class="text-center text-xs text-on-surface-variant flex items-center justify-center gap-1">
+                                <span class="material-symbols-outlined text-[14px] text-pitch-emerald">verified_user</span>
+                                Transaksi aman & terenkripsi SSL
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function checkoutApp() {
+            return {
+                mobileMenuOpen: false,
+                paymentMethod: 'qris',
+                agreed: false,
+                countdown: 599,
+                timer: null,
+                init() {
+                    this.timer = setInterval(() => {
+                        if (this.countdown > 0) { this.countdown--; }
+                        else { clearInterval(this.timer); }
+                    }, 1000);
+                },
+                formatTime(seconds) {
+                    const m = Math.floor(seconds / 60).toString().padStart(2, '0');
+                    const s = (seconds % 60).toString().padStart(2, '0');
+                    return `${m}:${s}`;
+                }
+            };
+        }
+    </script>
+
+</body>
+</html>
+

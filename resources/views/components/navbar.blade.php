@@ -13,10 +13,6 @@
                 >
             </a>
             
-            <div class="hidden xl:flex items-center gap-2 bg-pitch-surface text-pitch-deep px-3 py-1 rounded-full border border-pitch-light/30 whitespace-nowrap">
-                <span class="w-2 h-2 rounded-full bg-pitch-emerald animate-pulse"></span>
-                <span class="text-xs font-semibold">Buka 08:00 - 23:00 WIB</span>
-            </div>
         </div>
 
         <!-- Center: Menu Navigasi Sebaris (Beranda, Lapangan, Tentang, Kontak) -->
@@ -47,28 +43,18 @@
             </a>
         </nav>
 
-        <!-- Right: Action CTA & Slot Bag -->
+        <!-- Right: Auth + Action CTA -->
         <div class="flex items-center gap-2 sm:gap-3 shrink-0">
-            <!-- Selected Slot Counter Pill -->
-            <a 
-                href="{{ route('beranda') }}#jadwal-interaktif" 
-                class="relative p-2 rounded-full hover:bg-surface-container-low transition-colors text-on-surface flex items-center justify-center"
-                title="Slot Dipilih"
-            >
-                <span class="material-symbols-outlined text-[24px]">sports_score</span>
-                <span 
-                    x-show="typeof selectedSlots !== 'undefined' && selectedSlots.length > 0"
-                    x-text="typeof selectedSlots !== 'undefined' ? selectedSlots.length : 0"
-                    class="absolute top-1 right-1 w-5 h-5 bg-action-orange text-surface-white text-xs font-bold rounded-full flex items-center justify-center leading-none ring-2 ring-surface-white"
-                    style="display: none;"
-                ></span>
-            </a>
 
-            <div class="h-6 w-[1px] bg-surface-container-high hidden sm:block"></div>
+            <!-- Auth Links (desktop) -->
+            <div class="hidden md:flex items-center gap-1">
+                <a href="{{ route('login') }}" class="text-sm px-3 py-2 rounded-lg text-on-surface-variant hover:text-pitch-deep font-medium transition-colors">Masuk</a>
+                <a href="{{ route('register') }}" class="text-sm px-3 py-2 rounded-lg text-pitch-deep font-semibold hover:bg-pitch-surface transition-colors">Daftar</a>
+            </div>
 
             <!-- Primary Booking CTA (Single Line) -->
             <a 
-                href="{{ route('beranda') }}#jadwal-interaktif" 
+                href="{{ route('lapangan') }}" 
                 class="inline-flex items-center justify-center bg-action-orange hover:bg-tertiary-container text-surface-white font-bold text-sm px-4 py-2.5 rounded-lg shadow-sm transition-all transform hover:-translate-y-0.5 whitespace-nowrap"
             >
                 Booking Cepat
