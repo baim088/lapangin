@@ -1,20 +1,17 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\CourtController;
+use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 
 // === PUBLIC ROUTES ===
-Route::get('/', function () {
-    return view('welcome');
-})->name('beranda');
+Route::get('/', [HomeController::class, 'index'])->name('beranda');
+Route::get('/lapangan', [CourtController::class, 'index'])->name('lapangan');
+Route::get('/lapangan/{slug}', [CourtController::class, 'show'])->name('lapangan.detail');
 
-Route::get('/lapangan', function () {
-    return view('lapangan');
-})->name('lapangan');
-
-Route::get('/lapangan/{slug}', function (string $slug) {
-    return view('lapangan-detail', ['slug' => $slug]);
-})->name('lapangan.detail');
+Route::get('/api/lapangan/{slug}/slots', [CourtController::class, 'slots'])->name('api.lapangan.slots');
+Route::get('/api/quick-slots', [HomeController::class, 'quickSlots'])->name('api.quick-slots');
 
 Route::get('/tentang', function () {
     return view('tentang');

@@ -25,7 +25,7 @@
                 <span class="material-symbols-outlined text-[14px]">chevron_right</span>
                 <a href="{{ route('lapangan') }}" class="hover:text-pitch-deep transition-colors">Lapangan</a>
                 <span class="material-symbols-outlined text-[14px]">chevron_right</span>
-                <span class="text-on-surface font-medium">Futsal Arena A</span>
+                <span class="text-on-surface font-medium">{{ $court->name }}</span>
             </div>
         </div>
 
@@ -39,26 +39,41 @@
                     <div class="relative rounded-2xl overflow-hidden bg-surface-container aspect-video">
                         <div class="absolute inset-0 bg-gradient-to-br from-pitch-deep/80 to-pitch-emerald/40 flex items-center justify-center">
                             <div class="text-center text-surface-white">
-                                <span class="material-symbols-outlined text-[80px] text-pitch-light/60">sports_soccer</span>
-                                <p class="text-sm text-surface-container-highest mt-2">Foto lapangan akan tersedia</p>
+                                <span class="material-symbols-outlined text-[80px] text-pitch-light/60">
+                                    {{ in_array($court->sport_category->value, ['badminton', 'padel']) ? 'sports_tennis' : 'sports_soccer' }}
+                                </span>
+                                <p class="text-sm text-surface-container-highest mt-2">{{ $court->name }}</p>
                             </div>
                         </div>
                         {{-- Sport pill --}}
                         <div class="absolute top-4 left-4 flex flex-wrap gap-2">
                             <span class="inline-flex items-center gap-1.5 bg-pitch-deep text-pitch-light text-xs font-bold px-3 py-1.5 rounded-full">
-                                <span class="material-symbols-outlined text-[14px]">sports_soccer</span>
-                                Futsal
+                                <span class="material-symbols-outlined text-[14px]">
+                                    {{ in_array($court->sport_category->value, ['badminton', 'padel']) ? 'sports_tennis' : 'sports_soccer' }}
+                                </span>
+                                {{ ucfirst($court->sport_category->value) }}
                             </span>
                             <span class="inline-flex items-center gap-1.5 bg-surface-white/90 text-on-surface text-xs font-bold px-3 py-1.5 rounded-full">
-                                Vinyl Carpet
+                                {{ $court->surface_type }}
                             </span>
                         </div>
                         {{-- Availability badge --}}
                         <div class="absolute top-4 right-4">
-                            <span class="inline-flex items-center gap-1.5 bg-pitch-surface text-pitch-deep text-xs font-bold px-3 py-1.5 rounded-full border border-pitch-light/30">
-                                <span class="w-2 h-2 rounded-full bg-pitch-emerald animate-pulse"></span>
-                                Tersedia Hari Ini
-                            </span>
+                            @if ($court->status === \App\Enums\CourtStatus::Active)
+                                <span class="inline-flex items-center gap-1.5 bg-pitch-surface text-pitch-deep text-xs font-bold px-3 py-1.5 rounded-full border border-pitch-light/30">
+                                    <span class="w-2 h-2 rounded-full bg-pitch-emerald animate-pulse"></span>
+                                    Tersedia Hari Ini
+                                </span>
+                            @elseif ($court->status === \App\Enums\CourtStatus::Maintenance)
+                                <span class="inline-flex items-center gap-1.5 bg-action-amber text-surface-white text-xs font-bold px-3 py-1.5 rounded-full">
+                                    <span class="material-symbols-outlined text-[14px]">build</span>
+                                    Sedang Perawatan
+                                </span>
+                            @else
+                                <span class="inline-flex items-center gap-1.5 bg-surface-container-high text-on-surface-variant text-xs font-bold px-3 py-1.5 rounded-full">
+                                    Tidak Aktif
+                                </span>
+                            @endif
                         </div>
                     </div>
 
@@ -66,8 +81,8 @@
                     <div class="flex flex-col gap-3">
                         <div class="flex items-start justify-between gap-4">
                             <div>
-                                <h1 class="font-headline text-2xl sm:text-3xl font-bold text-on-surface">Futsal Arena A</h1>
-                                <p class="text-on-surface-variant text-sm mt-1">Lapangin Sports Center • Karpet Vinyl Berkualitas Tinggi</p>
+                                <h1 class="font-headline text-2xl sm:text-3xl font-bold text-on-surface">{{ $court->name }}</h1>
+                                <p class="text-on-surface-variant text-sm mt-1">{{ $court->venue->name ?? 'Lapangin Sports Center' }} • {{ $court->surface_type }}</p>
                             </div>
                             <div class="flex items-center gap-1.5 bg-action-glow px-3 py-2 rounded-xl shrink-0">
                                 <span class="material-symbols-outlined text-action-amber text-[18px]">star</span>
@@ -78,17 +93,14 @@
 
                         {{-- Quick specs row --}}
                         <div class="flex flex-wrap gap-2">
-                            @foreach([
-                                ['straighten', 'Ukuran 25x15m'],
-                                ['lightbulb', 'LED 800 Lux'],
-                                ['groups', 'Max 10 Pemain'],
-                                ['ac_unit', 'Indoor A/C'],
-                            ] as $spec)
-                            <span class="inline-flex items-center gap-1.5 bg-surface-container-low text-on-surface-variant text-xs font-medium px-3 py-1.5 rounded-full border border-surface-container-high">
-                                <span class="material-symbols-outlined text-[14px]">{{ $spec[0] }}</span>
-                                {{ $spec[1] }}
-                            </span>
-                            @endforeach
+                            @if (!empty($court->specs) && is_array($court->specs))
+                                @foreach ($court->specs as $spec)
+                                    <span class="inline-flex items-center gap-1.5 bg-surface-container-low text-on-surface-variant text-xs font-medium px-3 py-1.5 rounded-full border border-surface-container-high">
+                                        <span class="material-symbols-outlined text-[14px]">verified</span>
+                                        {{ $spec }}
+                                    </span>
+                                @endforeach
+                            @endif
                         </div>
                     </div>
 
@@ -119,15 +131,17 @@
                                     @endphp
                                     @for ($i = 0; $i < 7; $i++)
                                         @php
-                                            $date = now()->addDays($i);
-                                            $dayName = $days[(int)$date->format('w')];
-                                            $dayNum = $date->format('d');
-                                            $monthName = $months[(int)$date->format('n') - 1];
+                                            $dateOption = now()->addDays($i);
+                                            $dayName = $days[(int)$dateOption->format('w')];
+                                            $dayNum = $dateOption->format('d');
+                                            $monthName = $months[(int)$dateOption->format('n') - 1];
+                                            $dateString = $dateOption->format('Y-m-d');
                                         @endphp
                                         <button
-                                            @click="selectedDate = '{{ $date->format('Y-m-d') }}'"
-                                            :class="selectedDate === '{{ $date->format('Y-m-d') }}' ? 'bg-pitch-deep text-surface-white border-pitch-deep' : 'bg-surface-white text-on-surface border-surface-container-high hover:border-pitch-light hover:text-pitch-deep'"
-                                            class="flex flex-col items-center gap-0.5 px-4 py-3 rounded-xl border text-center transition-all shrink-0"
+                                            type="button"
+                                            @click="selectDate('{{ $dateString }}')"
+                                            :class="selectedDate === '{{ $dateString }}' ? 'bg-pitch-deep text-surface-white border-pitch-deep' : 'bg-surface-white text-on-surface border-surface-container-high hover:border-pitch-light hover:text-pitch-deep'"
+                                            class="flex flex-col items-center gap-0.5 px-4 py-3 rounded-xl border text-center transition-all shrink-0 cursor-pointer"
                                         >
                                             <span class="text-xs font-medium opacity-70">{{ $dayName }}</span>
                                             <span class="font-headline font-bold text-lg leading-none">{{ $dayNum }}</span>
@@ -149,48 +163,50 @@
                                     </div>
                                 </div>
 
-                                {{-- Time slots grid --}}
-                                @php
-                                    $slots = [
-                                        ['time' => '08:00', 'price' => 'Rp 120.000', 'status' => 'available'],
-                                        ['time' => '09:00', 'price' => 'Rp 120.000', 'status' => 'available'],
-                                        ['time' => '10:00', 'price' => 'Rp 120.000', 'status' => 'booked'],
-                                        ['time' => '11:00', 'price' => 'Rp 120.000', 'status' => 'booked'],
-                                        ['time' => '12:00', 'price' => 'Rp 150.000', 'status' => 'available'],
-                                        ['time' => '13:00', 'price' => 'Rp 150.000', 'status' => 'available'],
-                                        ['time' => '14:00', 'price' => 'Rp 150.000', 'status' => 'available'],
-                                        ['time' => '15:00', 'price' => 'Rp 150.000', 'status' => 'available'],
-                                        ['time' => '16:00', 'price' => 'Rp 180.000', 'status' => 'available'],
-                                        ['time' => '17:00', 'price' => 'Rp 180.000', 'status' => 'available'],
-                                        ['time' => '18:00', 'price' => 'Rp 200.000', 'status' => 'booked'],
-                                        ['time' => '19:00', 'price' => 'Rp 200.000', 'status' => 'booked'],
-                                        ['time' => '20:00', 'price' => 'Rp 200.000', 'status' => 'available'],
-                                        ['time' => '21:00', 'price' => 'Rp 200.000', 'status' => 'available'],
-                                        ['time' => '22:00', 'price' => 'Rp 180.000', 'status' => 'available'],
-                                    ];
-                                @endphp
+                                {{-- Time slots grid via Alpine --}}
                                 <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2">
-                                    @foreach ($slots as $i => $slot)
-                                        @if ($slot['status'] === 'booked')
-                                            <div class="relative flex flex-col items-center justify-center gap-0.5 py-3.5 px-2 rounded-lg border border-court-booked/20 bg-court-booked-surface cursor-not-allowed min-h-[64px]">
-                                                <span class="text-sm font-bold text-court-booked line-through">{{ $slot['time'] }}</span>
-                                                <span class="text-[10px] text-court-booked/70">Terisi</span>
-                                            </div>
-                                        @else
-                                            <button
-                                                type="button"
-                                                @click="toggleSlot({{ $i }}, '{{ $slot['time'] }}', {{ (int)preg_replace('/[^0-9]/', '', $slot['price']) }})"
-                                                :class="isSelected({{ $i }}) ? 'bg-action-glow border-2 border-action-orange shadow-[0_0_0_2px_rgba(234,88,12,0.15)] text-on-surface' : 'bg-pitch-surface border border-pitch-light/40 hover:border-pitch-emerald hover:shadow-[0_4px_12px_rgba(5,150,105,0.12)] text-pitch-deep'"
-                                                class="relative flex flex-col items-center justify-center gap-0.5 py-3.5 px-2 rounded-lg transition-all min-h-[64px]"
-                                            >
-                                                <span class="text-sm font-bold">{{ $slot['time'] }}</span>
-                                                <span class="text-[10px] font-medium opacity-80">{{ $slot['price'] }}</span>
-                                                <span x-show="isSelected({{ $i }})" class="absolute -top-1.5 -right-1.5 w-4 h-4 bg-action-orange text-surface-white rounded-full flex items-center justify-center">
-                                                    <span class="material-symbols-outlined text-[11px]">check</span>
-                                                </span>
-                                            </button>
-                                        @endif
-                                    @endforeach
+                                    <template x-for="slot in slots" :key="slot.id">
+                                        <div>
+                                            <template x-if="slot.status === 'booked'">
+                                                <div class="relative flex flex-col items-center justify-center gap-0.5 py-3.5 px-2 rounded-lg border border-court-booked/20 bg-court-booked-surface cursor-not-allowed min-h-[64px]">
+                                                    <span class="text-sm font-bold text-court-booked line-through" x-text="slot.start_time"></span>
+                                                    <span class="text-[10px] text-court-booked/70">Terisi</span>
+                                                </div>
+                                            </template>
+                                            <template x-if="slot.status === 'blocked'">
+                                                <div class="relative flex flex-col items-center justify-center gap-0.5 py-3.5 px-2 rounded-lg border border-surface-container-high bg-surface-container-low cursor-not-allowed min-h-[64px]">
+                                                    <span class="text-sm font-bold text-on-surface-variant line-through" x-text="slot.start_time"></span>
+                                                    <span class="text-[10px] text-on-surface-variant">Diblokir</span>
+                                                </div>
+                                            </template>
+                                            <template x-if="slot.status === 'maintenance'">
+                                                <div class="relative flex flex-col items-center justify-center gap-0.5 py-3.5 px-2 rounded-lg border border-amber-300 bg-amber-50 cursor-not-allowed min-h-[64px]">
+                                                    <span class="text-sm font-bold text-amber-700 line-through" x-text="slot.start_time"></span>
+                                                    <span class="text-[10px] text-amber-600 font-medium">Perawatan</span>
+                                                </div>
+                                            </template>
+                                            <template x-if="slot.status === 'past'">
+                                                <div class="relative flex flex-col items-center justify-center gap-0.5 py-3.5 px-2 rounded-lg border border-slate-200 bg-slate-100 cursor-not-allowed min-h-[64px] opacity-60">
+                                                    <span class="text-sm font-bold text-slate-400 line-through" x-text="slot.start_time"></span>
+                                                    <span class="text-[10px] text-slate-400">Lewat</span>
+                                                </div>
+                                            </template>
+                                            <template x-if="slot.status === 'available'">
+                                                <button
+                                                    type="button"
+                                                    @click="toggleSlot(slot)"
+                                                    :class="isSelected(slot) ? 'bg-action-glow border-2 border-action-orange shadow-[0_0_0_2px_rgba(234,88,12,0.15)] text-on-surface' : 'bg-pitch-surface border border-pitch-light/40 hover:border-pitch-emerald hover:shadow-[0_4px_12px_rgba(5,150,105,0.12)] text-pitch-deep'"
+                                                    class="w-full relative flex flex-col items-center justify-center gap-0.5 py-3.5 px-2 rounded-lg transition-all min-h-[64px] cursor-pointer"
+                                                >
+                                                    <span class="text-sm font-bold" x-text="slot.start_time"></span>
+                                                    <span class="text-[10px] font-medium opacity-80" x-text="'Rp ' + Number(slot.price).toLocaleString('id-ID')"></span>
+                                                    <span x-show="isSelected(slot)" class="absolute -top-1.5 -right-1.5 w-4 h-4 bg-action-orange text-surface-white rounded-full flex items-center justify-center">
+                                                        <span class="material-symbols-outlined text-[11px]">check</span>
+                                                    </span>
+                                                </button>
+                                            </template>
+                                        </div>
+                                    </template>
                                 </div>
 
                                 {{-- Mobile sticky summary --}}
@@ -304,7 +320,7 @@
                             <div class="flex items-center justify-between">
                                 <div>
                                     <span class="text-xs text-on-surface-variant uppercase font-semibold tracking-wider">Mulai dari</span>
-                                    <div class="font-headline text-2xl font-bold text-on-surface mt-0.5">Rp 120.000<span class="text-sm font-normal text-on-surface-variant">/jam</span></div>
+                                    <div class="font-headline text-2xl font-bold text-on-surface mt-0.5">Rp {{ number_format($court->price_regular, 0, ',', '.') }}<span class="text-sm font-normal text-on-surface-variant">/jam</span></div>
                                 </div>
                                 <div class="flex items-center gap-1 bg-action-glow px-2.5 py-1.5 rounded-lg">
                                     <span class="material-symbols-outlined text-action-amber text-[16px]" style="font-variation-settings:'FILL' 1">star</span>
@@ -322,15 +338,15 @@
                             <div x-show="selectedSlots.length > 0" class="flex flex-col gap-3" style="display:none;">
                                 <h4 class="text-sm font-semibold text-on-surface">Jam yang dipilih:</h4>
                                 <div class="flex flex-col gap-1.5 max-h-40 overflow-y-auto">
-                                    <template x-for="slot in selectedSlots" :key="slot.index">
+                                    <template x-for="slot in selectedSlots" :key="slot.id">
                                         <div class="flex items-center justify-between text-sm">
                                             <div class="flex items-center gap-2">
                                                 <span class="material-symbols-outlined text-action-orange text-[16px]">schedule</span>
-                                                <span x-text="slot.time + ' – ' + slot.endTime" class="font-medium text-on-surface"></span>
+                                                <span x-text="slot.time_label" class="font-medium text-on-surface"></span>
                                             </div>
                                             <div class="flex items-center gap-2">
-                                                <span x-text="'Rp ' + slot.price.toLocaleString('id-ID')" class="font-semibold text-on-surface"></span>
-                                                <button @click="toggleSlot(slot.index, slot.time, slot.price)" class="text-on-surface-variant hover:text-error">
+                                                <span x-text="'Rp ' + Number(slot.price).toLocaleString('id-ID')" class="font-semibold text-on-surface"></span>
+                                                <button @click="toggleSlot(slot)" class="text-on-surface-variant hover:text-error cursor-pointer">
                                                     <span class="material-symbols-outlined text-[16px]">close</span>
                                                 </button>
                                             </div>
@@ -474,31 +490,43 @@
             return {
                 mobileMenuOpen: false,
                 showAuthModal: false,
-                isLoggedIn: false,
-                selectedDate: '{{ now()->toDateString() }}',
+                isLoggedIn: {{ auth()->check() ? 'true' : 'false' }},
+                selectedDate: '{{ $date }}',
                 selectedSlots: [],
+                slug: '{{ $court->slug }}',
+                slots: @json($availability['slots']),
                 get totalPrice() {
                     return this.selectedSlots.reduce((sum, slot) => sum + slot.price, 0);
                 },
-                isSelected(index) {
-                    return this.selectedSlots.some(s => s.index === index);
+                isSelected(slot) {
+                    return this.selectedSlots.some(s => s.id === slot.id);
                 },
-                toggleSlot(index, time, price) {
-                    const idx = this.selectedSlots.findIndex(s => s.index === index);
+                selectDate(newDate) {
+                    this.selectedDate = newDate;
+                    this.selectedSlots = [];
+                    fetch('{{ url('/api/lapangan') }}/' + this.slug + '/slots?date=' + newDate)
+                        .then(res => res.json())
+                        .then(data => {
+                            this.slots = data.slots;
+                        });
+                },
+                toggleSlot(slot) {
+                    if (!slot.is_available) return;
+                    const idx = this.selectedSlots.findIndex(s => s.id === slot.id);
                     if (idx !== -1) {
                         this.selectedSlots.splice(idx, 1);
                     } else {
-                        const hour = parseInt(time.split(':')[0]);
-                        const endTime = (hour + 1).toString().padStart(2, '0') + ':00';
-                        this.selectedSlots.push({ index, time, endTime, price });
-                        this.selectedSlots.sort((a, b) => a.index - b.index);
+                        this.selectedSlots.push(slot);
+                        this.selectedSlots.sort((a, b) => a.start_time.localeCompare(b.start_time));
                     }
                 },
                 triggerCheckout() {
+                    if (this.selectedSlots.length === 0) return;
                     if (!this.isLoggedIn) {
                         this.showAuthModal = true;
                     } else {
-                        window.location.href = "{{ route('booking.checkout', 'futsal-arena-a') }}";
+                        const slotParams = this.selectedSlots.map(s => encodeURIComponent(s.start_time)).join(',');
+                        window.location.href = "{{ route('booking.checkout', $court->slug) }}?date=" + this.selectedDate + "&slots=" + slotParams;
                     }
                 }
             };

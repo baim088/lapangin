@@ -41,3 +41,25 @@ Dokumen ini mencatat keputusan arsitektur, asumsi implementasi, dan default yang
 - **Navbar Dinamis**:
   - Menggunakan direktif `@guest` untuk tombol Masuk dan Daftar.
   - Menggunakan direktif `@auth` untuk menampilkan nama pengguna, tautan dashboard dinamis sesuai peran aktif, dan tombol Keluar (form POST dengan `@csrf`).
+
+---
+
+## 3. Fase 2: Katalog & Ketersediaan Real-Time
+- **Service ExpireStaleBookings**:
+  - Menghapus kunci slot dan menandai `Booking` serta `Payment` yang pending sebagai `expired` bila `expires_at <= now()`.
+  - Dipanggil secara lazy saat endpoint atau service ketersediaan slot diakses dengan filter `$courtId` dan `$date`, serta dijadwalkan per menit pada `routes/console.php` untuk pembersihan global otomatis.
+- **Perhitungan Ketersediaan Slot**:
+  - Dihitung murni di server dalam `CourtAvailabilityService`.
+  - Menghasilkan slot per jam tepat dari `venue.open_time` hingga `venue.close_time`.
+  - Status slot diidentifikasi sebagai token:
+    - `maintenance`: Bila lapangan berstatus `CourtStatus::Maintenance`.
+    - `past`: Bila waktu mulai slot telah lewat dari `Carbon::now()`.
+    - `booked`: Bila slot terisi oleh booking aktif (`locked_until` NULL atau masih berlaku).
+    - `blocked`: Bila slot diblokir manual oleh operator.
+    - `available`: Slot bebas dan dapat dipesan.
+- **Harga Reguler & Prime Time**:
+  - Slot dengan `start_time` di antara `venue.prime_start_time` dan `venue.prime_end_time` dikenakan tarif `court.price_prime`.
+  - Slot di luar jam prime time dikenakan tarif `court.price_regular`.
+- **API Endpoint JSON**:
+  - `GET /api/lapangan/{slug}/slots?date=YYYY-MM-DD` untuk memperbarui slot Alpine.js saat user berganti tanggal di halaman detail.
+  - `GET /api/quick-slots` untuk widget pemesanan cepat pada landing page.
