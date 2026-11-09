@@ -158,3 +158,23 @@ Dokumen ini mencatat keputusan arsitektur, asumsi implementasi, dan default yang
     - **Aturan Penugasan Operator**: Jika role yang dipilih adalah `operator`, maka `venue_id` bersifat wajib (`Rule::requiredIf(...)`) dan harus valid terdaftar di tabel `venues`.
     - Jika role diubah menjadi non-operator (`customer` atau `super_admin`), `venue_id` otomatis di-set ke `null`.
     - **Self-Protection Guard**: Super admin dilarang menurunkan peran (demote) akunnya sendiri menjadi role lain; jika dicoba, sistem mengembalikan error validasi sesi.
+
+---
+
+## 7. Fase 6: Hardening, DemoSeeder & Audit Keamanan
+- **DemoSeeder (Khusus Local Environment & Idempotent)**:
+  - Dipanggil dari `DatabaseSeeder` secara kondisional hanya ketika `app()->environment('local')`.
+  - Idempotent: memeriksa `Booking::where('notes', 'like', '%[DEMO]%')->exists()`; jika sudah ada data demo, seeder langsung keluar tanpa duplikasi atau error.
+  - Menggunakan `BookingService` riil untuk membuat siklus transaksi realistis:
+    - 1 booking `pending` (unpaid, slot terkunci).
+    - 1 booking `pending` dengan bukti transfer terunggah (`pending_verification`, slot lock beku).
+    - 1 booking `confirmed` prime time oleh operator.
+    - 1 booking `confirmed` untuk hari ini agar dashboard operator langsung terisi metrik riil saat dev.
+    - 1 booking `cancelled` karena pembayaran ditolak operator beserta alasan penolakan.
+    - 1 booking `cancelled` atas pembatalan inisiatif penyewa sendiri.
+- **Audit Mandiri Keamanan & Rute**:
+  - Seluruh rute non-GET (POST, PUT, PATCH, DELETE) memiliki proteksi `@csrf` di setiap form Blade dan verifikasi CSRF middleware Laravel.
+  - Semua rute administratif dan operasional (`/admin/*`, `/operator/*`, `/dashboard/*`) diproteksi middleware `role` spesifik dan otorisasi `BookingPolicy`.
+  - File bukti transfer disimpan di disk privat (`storage/app/payment-proofs`) dan tidak dapat diakses publik. Akses download/streaming melalui rute `GET /bookings/{booking}/proof` diatur ketat oleh `BookingPolicy` (hanya penyewa pemilik booking, operator venue terkait, dan super_admin yang diizinkan).
+  - Tidak ada fungsi debugging (`dd()`, `dump()`, `var_dump()`) yang tertinggal di basis kode aplikasi.
+  - Review testimoni pada `resources/views/lapangan-detail.blade.php:288` yang mengandung nama statis "Ahmad Fauzi" merupakan komponen visual mockup review lapangan dari frontend Ibrahim dan sengaja dipertahankan tanpa mengganggu data riil user.

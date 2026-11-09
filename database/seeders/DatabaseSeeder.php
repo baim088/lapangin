@@ -19,5 +19,9 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             CourtSeeder::class,
         ]);
+
+        if (app()->environment('local')) {
+            $this->call(DemoSeeder::class);
+        }
     }
 }
