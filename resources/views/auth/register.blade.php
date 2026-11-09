@@ -82,7 +82,7 @@
                     </p>
                 </div>
 
-                <form method="POST" action="#" class="flex flex-col gap-4">
+                <form method="POST" action="{{ route('register') }}" class="flex flex-col gap-4">
                     @csrf
 
                     {{-- Name --}}
@@ -90,9 +90,12 @@
                         <label for="name" class="text-sm font-semibold text-on-surface">Nama Lengkap</label>
                         <div class="relative">
                             <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">person</span>
-                            <input type="text" id="name" name="name" placeholder="Nama lengkap Anda"
+                            <input type="text" id="name" name="name" value="{{ old('name') }}" placeholder="Nama lengkap Anda"
                                 class="w-full pl-10 pr-4 py-3 rounded-lg border border-surface-container-high bg-surface-white text-on-surface text-sm placeholder-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-pitch-emerald focus:border-pitch-emerald transition-all">
                         </div>
+                        @error('name')
+                            <p class="text-xs text-rose-600 mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     {{-- Phone --}}
@@ -100,10 +103,13 @@
                         <label for="phone" class="text-sm font-semibold text-on-surface">Nomor WhatsApp</label>
                         <div class="relative">
                             <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">phone</span>
-                            <input type="tel" id="phone" name="phone" placeholder="08xx-xxxx-xxxx"
+                            <input type="tel" id="phone" name="phone" value="{{ old('phone') }}" placeholder="08xx-xxxx-xxxx"
                                 class="w-full pl-10 pr-4 py-3 rounded-lg border border-surface-container-high bg-surface-white text-on-surface text-sm placeholder-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-pitch-emerald focus:border-pitch-emerald transition-all">
                         </div>
                         <p class="text-xs text-on-surface-variant">Digunakan untuk notifikasi booking via WhatsApp</p>
+                        @error('phone')
+                            <p class="text-xs text-rose-600 mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     {{-- Email --}}
@@ -111,9 +117,12 @@
                         <label for="email" class="text-sm font-semibold text-on-surface">Email</label>
                         <div class="relative">
                             <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">mail</span>
-                            <input type="email" id="email" name="email" placeholder="nama@email.com"
+                            <input type="email" id="email" name="email" value="{{ old('email') }}" placeholder="nama@email.com"
                                 class="w-full pl-10 pr-4 py-3 rounded-lg border border-surface-container-high bg-surface-white text-on-surface text-sm placeholder-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-pitch-emerald focus:border-pitch-emerald transition-all">
                         </div>
+                        @error('email')
+                            <p class="text-xs text-rose-600 mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     {{-- Password --}}
@@ -127,6 +136,9 @@
                                 <span class="material-symbols-outlined text-[20px]" x-text="showPass ? 'visibility_off' : 'visibility'">visibility</span>
                             </button>
                         </div>
+                        @error('password')
+                            <p class="text-xs text-rose-600 mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     {{-- Password Confirm --}}
@@ -143,13 +155,18 @@
                     </div>
 
                     {{-- Terms --}}
-                    <label class="flex items-start gap-2.5 cursor-pointer mt-1">
-                        <input type="checkbox" name="terms" class="w-4 h-4 mt-0.5 rounded border-surface-container-high text-pitch-emerald focus:ring-pitch-emerald flex-shrink-0">
-                        <span class="text-xs text-on-surface-variant leading-relaxed">
-                            Saya menyetujui <a href="{{ route('tentang') }}" class="text-pitch-deep font-semibold hover:underline">Syarat & Ketentuan</a> dan
-                            <a href="{{ route('tentang') }}" class="text-pitch-deep font-semibold hover:underline">Kebijakan Privasi</a> Lapangin
-                        </span>
-                    </label>
+                    <div>
+                        <label class="flex items-start gap-2.5 cursor-pointer mt-1">
+                            <input type="checkbox" name="terms" value="1" {{ old('terms') ? 'checked' : '' }} class="w-4 h-4 mt-0.5 rounded border-surface-container-high text-pitch-emerald focus:ring-pitch-emerald flex-shrink-0">
+                            <span class="text-xs text-on-surface-variant leading-relaxed">
+                                Saya menyetujui <a href="{{ route('tentang') }}" class="text-pitch-deep font-semibold hover:underline">Syarat & Ketentuan</a> dan
+                                <a href="{{ route('tentang') }}" class="text-pitch-deep font-semibold hover:underline">Kebijakan Privasi</a> Lapangin
+                            </span>
+                        </label>
+                        @error('terms')
+                            <p class="text-xs text-rose-600 mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
 
                     <button type="submit" class="w-full flex items-center justify-center gap-2 bg-action-orange hover:bg-tertiary-container text-surface-white font-bold text-sm py-3.5 rounded-lg shadow-sm shadow-action-orange/20 transition-all mt-2 cursor-pointer">
                         <span class="material-symbols-outlined text-[20px]">how_to_reg</span>

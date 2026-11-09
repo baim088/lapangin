@@ -39,8 +39,12 @@
             {{-- Booking code --}}
             <div class="bg-pitch-surface border border-pitch-light/30 rounded-2xl px-8 py-5 flex flex-col items-center gap-1 w-full">
                 <span class="text-xs font-semibold text-pitch-deep uppercase tracking-wider">Kode Booking</span>
-                <span class="font-headline text-3xl font-bold text-pitch-deep tracking-wider">LPN-2026-4729</span>
-                <span class="text-xs text-pitch-emerald flex items-center gap-1 mt-1">
+                <span class="font-headline text-3xl font-bold text-pitch-deep tracking-wider">{{ $booking->booking_code }}</span>
+                <div class="mt-2 text-center">
+                    <span class="text-[11px] text-on-surface-variant block">Token Check-In (Tunjukkan ke Petugas):</span>
+                    <span class="font-mono text-xs font-bold text-pitch-deep bg-surface-white px-3 py-1 rounded-md border border-pitch-light/30 break-all select-all inline-block mt-0.5">{{ $booking->checkin_token }}</span>
+                </div>
+                <span class="text-xs text-pitch-emerald flex items-center gap-1 mt-2">
                     <span class="material-symbols-outlined text-[13px]">verified</span>
                     Tersimpan otomatis di akun Anda
                 </span>
@@ -52,23 +56,23 @@
                 <div class="flex flex-col gap-3 text-sm">
                     <div class="flex items-center justify-between py-2 border-b border-surface-container-high">
                         <span class="flex items-center gap-2 text-on-surface-variant"><span class="material-symbols-outlined text-[16px]">stadium</span> Lapangan</span>
-                        <span class="font-semibold">Futsal Arena A</span>
+                        <span class="font-semibold">{{ $booking->items->first()?->court->name ?? '-' }}</span>
                     </div>
                     <div class="flex items-center justify-between py-2 border-b border-surface-container-high">
                         <span class="flex items-center gap-2 text-on-surface-variant"><span class="material-symbols-outlined text-[16px]">calendar_today</span> Tanggal</span>
-                        <span class="font-semibold">Senin, 11 Nov 2026</span>
+                        <span class="font-semibold">{{ $booking->items->first()?->booking_date ? \Carbon\Carbon::parse($booking->items->first()->booking_date)->format('d M Y') : '-' }}</span>
                     </div>
                     <div class="flex items-center justify-between py-2 border-b border-surface-container-high">
                         <span class="flex items-center gap-2 text-on-surface-variant"><span class="material-symbols-outlined text-[16px]">schedule</span> Waktu</span>
-                        <span class="font-semibold">09:00 – 11:00 WIB</span>
+                        <span class="font-semibold">{{ $booking->items->map(fn($it) => \Carbon\Carbon::parse($it->start_time)->format('H:i') . '–' . \Carbon\Carbon::parse($it->end_time)->format('H:i'))->implode(', ') }} WIB</span>
                     </div>
                     <div class="flex items-center justify-between py-2 border-b border-surface-container-high">
                         <span class="flex items-center gap-2 text-on-surface-variant"><span class="material-symbols-outlined text-[16px]">person</span> Nama</span>
-                        <span class="font-semibold">Ahmad Fauzi</span>
+                        <span class="font-semibold">{{ $booking->customer_name }}</span>
                     </div>
                     <div class="flex items-center justify-between py-2">
                         <span class="flex items-center gap-2 text-on-surface-variant"><span class="material-symbols-outlined text-[16px]">payments</span> Total Bayar</span>
-                        <span class="font-bold text-action-orange">Rp 240.000</span>
+                        <span class="font-bold text-action-orange">Rp {{ number_format($booking->total_amount, 0, ',', '.') }}</span>
                     </div>
                 </div>
             </div>

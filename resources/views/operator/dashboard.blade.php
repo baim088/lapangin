@@ -58,10 +58,13 @@
                         <span class="material-symbols-outlined text-[20px]">open_in_new</span>
                         Lihat Situs Publik
                     </a>
-                    <a href="{{ route('login') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-surface-container-highest hover:text-surface-white hover:bg-surface-white/5 transition-all">
-                        <span class="material-symbols-outlined text-[20px]">logout</span>
-                        Keluar
-                    </a>
+                    <form action="{{ route('logout') }}" method="POST">
+                        @csrf
+                        <button type="submit" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-surface-container-highest hover:text-surface-white hover:bg-surface-white/5 transition-all text-left">
+                            <span class="material-symbols-outlined text-[20px]">logout</span>
+                            Keluar
+                        </button>
+                    </form>
                 </div>
             </nav>
 
@@ -69,11 +72,11 @@
             <div class="px-4 py-4 border-t border-pitch-deep/50">
                 <div class="flex items-center gap-3 p-3 rounded-xl bg-surface-white/5">
                     <div class="w-9 h-9 rounded-full bg-pitch-emerald/30 flex items-center justify-center">
-                        <span class="font-bold text-pitch-light text-sm">BO</span>
+                        <span class="font-bold text-pitch-light text-sm">{{ strtoupper(substr(auth()->user()->name, 0, 2)) }}</span>
                     </div>
                     <div class="flex-1 min-w-0">
-                        <p class="text-xs font-bold text-surface-white truncate">Budi Operator</p>
-                        <p class="text-[10px] text-surface-container-highest truncate">budi@lapangin.id</p>
+                        <p class="text-xs font-bold text-surface-white truncate">{{ auth()->user()->name }}</p>
+                        <p class="text-[10px] text-surface-container-highest truncate">{{ auth()->user()->email }}</p>
                     </div>
                     <span class="material-symbols-outlined text-surface-container-highest text-[18px]">settings</span>
                 </div>
@@ -100,7 +103,7 @@
                 <div class="flex items-center gap-3">
                     <div class="flex items-center gap-1.5 bg-pitch-surface px-3 py-1.5 rounded-full text-xs text-pitch-deep font-semibold">
                         <span class="w-1.5 h-1.5 rounded-full bg-pitch-emerald animate-pulse"></span>
-                        Venue Aktif
+                        {{ $venue->name }}
                     </div>
                     <button class="relative p-2 rounded-lg hover:bg-surface-container-low text-on-surface-variant">
                         <span class="material-symbols-outlined text-[22px]">notifications</span>
@@ -116,10 +119,10 @@
                 <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                     @php
                         $kpis = [
-                            ['today_booking', 'Booking Hari Ini', '8', '+2 dari kemarin', 'pitch-deep', 'pitch-surface'],
-                            ['payments', 'Pendapatan Hari Ini', 'Rp 1,6 Jt', '+15% dari kemarin', 'pitch-emerald', 'pitch-surface'],
-                            ['pending_actions', 'Menunggu Konfirmasi', '3', 'Perlu tindakan', 'action-orange', 'action-glow'],
-                            ['cancel', 'Pembatalan Hari Ini', '0', 'Tidak ada pembatalan', 'court-booked', 'court-booked-surface'],
+                            ['today_booking', 'Booking Hari Ini', $todayBookingsCount, 'Jadwal hari ini', 'pitch-deep', 'pitch-surface'],
+                            ['payments', 'Pendapatan Hari Ini', 'Rp ' . number_format($todayRevenue, 0, ',', '.'), 'Booking terkonfirmasi', 'pitch-emerald', 'pitch-surface'],
+                            ['pending_actions', 'Menunggu Konfirmasi', $pendingVerificationCount, 'Perlu tindakan', 'action-orange', 'action-glow'],
+                            ['cancel', 'Pembatalan Hari Ini', $todayCancelledCount, 'Status dibatalkan/expired', 'court-booked', 'court-booked-surface'],
                         ];
                     @endphp
                     @foreach($kpis as $kpi)
@@ -147,45 +150,56 @@
                             </a>
                         </div>
                         <div class="flex flex-col divide-y divide-surface-container-high">
+                            @forelse($todayBookings as $b)
                             @php
-                                $bookings = [
-                                    ['LPN-4729', 'Ahmad Fauzi', 'Futsal Arena A', '09:00–11:00', 'Rp 240.000', 'confirmed', '0812-3456-7890'],
-                                    ['LPN-4580', 'Sari Dewi', 'Badminton Court 2', '17:00–19:00', 'Rp 160.000', 'pending', '0878-1234-5678'],
-                                    ['LPN-4421', 'Budi Santoso', 'Mini Soccer Field', '15:00–17:00', 'Rp 300.000', 'confirmed', '0856-9876-5432'],
-                                    ['LPN-4300', 'Dini Rahayu', 'Futsal Arena B', '19:00–21:00', 'Rp 400.000', 'pending', '0896-5555-4444'],
-                                ];
+                                $courtName = $b->items->first()?->court?->name ?? 'Lapangan';
+                                $times = $b->items->pluck('start_time')->map(fn($t) => substr($t, 0, 5))->join(', ');
+                                $phoneClean = preg_replace('/[^0-9]/', '', (string) $b->customer_phone);
                             @endphp
-                            @foreach($bookings as $b)
                             <div class="flex items-center gap-4 px-5 py-4 hover:bg-surface-container-low transition-colors">
                                 <div class="w-9 h-9 rounded-full bg-pitch-surface flex items-center justify-center shrink-0">
-                                    <span class="font-bold text-pitch-deep text-sm">{{ substr($b[1], 0, 1) }}</span>
+                                    <span class="font-bold text-pitch-deep text-sm">{{ strtoupper(substr($b->customer_name, 0, 1)) }}</span>
                                 </div>
                                 <div class="flex-1 min-w-0">
-                                    <p class="text-sm font-semibold text-on-surface">{{ $b[1] }}</p>
-                                    <p class="text-xs text-on-surface-variant">{{ $b[2] }} • {{ $b[3] }}</p>
+                                    <p class="text-sm font-semibold text-on-surface">{{ $b->customer_name }}</p>
+                                    <p class="text-xs text-on-surface-variant">{{ $courtName }} • {{ $times }} WIB</p>
                                 </div>
                                 <div class="text-right shrink-0">
-                                    <p class="text-sm font-bold text-on-surface">{{ $b[4] }}</p>
-                                    <span @class([
-                                        'inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full',
-                                        'bg-pitch-surface text-pitch-deep' => $b[5] === 'confirmed',
-                                        'bg-action-glow text-action-orange' => $b[5] === 'pending',
-                                    ])>
-                                        {{ $b[5] === 'confirmed' ? 'Terkonfirmasi' : 'Menunggu Bayar' }}
+                                    <p class="text-sm font-bold text-on-surface">Rp {{ number_format($b->total_amount, 0, ',', '.') }}</p>
+                                    @if($b->status->value === 'confirmed')
+                                    <span class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-pitch-surface text-pitch-deep">
+                                        <span class="w-1 h-1 rounded-full bg-pitch-emerald"></span> Terkonfirmasi
                                     </span>
+                                    @elseif($b->status->value === 'pending')
+                                    <span class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-action-glow text-action-orange">
+                                        <span class="w-1 h-1 rounded-full bg-action-amber animate-pulse"></span>
+                                        {{ $b->payment?->status?->value === 'pending_verification' ? 'Verifikasi Bukti' : 'Menunggu Bayar' }}
+                                    </span>
+                                    @else
+                                    <span class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-surface-container-low text-on-surface-variant">
+                                        {{ $b->status->label() }}
+                                    </span>
+                                    @endif
                                 </div>
                                 <div class="flex flex-col gap-1 shrink-0">
-                                    @if($b[5] === 'pending')
-                                    <button class="text-[10px] font-bold bg-pitch-deep text-surface-white px-2.5 py-1 rounded-lg hover:bg-pitch-emerald transition-colors">
-                                        Konfirmasi
-                                    </button>
+                                    @if($b->status->value === 'pending')
+                                    <form action="{{ route('operator.booking.confirm', $b->id) }}" method="POST" onsubmit="return confirm('Konfirmasi booking ini?')">
+                                        @csrf
+                                        <button type="submit" class="w-full text-[10px] font-bold bg-pitch-deep text-surface-white px-2.5 py-1 rounded-lg hover:bg-pitch-emerald transition-colors">
+                                            Konfirmasi
+                                        </button>
+                                    </form>
                                     @endif
-                                    <a href="https://wa.me/{{ $b[6] }}" target="_blank" class="text-[10px] font-semibold text-pitch-deep border border-pitch-light/40 px-2.5 py-1 rounded-lg hover:bg-pitch-surface transition-colors text-center">
+                                    <a href="https://wa.me/{{ $phoneClean }}" target="_blank" class="text-[10px] font-semibold text-pitch-deep border border-pitch-light/40 px-2.5 py-1 rounded-lg hover:bg-pitch-surface transition-colors text-center">
                                         WhatsApp
                                     </a>
                                 </div>
                             </div>
-                            @endforeach
+                            @empty
+                            <div class="p-8 text-center text-xs text-on-surface-variant">
+                                Belum ada booking masuk untuk hari ini.
+                            </div>
+                            @endforelse
                         </div>
                     </div>
 
@@ -195,42 +209,48 @@
                         {{-- Today's occupancy --}}
                         <div class="bg-surface-white rounded-2xl border border-surface-container-high p-5 flex flex-col gap-4">
                             <h3 class="font-headline text-sm font-bold text-on-surface">Occupancy Hari Ini</h3>
+                            @forelse($courtOccupancies as $occ)
                             @php
-                                $courts = [
-                                    ['Futsal Arena A', 75, 'pitch-emerald'],
-                                    ['Futsal Arena B', 50, 'pitch-emerald'],
-                                    ['Badminton Court 1-3', 90, 'action-amber'],
-                                    ['Mini Soccer Field', 30, 'pitch-light'],
-                                    ['Padel Court', 60, 'pitch-emerald'],
-                                ];
+                                $color = $occ['rate'] >= 70 ? 'pitch-emerald' : ($occ['rate'] >= 40 ? 'action-amber' : 'pitch-light');
                             @endphp
-                            @foreach($courts as $court)
                             <div class="flex flex-col gap-1.5">
                                 <div class="flex items-center justify-between text-xs">
-                                    <span class="text-on-surface font-medium">{{ $court[0] }}</span>
-                                    <span class="font-bold text-on-surface">{{ $court[1] }}%</span>
+                                    <span class="text-on-surface font-medium">{{ $occ['court']->name }}</span>
+                                    @if($occ['is_maintenance'])
+                                    <span class="font-bold text-court-blocked text-[11px]">Maintenance</span>
+                                    @else
+                                    <span class="font-bold text-on-surface">{{ $occ['rate'] }}%</span>
+                                    @endif
                                 </div>
                                 <div class="h-2 bg-surface-container-high rounded-full overflow-hidden">
-                                    <div class="h-full bg-{{ $court[2] }} rounded-full transition-all" style="width:{{ $court[1] }}%"></div>
+                                    <div class="h-full bg-{{ $color }} rounded-full transition-all" style="width:{{ $occ['rate'] }}%"></div>
                                 </div>
                             </div>
-                            @endforeach
+                            @empty
+                            <p class="text-xs text-on-surface-variant">Belum ada data lapangan.</p>
+                            @endforelse
                         </div>
 
                         {{-- Revenue chart placeholder --}}
                         <div class="bg-surface-white rounded-2xl border border-surface-container-high p-5 flex flex-col gap-4">
                             <h3 class="font-headline text-sm font-bold text-on-surface">Pendapatan 7 Hari</h3>
+                            @php
+                                $maxRev = max(1, max(array_column($weeklyRevenue, 'amount')));
+                            @endphp
                             <div class="flex items-end gap-1.5 h-24">
-                                @foreach([40, 65, 50, 80, 55, 90, 75] as $i => $h)
-                                <div class="flex-1 flex flex-col items-center gap-1">
-                                    <div class="w-full rounded-t-sm bg-pitch-light/80 hover:bg-pitch-emerald transition-colors" style="height: {{ $h }}%"></div>
-                                    <span class="text-[9px] text-on-surface-variant">{{ ['S','S','R','K','J','S','M'][$i] }}</span>
+                                @foreach($weeklyRevenue as $wr)
+                                @php
+                                    $hPercent = max(8, min(100, (int) round(($wr['amount'] / $maxRev) * 100)));
+                                @endphp
+                                <div class="flex-1 flex flex-col items-center gap-1" title="Rp {{ number_format($wr['amount'], 0, ',', '.') }}">
+                                    <div class="w-full rounded-t-sm bg-pitch-light/80 hover:bg-pitch-emerald transition-colors" style="height: {{ $hPercent }}%"></div>
+                                    <span class="text-[9px] text-on-surface-variant">{{ $wr['label'] }}</span>
                                 </div>
                                 @endforeach
                             </div>
                             <div class="flex items-center justify-between text-xs text-on-surface-variant border-t border-surface-container-high pt-3">
                                 <span>Total minggu ini</span>
-                                <span class="font-bold text-on-surface">Rp 9,8 Jt</span>
+                                <span class="font-bold text-on-surface">Rp {{ number_format($weeklyTotal, 0, ',', '.') }}</span>
                             </div>
                         </div>
                     </div>

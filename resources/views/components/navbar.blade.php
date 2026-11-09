@@ -46,11 +46,31 @@
         <!-- Right: Auth + Action CTA -->
         <div class="flex items-center gap-2 sm:gap-3 shrink-0">
 
-            <!-- Auth Links (desktop) -->
-            <div class="hidden md:flex items-center gap-1">
-                <a href="{{ route('login') }}" class="text-sm px-3 py-2 rounded-lg text-on-surface-variant hover:text-pitch-deep font-medium transition-colors">Masuk</a>
-                <a href="{{ route('register') }}" class="text-sm px-3 py-2 rounded-lg text-pitch-deep font-semibold hover:bg-pitch-surface transition-colors">Daftar</a>
-            </div>
+            @guest
+                <!-- Auth Links (desktop) -->
+                <div class="hidden md:flex items-center gap-1">
+                    <a href="{{ route('login') }}" class="text-sm px-3 py-2 rounded-lg text-on-surface-variant hover:text-pitch-deep font-medium transition-colors">Masuk</a>
+                    <a href="{{ route('register') }}" class="text-sm px-3 py-2 rounded-lg text-pitch-deep font-semibold hover:bg-pitch-surface transition-colors">Daftar</a>
+                </div>
+            @endguest
+            @auth
+                @php
+                    $dashboardRoute = auth()->user()->isSuperAdmin()
+                        ? route('admin.dashboard')
+                        : (auth()->user()->isOperator() ? route('operator.dashboard') : route('user.dashboard'));
+                @endphp
+                <div class="hidden md:flex items-center gap-2">
+                    <a href="{{ $dashboardRoute }}" class="text-sm px-3 py-2 rounded-lg text-on-surface-variant hover:text-pitch-deep font-medium transition-colors">
+                        {{ auth()->user()->name }}
+                    </a>
+                    <form method="POST" action="{{ route('logout') }}" class="inline">
+                        @csrf
+                        <button type="submit" class="text-sm px-3 py-2 rounded-lg text-rose-600 hover:bg-rose-50 font-medium transition-colors">
+                            Keluar
+                        </button>
+                    </form>
+                </div>
+            @endauth
 
             <!-- Primary Booking CTA (Single Line) -->
             <a 
@@ -108,5 +128,30 @@
         >
             Kontak
         </a>
+
+        @guest
+            <div class="pt-2 mt-2 border-t border-slate-100 flex flex-col gap-1">
+                <a href="{{ route('login') }}" class="py-2 px-3 rounded-lg text-sm font-semibold text-on-surface-variant hover:bg-pitch-surface hover:text-pitch-deep">Masuk</a>
+                <a href="{{ route('register') }}" class="py-2 px-3 rounded-lg text-sm font-semibold text-pitch-deep hover:bg-pitch-surface">Daftar</a>
+            </div>
+        @endguest
+        @auth
+            @php
+                $mobileDashboardRoute = auth()->user()->isSuperAdmin()
+                    ? route('admin.dashboard')
+                    : (auth()->user()->isOperator() ? route('operator.dashboard') : route('user.dashboard'));
+            @endphp
+            <div class="pt-2 mt-2 border-t border-slate-100 flex flex-col gap-1">
+                <a href="{{ $mobileDashboardRoute }}" class="py-2 px-3 rounded-lg text-sm font-semibold text-pitch-deep hover:bg-pitch-surface">
+                    {{ auth()->user()->name }} (Dashboard)
+                </a>
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="w-full text-left py-2 px-3 rounded-lg text-sm font-semibold text-rose-600 hover:bg-rose-50">
+                        Keluar
+                    </button>
+                </form>
+            </div>
+        @endauth
     </div>
 </header>

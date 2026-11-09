@@ -1096,47 +1096,55 @@
             return {
                 mobileMenuOpen: false,
                 showAuthModal: false,
-                isLoggedIn: false,
+                isLoggedIn: {{ auth()->check() ? 'true' : 'false' }},
                 currentSport: 'futsal',
-                selectedDate: '2026-11-03',
+                selectedDate: '{{ now()->toDateString() }}',
                 filterTimeType: 'all',
                 selectedSlots: [],
                 activeFaq: 1,
 
                 dateOptions: [
-                    { date: '2026-11-03', dayLabel: 'HARI INI', dateLabel: '3 Nov', isWeekend: false },
-                    { date: '2026-11-04', dayLabel: 'RAB', dateLabel: '4 Nov', isWeekend: false },
-                    { date: '2026-11-05', dayLabel: 'KAM', dateLabel: '5 Nov', isWeekend: false },
-                    { date: '2026-11-06', dayLabel: 'JUM', dateLabel: '6 Nov', isWeekend: false },
-                    { date: '2026-11-07', dayLabel: 'SAB', dateLabel: '7 Nov', isWeekend: true },
-                    { date: '2026-11-08', dayLabel: 'MIN', dateLabel: '8 Nov', isWeekend: true },
-                    { date: '2026-11-09', dayLabel: 'SEN', dateLabel: '9 Nov', isWeekend: false },
+                    @for ($i = 0; $i < 7; $i++)
+                        @php
+                            $d = now()->addDays($i);
+                            $dayLbl = $i === 0 ? 'HARI INI' : match($d->dayOfWeek) {
+                                1 => 'SEN', 2 => 'SEL', 3 => 'RAB', 4 => 'KAM', 5 => 'JUM', 6 => 'SAB', 0 => 'MIN'
+                            };
+                            $dateLbl = $d->format('j M');
+                            $isWknd = in_array($d->dayOfWeek, [0, 6]);
+                        @endphp
+                        { date: '{{ $d->toDateString() }}', dayLabel: '{{ $dayLbl }}', dateLabel: '{{ $dateLbl }}', isWeekend: {{ $isWknd ? 'true' : 'false' }} },
+                    @endfor
                 ],
 
                 sportCatalog: {
                     'futsal': {
-                        name: 'Lapangan Futsal A',
-                        regularPrice: 150000,
-                        primePrice: 220000,
-                        bookedSlots: ['12.00 - 13.00', '15.00 - 16.00', '19.00 - 20.00']
+                        name: '{{ $futsalCourt->name ?? "Lapangan Futsal A" }}',
+                        slug: '{{ $futsalCourt->slug ?? "futsal-arena-a" }}',
+                        regularPrice: {{ $futsalCourt->price_regular ?? 150000 }},
+                        primePrice: {{ $futsalCourt->price_prime ?? 220000 }},
+                        bookedSlots: []
                     },
                     'badminton': {
-                        name: 'Badminton Court 1–4',
-                        regularPrice: 45000,
-                        primePrice: 65000,
-                        bookedSlots: ['09.00 - 10.00', '14.00 - 15.00', '18.00 - 19.00', '20.00 - 21.00']
+                        name: '{{ $badmintonCourt->name ?? "Badminton Court 1" }}',
+                        slug: '{{ $badmintonCourt->slug ?? "badminton-court-1" }}',
+                        regularPrice: {{ $badmintonCourt->price_regular ?? 45000 }},
+                        primePrice: {{ $badmintonCourt->price_prime ?? 65000 }},
+                        bookedSlots: []
                     },
                     'minisoccer': {
-                        name: 'Mini Soccer 7v7',
-                        regularPrice: 450000,
-                        primePrice: 650000,
-                        bookedSlots: ['16.00 - 17.00', '17.00 - 18.00', '21.00 - 22.00']
+                        name: '{{ $miniSoccerCourt->name ?? "Mini Soccer 7v7" }}',
+                        slug: '{{ $miniSoccerCourt->slug ?? "mini-soccer-7v7" }}',
+                        regularPrice: {{ $miniSoccerCourt->price_regular ?? 450000 }},
+                        primePrice: {{ $miniSoccerCourt->price_prime ?? 650000 }},
+                        bookedSlots: []
                     },
                     'padel': {
-                        name: 'Padel Court Glass',
-                        regularPrice: 250000,
-                        primePrice: 330000,
-                        bookedSlots: ['10.00 - 11.00', '16.00 - 17.00', '19.00 - 20.00']
+                        name: '{{ $padelCourt->name ?? "Padel Court Glass" }}',
+                        slug: '{{ $padelCourt->slug ?? "padel-court-glass" }}',
+                        regularPrice: {{ $padelCourt->price_regular ?? 250000 }},
+                        primePrice: {{ $padelCourt->price_prime ?? 330000 }},
+                        bookedSlots: []
                     }
                 },
 
@@ -1233,10 +1241,11 @@
 
                 proceedBooking() {
                     if (this.selectedSlots.length === 0) return;
+                    const sport = this.sportCatalog[this.currentSport] || this.sportCatalog['futsal'];
                     if (!this.isLoggedIn) {
                         this.showAuthModal = true;
                     } else {
-                        window.location.href = "{{ route('booking.checkout', 'futsal-arena-a') }}";
+                        window.location.href = "{{ url('/booking') }}/" + sport.slug;
                     }
                 }
             };

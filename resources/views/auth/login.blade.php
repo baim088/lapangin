@@ -88,7 +88,7 @@
                 </div>
 
                 {{-- Form --}}
-                <form method="POST" action="#" class="flex flex-col gap-4">
+                <form method="POST" action="{{ route('login') }}" class="flex flex-col gap-4">
                     @csrf
 
                     {{-- Email --}}
@@ -100,10 +100,14 @@
                                 type="email"
                                 id="email"
                                 name="email"
+                                value="{{ old('email') }}"
                                 placeholder="nama@email.com"
                                 class="w-full pl-10 pr-4 py-3 rounded-lg border border-surface-container-high bg-surface-white text-on-surface text-sm placeholder-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-pitch-emerald focus:border-pitch-emerald transition-all"
                             >
                         </div>
+                        @error('email')
+                            <p class="text-xs text-rose-600 mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     {{-- Password --}}
@@ -129,6 +133,9 @@
                                 <span class="material-symbols-outlined text-[20px]" x-text="showPass ? 'visibility_off' : 'visibility'">visibility</span>
                             </button>
                         </div>
+                        @error('password')
+                            <p class="text-xs text-rose-600 mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     {{-- Remember --}}

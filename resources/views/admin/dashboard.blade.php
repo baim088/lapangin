@@ -44,16 +44,23 @@
                         <span class="material-symbols-outlined text-[20px]">open_in_new</span>
                         Lihat Situs Publik
                     </a>
+                    <form action="{{ route('logout') }}" method="POST">
+                        @csrf
+                        <button type="submit" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-surface-container-highest hover:text-surface-white hover:bg-surface-white/5 transition-all text-left">
+                            <span class="material-symbols-outlined text-[20px]">logout</span>
+                            Keluar
+                        </button>
+                    </form>
                 </div>
             </nav>
             <div class="px-4 py-4 border-t border-surface-white/10">
                 <div class="flex items-center gap-3 p-3 rounded-xl bg-surface-white/5">
                     <div class="w-9 h-9 rounded-full bg-action-orange/30 flex items-center justify-center">
-                        <span class="font-bold text-action-amber text-sm">SA</span>
+                        <span class="font-bold text-action-amber text-sm">{{ strtoupper(substr(auth()->user()->name, 0, 2)) }}</span>
                     </div>
                     <div class="flex-1 min-w-0">
-                        <p class="text-xs font-bold text-surface-white truncate">Super Admin</p>
-                        <p class="text-[10px] text-surface-container-highest truncate">admin@lapangin.id</p>
+                        <p class="text-xs font-bold text-surface-white truncate">{{ auth()->user()->name }}</p>
+                        <p class="text-[10px] text-surface-container-highest truncate">{{ auth()->user()->email }}</p>
                     </div>
                 </div>
             </div>
@@ -82,10 +89,10 @@
                 {{-- Global KPIs --}}
                 <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
                     @foreach([
-                        ['domain', 'Total Venue', '1', 'venue aktif', 'pitch-deep', 'pitch-surface'],
-                        ['people', 'Total User', '247', '+12 minggu ini', 'pitch-emerald', 'pitch-surface'],
-                        ['receipt_long', 'Total Booking', '1.429', '+89 bulan ini', 'action-orange', 'action-glow'],
-                        ['payments', 'Total Revenue', 'Rp 94,2 Jt', 'Bulan November', 'pitch-deep', 'pitch-surface'],
+                        ['domain', 'Total Venue', $totalVenues, 'Venue terdaftar', 'pitch-deep', 'pitch-surface'],
+                        ['people', 'Total User', $totalUsers, 'Pengguna aktif/terdaftar', 'pitch-emerald', 'pitch-surface'],
+                        ['receipt_long', 'Total Booking', $totalBookings, 'Total reservasi platform', 'action-orange', 'action-glow'],
+                        ['payments', 'Total Revenue', 'Rp ' . number_format($totalRevenue, 0, ',', '.'), 'GMV booking berhasil', 'pitch-deep', 'pitch-surface'],
                     ] as $kpi)
                     <div class="bg-surface-white rounded-2xl border border-surface-container-high p-5 flex flex-col gap-3">
                         <div class="flex items-center justify-between">
@@ -111,26 +118,23 @@
                             </a>
                         </div>
                         <div class="flex flex-col divide-y divide-surface-container-high">
-                            @foreach([
-                                ['Ahmad Fauzi', 'ahmad@email.com', 'Penyewa', '2 jam lalu'],
-                                ['Sari Dewi', 'sari@email.com', 'Penyewa', '5 jam lalu'],
-                                ['Budi Santoso', 'budi@email.com', 'Penyewa', 'Kemarin'],
-                                ['Tim Garuda', 'tim@email.com', 'Penyewa', '2 hari lalu'],
-                            ] as $user)
+                            @forelse($recentUsers as $user)
                             <div class="flex items-center gap-4 px-5 py-3.5 hover:bg-surface-container-low transition-colors">
                                 <div class="w-9 h-9 rounded-full bg-pitch-surface flex items-center justify-center shrink-0">
-                                    <span class="font-bold text-pitch-deep text-sm">{{ substr($user[0], 0, 1) }}</span>
+                                    <span class="font-bold text-pitch-deep text-sm">{{ strtoupper(substr($user->name, 0, 1)) }}</span>
                                 </div>
                                 <div class="flex-1 min-w-0">
-                                    <p class="text-sm font-semibold text-on-surface">{{ $user[0] }}</p>
-                                    <p class="text-xs text-on-surface-variant truncate">{{ $user[1] }}</p>
+                                    <p class="text-sm font-semibold text-on-surface">{{ $user->name }}</p>
+                                    <p class="text-xs text-on-surface-variant truncate">{{ $user->email }}</p>
                                 </div>
                                 <div class="text-right shrink-0">
-                                    <span class="text-[10px] font-bold bg-pitch-surface text-pitch-deep px-2 py-0.5 rounded-full">{{ $user[2] }}</span>
-                                    <p class="text-[10px] text-on-surface-variant mt-0.5">{{ $user[3] }}</p>
+                                    <span class="text-[10px] font-bold bg-pitch-surface text-pitch-deep px-2 py-0.5 rounded-full">{{ $user->role->label() }}</span>
+                                    <p class="text-[10px] text-on-surface-variant mt-0.5">{{ $user->created_at ? $user->created_at->diffForHumans() : '-' }}</p>
                                 </div>
                             </div>
-                            @endforeach
+                            @empty
+                            <p class="p-5 text-xs text-on-surface-variant text-center">Belum ada data user.</p>
+                            @endforelse
                         </div>
                     </div>
 
@@ -143,43 +147,46 @@
                             </a>
                         </div>
                         <div class="p-5 flex flex-col gap-4">
+                            @forelse($venues as $v)
                             {{-- Venue card --}}
                             <div class="p-4 bg-surface-container-low rounded-xl border border-surface-container-high flex flex-col gap-4">
                                 <div class="flex items-center justify-between">
                                     <div>
-                                        <h3 class="text-sm font-bold text-on-surface">Lapangin Sports Center</h3>
-                                        <p class="text-xs text-on-surface-variant">Jakarta Selatan</p>
+                                        <h3 class="text-sm font-bold text-on-surface">{{ $v->name }}</h3>
+                                        <p class="text-xs text-on-surface-variant">{{ $v->city ?? $v->address }}</p>
                                     </div>
                                     <span class="text-[10px] font-bold bg-pitch-surface text-pitch-deep px-2.5 py-1 rounded-full flex items-center gap-1">
                                         <span class="w-1.5 h-1.5 rounded-full bg-pitch-emerald"></span> Aktif
                                     </span>
                                 </div>
                                 <div class="grid grid-cols-3 gap-3 text-center">
-                                    @foreach([['7', 'Lapangan'], ['247', 'User'], ['1.429', 'Booking']] as $v)
                                     <div class="bg-surface-white rounded-lg p-3">
-                                        <div class="font-headline text-lg font-bold text-on-surface">{{ $v[0] }}</div>
-                                        <div class="text-[10px] text-on-surface-variant mt-0.5">{{ $v[1] }}</div>
+                                        <div class="font-headline text-lg font-bold text-on-surface">{{ $v->courts_count }}</div>
+                                        <div class="text-[10px] text-on-surface-variant mt-0.5">Lapangan</div>
                                     </div>
-                                    @endforeach
+                                    <div class="bg-surface-white rounded-lg p-3">
+                                        <div class="font-headline text-lg font-bold text-on-surface">{{ \App\Models\User::where('venue_id', $v->id)->count() }}</div>
+                                        <div class="text-[10px] text-on-surface-variant mt-0.5">Operator</div>
+                                    </div>
+                                    <div class="bg-surface-white rounded-lg p-3">
+                                        <div class="font-headline text-lg font-bold text-on-surface">{{ $venueStats[$v->id]['bookings_count'] ?? 0 }}</div>
+                                        <div class="text-[10px] text-on-surface-variant mt-0.5">Booking</div>
+                                    </div>
                                 </div>
                                 <div class="flex flex-col gap-1.5">
                                     <div class="flex items-center justify-between text-xs">
-                                        <span class="text-on-surface-variant">Revenue Bulan Ini</span>
-                                        <span class="font-bold text-on-surface">Rp 94,2 Jt</span>
-                                    </div>
-                                    <div class="h-2 bg-surface-container-high rounded-full overflow-hidden">
-                                        <div class="h-full bg-pitch-emerald rounded-full" style="width:78%"></div>
-                                    </div>
-                                    <div class="flex items-center justify-between text-[10px] text-on-surface-variant">
-                                        <span>Target: Rp 120 Jt</span>
-                                        <span class="font-semibold">78% tercapai</span>
+                                        <span class="text-on-surface-variant">Total GMV</span>
+                                        <span class="font-bold text-on-surface">Rp {{ number_format($venueStats[$v->id]['revenue'] ?? 0, 0, ',', '.') }}</span>
                                     </div>
                                 </div>
                             </div>
+                            @empty
+                            <p class="text-xs text-on-surface-variant text-center">Belum ada venue terdaftar.</p>
+                            @endforelse
 
                             <a href="{{ route('admin.venues') }}" class="flex items-center justify-center gap-2 border-2 border-dashed border-surface-container-high rounded-xl p-4 text-sm text-on-surface-variant hover:border-pitch-light/40 hover:text-pitch-deep hover:bg-pitch-surface transition-all">
-                                <span class="material-symbols-outlined text-[20px]">add_circle</span>
-                                Tambah Venue Baru
+                                <span class="material-symbols-outlined text-[20px]">domain</span>
+                                Kelola Seluruh Venue
                             </a>
                         </div>
                     </div>
