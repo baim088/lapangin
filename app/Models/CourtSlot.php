@@ -37,6 +37,15 @@ class CourtSlot extends Model
     use HasFactory;
 
     /**
+     * The model's default values for attributes.
+     *
+     * @var array<string, mixed>
+     */
+    protected $attributes = [
+        'block_type' => 'booking',
+    ];
+
+    /**
      * Boot model events to enforce business invariants (D1).
      */
     protected static function booted(): void

@@ -275,4 +275,26 @@ class DatabaseLayerTest extends TestCase
         $this->assertEquals(UserStatus::Active, $user->status);
         $this->assertNull($user->venue_id);
     }
+
+    /**
+     * CourtSlot default block_type adalah 'booking' jika atribut block_type tidak diisi.
+     */
+    public function test_court_slot_default_block_type_is_booking_when_omitted(): void
+    {
+        $court = Court::factory()->create();
+        $booking = Booking::factory()->create();
+
+        $slot = CourtSlot::create([
+            'court_id' => $court->id,
+            'booking_id' => $booking->id,
+            'booking_date' => '2026-11-20',
+            'start_time' => '10:00:00',
+            'end_time' => '11:00:00',
+        ]);
+
+        $this->assertEquals(SlotBlockType::Booking, $slot->block_type);
+
+        $slot->refresh();
+        $this->assertEquals(SlotBlockType::Booking, $slot->block_type);
+    }
 }
