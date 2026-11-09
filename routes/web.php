@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\CourtController;
@@ -70,15 +71,12 @@ Route::prefix('operator')->name('operator.')->middleware(['role:operator,super_a
 
 // === ADMIN ROUTES ===
 Route::prefix('admin')->name('admin.')->middleware(['role:super_admin'])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('admin.dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
 
-    Route::get('/venues', function () {
-        return view('admin.venues');
-    })->name('venues');
+    Route::get('/venues', [AdminController::class, 'venues'])->name('venues');
+    Route::put('/venues/{venue}', [AdminController::class, 'updateVenue'])->name('venues.update');
 
-    Route::get('/users', function () {
-        return view('admin.users');
-    })->name('users');
+    Route::get('/users', [AdminController::class, 'users'])->name('users');
+    Route::patch('/users/{user}/toggle-status', [AdminController::class, 'toggleUserStatus'])->name('users.toggle-status');
+    Route::put('/users/{user}/role', [AdminController::class, 'updateUserRole'])->name('users.update-role');
 });

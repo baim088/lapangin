@@ -121,3 +121,40 @@ Dokumen ini mencatat keputusan arsitektur, asumsi implementasi, dan default yang
   - Penambahan lapangan baru via `POST /operator/lapangan` otomatis men-generate slug unik berformat `{base-slug}-{counter}`.
   - Pengubahan informasi teknis, jenis permukaan, harga reguler, dan harga prime time via `PUT /operator/lapangan/{court}`.
   - Penonaktifan lapangan via `PATCH /operator/lapangan/{court}/toggle-status` mengubah status antara `active` dan `maintenance` (aturan: dinonaktifkan, tidak pernah di-hard delete).
+
+---
+
+## 6. Fase 5: Panel Super Admin
+- **Otorisasi & Keamanan Akses**:
+  - Semua rute admin (`/admin/*`) berada di bawah grup middleware `role:super_admin`.
+  - Akses oleh pengguna non-autentikasi (guest) otomatis dialihkan ke halaman login (`/login`).
+  - Akses oleh pengguna selain role `super_admin` (baik customer maupun operator) ditolak dengan HTTP `403 Forbidden`.
+- **Dashboard Global KPI & Kesehatan Platform**:
+  - **Total Venue**: Jumlah seluruh entitas venue terdaftar di sistem (`Venue::count()`).
+  - **Total Pengguna**: Jumlah seluruh akun pengguna (`User::count()`).
+  - **Total Reservasi**: Akumulasi seluruh reservasi di sistem (`Booking::count()`).
+  - **Total GMV (Gross Merchandise Value)**: Total omzet (`sum(total_amount)`) dari seluruh booking dengan status `confirmed` atau `done`.
+  - **Daftar Ringkasan Venue**: Menampilkan statistik spesifik per venue (jumlah lapangan terpasang, total booking, dan GMV masing-masing venue).
+  - **Pengguna Baru**: Menampilkan 5 pengguna terdaftar terakhir beserta status dan perannya.
+- **Pengelolaan Konfigurasi Venue**:
+  - Pembaruan informasi venue melalui `PUT /admin/venues/{venue}` via `UpdateVenueRequest`.
+  - **Validasi Jam Operasional**:
+    - `open_time` dan `close_time` harus berformat `H:i`.
+    - `close_time` wajib setelah (`after:open_time`).
+  - **Validasi Jam Prime Time**:
+    - `prime_start_time` dan `prime_end_time` harus berformat `H:i`.
+    - `prime_end_time` wajib setelah (`after:prime_start_time`).
+  - **Validasi Durasi Kunci Slot**:
+    - `slot_lock_duration_minutes` dibatasi antara 5 menit sampai 60 menit (`integer`, `min:5`, `max:60`).
+- **Administrasi Pengguna**:
+  - Halaman `GET /admin/users` menyediakan fitur pencarian nama/email/telepon, filter peran pengguna (`customer`, `operator`, `super_admin`), serta pagination.
+  - **Toggle Status Akun (Aktif / Suspend)**:
+    - Rute `PATCH /admin/users/{user}/toggle-status` membalik status antara `active` dan `suspended`.
+    - Dilakukan via `forceFill(['status' => ...])` untuk kepatuhan proteksi mass-assignment.
+    - **Self-Protection Guard**: Super admin dilarang men-suspend atau menonaktifkan akunnya sendiri; jika dicoba, sistem mengembalikan error validasi sesi.
+  - **Pembaruan Peran (Role) & Penugasan Venue**:
+    - Rute `PUT /admin/users/{user}/role` via `UpdateUserRoleRequest`.
+    - Pengisian role dan `venue_id` dilakukan eksplisit melalui `$user->forceFill([...])->save()`, tidak melalui mass-assignment.
+    - **Aturan Penugasan Operator**: Jika role yang dipilih adalah `operator`, maka `venue_id` bersifat wajib (`Rule::requiredIf(...)`) dan harus valid terdaftar di tabel `venues`.
+    - Jika role diubah menjadi non-operator (`customer` atau `super_admin`), `venue_id` otomatis di-set ke `null`.
+    - **Self-Protection Guard**: Super admin dilarang menurunkan peran (demote) akunnya sendiri menjadi role lain; jika dicoba, sistem mengembalikan error validasi sesi.
