@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\AuthController;
 use Illuminate\Support\Facades\Route;
 
 // === PUBLIC ROUTES ===
@@ -24,13 +25,13 @@ Route::get('/kontak', function () {
 })->name('kontak');
 
 // === AUTH ROUTES ===
-Route::get('/login', function () {
-    return view('auth.login');
-})->name('login');
+Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login')->middleware('guest');
+Route::post('/login', [AuthController::class, 'login'])->middleware('guest');
 
-Route::get('/register', function () {
-    return view('auth.register');
-})->name('register');
+Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register')->middleware('guest');
+Route::post('/register', [AuthController::class, 'register'])->middleware('guest');
+
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
 
 // === BOOKING ROUTES (User) ===
 Route::get('/booking/{slug}', function (string $slug) {
@@ -46,16 +47,18 @@ Route::get('/booking/sukses', function () {
 })->name('booking.sukses');
 
 // === DASHBOARD USER ===
-Route::get('/dashboard', function () {
-    return view('user.dashboard');
-})->name('user.dashboard');
+Route::middleware(['role:customer,operator,super_admin'])->group(function () {
+    Route::get('/dashboard', function () {
+        return view('user.dashboard');
+    })->name('user.dashboard');
 
-Route::get('/dashboard/booking/{id}', function (string $id) {
-    return view('user.booking-detail', ['id' => $id]);
-})->name('user.booking.detail');
+    Route::get('/dashboard/booking/{id}', function (string $id) {
+        return view('user.booking-detail', ['id' => $id]);
+    })->name('user.booking.detail');
+});
 
 // === OPERATOR ROUTES ===
-Route::prefix('operator')->name('operator.')->group(function () {
+Route::prefix('operator')->name('operator.')->middleware(['role:operator,super_admin'])->group(function () {
     Route::get('/dashboard', function () {
         return view('operator.dashboard');
     })->name('dashboard');
@@ -74,7 +77,7 @@ Route::prefix('operator')->name('operator.')->group(function () {
 });
 
 // === ADMIN ROUTES ===
-Route::prefix('admin')->name('admin.')->group(function () {
+Route::prefix('admin')->name('admin.')->middleware(['role:super_admin'])->group(function () {
     Route::get('/dashboard', function () {
         return view('admin.dashboard');
     })->name('dashboard');
