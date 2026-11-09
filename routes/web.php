@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\CourtController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\Operator\OperatorController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -49,21 +50,22 @@ Route::middleware(['role:customer,operator,super_admin'])->group(function () {
 
 // === OPERATOR ROUTES ===
 Route::prefix('operator')->name('operator.')->middleware(['role:operator,super_admin'])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('operator.dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [OperatorController::class, 'dashboard'])->name('dashboard');
 
-    Route::get('/jadwal', function () {
-        return view('operator.jadwal');
-    })->name('jadwal');
+    Route::get('/booking', [OperatorController::class, 'bookingList'])->name('booking');
+    Route::get('/booking/export', [OperatorController::class, 'exportCsv'])->name('booking.export');
+    Route::post('/booking/{booking}/confirm', [OperatorController::class, 'confirm'])->name('booking.confirm');
+    Route::post('/booking/{booking}/reject', [OperatorController::class, 'reject'])->name('booking.reject');
+    Route::post('/booking/{booking}/cancel', [OperatorController::class, 'cancel'])->name('booking.cancel');
 
-    Route::get('/booking', function () {
-        return view('operator.booking');
-    })->name('booking');
+    Route::get('/jadwal', [OperatorController::class, 'jadwal'])->name('jadwal');
+    Route::post('/jadwal/block', [OperatorController::class, 'blockSlot'])->name('jadwal.block');
+    Route::delete('/jadwal/unblock/{id}', [OperatorController::class, 'unblockSlot'])->name('jadwal.unblock');
 
-    Route::get('/lapangan', function () {
-        return view('operator.lapangan');
-    })->name('lapangan');
+    Route::get('/lapangan', [OperatorController::class, 'lapangan'])->name('lapangan');
+    Route::post('/lapangan', [OperatorController::class, 'storeCourt'])->name('lapangan.store');
+    Route::put('/lapangan/{court}', [OperatorController::class, 'updateCourt'])->name('lapangan.update');
+    Route::patch('/lapangan/{court}/toggle-status', [OperatorController::class, 'toggleCourtStatus'])->name('lapangan.toggle-status');
 });
 
 // === ADMIN ROUTES ===

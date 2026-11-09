@@ -89,3 +89,35 @@ Dokumen ini mencatat keputusan arsitektur, asumsi implementasi, dan default yang
   - Hanya diperbolehkan untuk booking berstatus `pending`.
   - Menghapus baris `court_slots` terkait seketika, mengubah status booking menjadi `cancelled`, dan payment tetap `unpaid`.
   - Pembatalan booking `confirmed` hanya dapat dilakukan oleh operator atau admin.
+
+---
+
+## 5. Fase 4: Panel Operator (Venue Milik Sendiri)
+- **Otorisasi & Lingkup Venue**:
+  - Operator hanya dapat melihat, mengelola booking, jadwal, dan lapangan dari `venue_id` miliknya (`$user->venue_id`).
+  - Bila operator mencoba mengakses atau memanipulasi booking/lapangan milik venue lain, sistem mengembalikan HTTP `403 Forbidden`.
+  - Super admin yang mengakses panel operator memiliki akses fallback ke venue aktif.
+- **Formula & Metrik Dashboard**:
+  - **Booking Hari Ini**: Jumlah booking yang memiliki setidaknya satu item main pada hari ini (`booking_date = today`).
+  - **Pendapatan Hari Ini**: Total omzet (`sum(total_amount)`) dari booking berstatus `confirmed` atau `done` yang jadwal mainnya hari ini.
+  - **Antrean Menunggu Konfirmasi**: Jumlah booking dengan status `pending` atau pembayaran berstatus `pending_verification`.
+  - **Pembatalan Hari Ini**: Jumlah booking yang dibatalkan (`cancelled` atau `expired`) dengan jadwal main hari ini.
+  - **Rumus Okupansi Lapangan (%)**:
+    $$\text{Okupansi (\%)} = \min\left(100, \text{round}\left(\frac{\text{Jumlah Jam Slot Terisi / Terkunci Hari Ini}}{\text{Total Jam Operasional Venue}} \times 100\right)\right)$$
+    - Total Jam Operasional Venue dihitung dari selisih `venue.close_time - venue.open_time` dalam satuan jam.
+    - Lapangan berstatus `maintenance` dikecualikan dari okupansi aktif dan ditandai secara visual.
+- **Aksi Antrean Booking (State Machine Enforcement)**:
+  - **Konfirmasi**: `POST /operator/booking/{booking}/confirm` memicu `BookingService::confirmByOperator`, mengubah status booking menjadi `confirmed`, payment menjadi `paid`, mencatat `verified_by` dan `verified_at`, serta mempertahankan slot permanen.
+  - **Tolak**: `POST /operator/booking/{booking}/reject` mewajibkan pengisian `reason`, memicu `BookingService::rejectByOperator`, mengubah status booking menjadi `cancelled`, payment menjadi `rejected`, mencatat `cancelled_reason`, dan menghapus slot di database.
+  - **Batalkan Booking Confirmed**: `POST /operator/booking/{booking}/cancel` mewajibkan pengisian `reason`, memicu `BookingService::cancelConfirmedByOperator`, mengubah status booking menjadi `cancelled`, payment menjadi `refund_pending`, dan menghapus baris slot agar lapangan dapat dipesan kembali.
+- **Kelola Jadwal & Pemblokiran Manual**:
+  - Hanya slot bebas (tidak ada baris `court_slots` aktif atau terkunci) yang dapat diblokir manual via `POST /operator/jadwal/block`.
+  - Catatan/alasan pemblokiran wajib diisi (`note`). Tipe pemblokiran: `manual_block`, `maintenance`, atau `event`.
+  - Pembukaan blokir via `DELETE /operator/jadwal/unblock/{id}` hanya diizinkan untuk slot non-booking (`block_type !== 'booking'` dan `booking_id === null`). Slot reservasi penyewa tidak dapat dihapus lewat rute ini guna menjaga integritas data.
+- **Daftar Booking & Ekspor CSV**:
+  - Menyediakan filter status (`all`, `confirmed`, `pending`, `done`, `cancelled`), pencarian teks bebas (kode booking, nama, telepon), dan pagination 10 per halaman.
+  - Ekspor CSV sederhana via `GET /operator/booking/export` menghasilkan file CSV terunduh secara streaming (`StreamedResponse`) sesuai filter pencarian yang sedang aktif.
+- **Manajemen Lapangan (CRUD)**:
+  - Penambahan lapangan baru via `POST /operator/lapangan` otomatis men-generate slug unik berformat `{base-slug}-{counter}`.
+  - Pengubahan informasi teknis, jenis permukaan, harga reguler, dan harga prime time via `PUT /operator/lapangan/{court}`.
+  - Penonaktifan lapangan via `PATCH /operator/lapangan/{court}/toggle-status` mengubah status antara `active` dan `maintenance` (aturan: dinonaktifkan, tidak pernah di-hard delete).

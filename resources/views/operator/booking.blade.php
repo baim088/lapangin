@@ -32,15 +32,28 @@
                     </a>
                     @endforeach
                 </div>
+                <div class="mt-6 pt-4 border-t border-pitch-deep/50 flex flex-col gap-1">
+                    <a href="{{ route('beranda') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-surface-container-highest hover:text-surface-white hover:bg-surface-white/5 transition-all">
+                        <span class="material-symbols-outlined text-[20px]">open_in_new</span>
+                        Lihat Situs Publik
+                    </a>
+                    <form action="{{ route('logout') }}" method="POST">
+                        @csrf
+                        <button type="submit" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-surface-container-highest hover:text-surface-white hover:bg-surface-white/5 transition-all text-left">
+                            <span class="material-symbols-outlined text-[20px]">logout</span>
+                            Keluar
+                        </button>
+                    </form>
+                </div>
             </nav>
             <div class="px-4 py-4 border-t border-pitch-deep/50">
                 <div class="flex items-center gap-3 p-3 rounded-xl bg-surface-white/5">
                     <div class="w-9 h-9 rounded-full bg-pitch-emerald/30 flex items-center justify-center">
-                        <span class="font-bold text-pitch-light text-sm">BO</span>
+                        <span class="font-bold text-pitch-light text-sm">{{ strtoupper(substr(auth()->user()->name, 0, 2)) }}</span>
                     </div>
                     <div class="flex-1 min-w-0">
-                        <p class="text-xs font-bold text-surface-white truncate">Budi Operator</p>
-                        <p class="text-[10px] text-surface-container-highest truncate">budi@lapangin.id</p>
+                        <p class="text-xs font-bold text-surface-white truncate">{{ auth()->user()->name }}</p>
+                        <p class="text-[10px] text-surface-container-highest truncate">{{ auth()->user()->email }}</p>
                     </div>
                 </div>
             </div>
@@ -59,31 +72,43 @@
                         <p class="text-xs text-on-surface-variant">Kelola semua transaksi booking</p>
                     </div>
                 </div>
-                <button class="flex items-center gap-2 border border-surface-container-high text-on-surface font-semibold text-sm px-4 py-2.5 rounded-xl hover:bg-surface-container-low transition-all">
+                <a href="{{ route('operator.booking.export', ['search' => $search, 'status' => $activeFilter]) }}" class="flex items-center gap-2 border border-surface-container-high text-on-surface font-semibold text-sm px-4 py-2.5 rounded-xl hover:bg-surface-container-low transition-all">
                     <span class="material-symbols-outlined text-[18px]">download</span>
                     Export CSV
-                </button>
+                </a>
             </header>
 
             <main class="flex-1 p-6 overflow-auto flex flex-col gap-6">
 
+                @if(session('status'))
+                <div class="p-4 bg-pitch-surface border border-pitch-light/40 rounded-xl text-sm font-semibold text-pitch-deep">
+                    {{ session('status') }}
+                </div>
+                @endif
+
+                @if($errors->any())
+                <div class="p-4 bg-error-container/20 border border-error/30 rounded-xl text-sm font-semibold text-error">
+                    {{ $errors->first() }}
+                </div>
+                @endif
+
                 {{-- Filters row --}}
                 <div class="flex flex-wrap items-center gap-3">
                     {{-- Search --}}
-                    <div class="relative flex-1 min-w-48">
+                    <form method="GET" action="{{ route('operator.booking') }}" class="relative flex-1 min-w-48">
                         <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px]">search</span>
-                        <input type="text" x-model="search" placeholder="Cari nama, kode booking..."
+                        <input type="text" name="search" value="{{ $search }}" placeholder="Cari nama, kode booking, no HP..."
                             class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-surface-container-high bg-surface-white text-sm focus:outline-none focus:ring-2 focus:ring-pitch-emerald">
-                    </div>
+                        <input type="hidden" name="status" value="{{ $activeFilter }}">
+                    </form>
 
                     {{-- Status filter --}}
                     <div class="flex gap-1 bg-surface-container-low p-1 rounded-xl">
-                        @foreach(['all' => 'Semua', 'confirmed' => 'Dikonfirmasi', 'pending' => 'Menunggu', 'done' => 'Selesai'] as $key => $label)
-                        <button
-                            @click="activeFilter = '{{ $key }}'"
-                            :class="activeFilter === '{{ $key }}' ? 'bg-surface-white text-pitch-deep shadow-sm font-bold' : 'text-on-surface-variant hover:text-on-surface'"
-                            class="text-xs px-3 py-1.5 rounded-lg transition-all font-medium"
-                        >{{ $label }}</button>
+                        @foreach(['all' => 'Semua', 'confirmed' => 'Dikonfirmasi', 'pending' => 'Menunggu', 'done' => 'Selesai', 'cancelled' => 'Dibatalkan'] as $key => $label)
+                        <a
+                            href="{{ route('operator.booking', ['status' => $key, 'search' => $search]) }}"
+                            class="text-xs px-3 py-1.5 rounded-lg transition-all font-medium {{ $activeFilter === $key ? 'bg-surface-white text-pitch-deep shadow-sm font-bold' : 'text-on-surface-variant hover:text-on-surface' }}"
+                        >{{ $label }}</a>
                         @endforeach
                     </div>
                 </div>
@@ -103,79 +128,101 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-surface-container-high">
+                            @forelse($allBookings as $b)
                             @php
-                                $allBookings = [
-                                    ['LPN-4729', 'Ahmad Fauzi', '0812-3456', 'Futsal Arena A', '11 Nov 2026', '09:00–11:00', 'Rp 240.000', 'confirmed'],
-                                    ['LPN-4580', 'Sari Dewi', '0878-1234', 'Badminton 2', '11 Nov 2026', '17:00–19:00', 'Rp 160.000', 'pending'],
-                                    ['LPN-4421', 'Budi Santoso', '0856-9876', 'Mini Soccer', '11 Nov 2026', '15:00–17:00', 'Rp 300.000', 'confirmed'],
-                                    ['LPN-4300', 'Dini Rahayu', '0896-5555', 'Futsal Arena B', '11 Nov 2026', '19:00–21:00', 'Rp 400.000', 'pending'],
-                                    ['LPN-4120', 'Tim Garuda FC', '0812-7777', 'Mini Soccer', '10 Nov 2026', '15:00–17:00', 'Rp 300.000', 'done'],
-                                    ['LPN-3890', 'Eko Purnama', '0877-3333', 'Futsal Arena B', '10 Nov 2026', '19:00–21:00', 'Rp 400.000', 'done'],
-                                ];
+                                $courtName = $b->items->first()?->court?->name ?? 'Lapangan';
+                                $bookingDate = $b->items->first()?->booking_date ? \Carbon\Carbon::parse($b->items->first()->booking_date)->translatedFormat('d M Y') : '-';
+                                $times = $b->items->pluck('start_time')->map(fn($t) => substr($t, 0, 5))->join(', ');
                             @endphp
-                            @foreach($allBookings as $b)
                             <tr class="hover:bg-surface-container-low/50 transition-colors">
                                 <td class="px-5 py-4">
-                                    <span class="font-mono text-xs font-bold text-pitch-deep">{{ $b[0] }}</span>
+                                    <span class="font-mono text-xs font-bold text-pitch-deep">{{ $b->booking_code }}</span>
                                 </td>
                                 <td class="px-5 py-4">
                                     <div>
-                                        <p class="font-semibold text-on-surface">{{ $b[1] }}</p>
-                                        <p class="text-xs text-on-surface-variant">{{ $b[2] }}</p>
+                                        <p class="font-semibold text-on-surface">{{ $b->customer_name }}</p>
+                                        <p class="text-xs text-on-surface-variant">{{ $b->customer_phone }}</p>
                                     </div>
                                 </td>
-                                <td class="px-5 py-4 text-on-surface">{{ $b[3] }}</td>
+                                <td class="px-5 py-4 text-on-surface">{{ $courtName }}</td>
                                 <td class="px-5 py-4">
-                                    <p class="font-medium text-on-surface">{{ $b[4] }}</p>
-                                    <p class="text-xs text-on-surface-variant">{{ $b[5] }}</p>
+                                    <p class="font-medium text-on-surface">{{ $bookingDate }}</p>
+                                    <p class="text-xs text-on-surface-variant">{{ $times }} WIB</p>
                                 </td>
-                                <td class="px-5 py-4 font-bold text-on-surface">{{ $b[6] }}</td>
+                                <td class="px-5 py-4 font-bold text-on-surface">Rp {{ number_format($b->total_amount, 0, ',', '.') }}</td>
                                 <td class="px-5 py-4">
-                                    @if($b[7] === 'confirmed')
+                                    @if($b->status->value === 'confirmed')
                                     <span class="inline-flex items-center gap-1 bg-pitch-surface text-pitch-deep text-xs font-bold px-2.5 py-1 rounded-full">
                                         <span class="w-1.5 h-1.5 rounded-full bg-pitch-emerald"></span> Terkonfirmasi
                                     </span>
-                                    @elseif($b[7] === 'pending')
+                                    @elseif($b->status->value === 'pending')
                                     <span class="inline-flex items-center gap-1 bg-action-glow text-action-orange text-xs font-bold px-2.5 py-1 rounded-full">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-action-amber animate-pulse"></span> Menunggu Bayar
+                                        <span class="w-1.5 h-1.5 rounded-full bg-action-amber animate-pulse"></span>
+                                        {{ $b->payment?->status?->value === 'pending_verification' ? 'Verifikasi Bukti' : 'Menunggu Bayar' }}
                                     </span>
-                                    @else
+                                    @elseif($b->status->value === 'done')
                                     <span class="inline-flex items-center gap-1 bg-surface-container-low text-on-surface-variant text-xs font-bold px-2.5 py-1 rounded-full">
                                         <span class="material-symbols-outlined text-[12px]">task_alt</span> Selesai
+                                    </span>
+                                    @else
+                                    <span class="inline-flex items-center gap-1 bg-error-container/20 text-error text-xs font-bold px-2.5 py-1 rounded-full">
+                                        {{ $b->status->label() }}
                                     </span>
                                     @endif
                                 </td>
                                 <td class="px-5 py-4">
-                                    <div class="flex items-center gap-2">
-                                        @if($b[7] === 'pending')
-                                        <button class="text-xs font-bold bg-pitch-deep text-surface-white px-2.5 py-1.5 rounded-lg hover:bg-pitch-emerald transition-colors">
-                                            Konfirmasi
-                                        </button>
+                                    <div class="flex items-center gap-2 flex-wrap">
+                                        @if($b->status->value === 'pending')
+                                        <form action="{{ route('operator.booking.confirm', $b->id) }}" method="POST" onsubmit="return confirm('Konfirmasi booking ini?')">
+                                            @csrf
+                                            <button type="submit" class="text-xs font-bold bg-pitch-deep text-surface-white px-2.5 py-1.5 rounded-lg hover:bg-pitch-emerald transition-colors">
+                                                Konfirmasi
+                                            </button>
+                                        </form>
+                                        <form action="{{ route('operator.booking.reject', $b->id) }}" method="POST" onsubmit="var reason = prompt('Masukkan alasan penolakan booking:'); if (!reason) return false; this.querySelector('input[name=reason]').value = reason; return true;">
+                                            @csrf
+                                            <input type="hidden" name="reason" value="">
+                                            <button type="submit" class="text-xs font-semibold text-error border border-error/30 px-2 py-1.5 rounded-lg hover:bg-error-container/10 transition-colors">
+                                                Tolak
+                                            </button>
+                                        </form>
+                                        @elseif($b->status->value === 'confirmed')
+                                        <form action="{{ route('operator.booking.cancel', $b->id) }}" method="POST" onsubmit="var reason = prompt('Masukkan alasan pembatalan booking:'); if (!reason) return false; this.querySelector('input[name=reason]').value = reason; return true;">
+                                            @csrf
+                                            <input type="hidden" name="reason" value="">
+                                            <button type="submit" class="text-xs font-semibold text-error border border-error/30 px-2 py-1.5 rounded-lg hover:bg-error-container/10 transition-colors">
+                                                Batalkan
+                                            </button>
+                                        </form>
                                         @endif
-                                        <button class="text-xs font-semibold text-on-surface-variant border border-surface-container-high px-2.5 py-1.5 rounded-lg hover:bg-surface-container-low transition-colors">
+
+                                        @if($b->payment?->proof_path)
+                                        <a href="{{ route('booking.proof', $b->id) }}" target="_blank" class="text-xs font-semibold text-pitch-deep border border-pitch-light/40 px-2 py-1.5 rounded-lg hover:bg-pitch-surface transition-colors">
+                                            Bukti
+                                        </a>
+                                        @endif
+                                        <a href="{{ route('user.booking.detail', $b->id) }}" class="text-xs font-semibold text-on-surface-variant border border-surface-container-high px-2 py-1.5 rounded-lg hover:bg-surface-container-low transition-colors">
                                             Detail
-                                        </button>
+                                        </a>
                                     </div>
                                 </td>
                             </tr>
-                            @endforeach
+                            @empty
+                            <tr>
+                                <td colspan="7" class="px-5 py-8 text-center text-xs text-on-surface-variant">
+                                    Tidak ada data booking yang sesuai filter.
+                                </td>
+                            </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
 
                 {{-- Pagination --}}
-                <div class="flex items-center justify-between">
-                    <span class="text-xs text-on-surface-variant">Menampilkan 6 dari 48 booking</span>
-                    <div class="flex items-center gap-1">
-                        <button class="p-2 rounded-lg border border-surface-container-high text-on-surface-variant hover:bg-surface-container-low">
-                            <span class="material-symbols-outlined text-[18px]">chevron_left</span>
-                        </button>
-                        @foreach([1, 2, 3, '...', 8] as $page)
-                        <button class="w-9 h-9 rounded-lg text-sm font-medium {{ $page === 1 ? 'bg-pitch-deep text-surface-white' : 'border border-surface-container-high text-on-surface hover:bg-surface-container-low' }}">{{ $page }}</button>
-                        @endforeach
-                        <button class="p-2 rounded-lg border border-surface-container-high text-on-surface-variant hover:bg-surface-container-low">
-                            <span class="material-symbols-outlined text-[18px]">chevron_right</span>
-                        </button>
+                <div class="flex items-center justify-between flex-wrap gap-4">
+                    <span class="text-xs text-on-surface-variant">Menampilkan {{ $allBookings->firstItem() ?? 0 }} - {{ $allBookings->lastItem() ?? 0 }} dari {{ $allBookings->total() }} booking</span>
+                    <div>
+                        {{ $allBookings->links() }}
                     </div>
                 </div>
 
