@@ -24,6 +24,11 @@ class ExpireStaleBookings
      * @param  string|null  $date  Optional date (Y-m-d) to limit lazy scope
      * @return int Number of expired bookings
      */
+    public function execute(?int $courtId = null, ?string $date = null): int
+    {
+        return $this->handle($courtId, $date);
+    }
+
     public function handle(?int $courtId = null, ?string $date = null): int
     {
         $now = Carbon::now();

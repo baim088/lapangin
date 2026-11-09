@@ -108,4 +108,20 @@ class Booking extends Model
     {
         return $this->hasOne(Payment::class)->latestOfMany();
     }
+
+    /**
+     * Get primary booking date from first item.
+     */
+    public function getBookingDateAttribute(): ?string
+    {
+        return $this->items->first()?->booking_date;
+    }
+
+    /**
+     * Get primary court from first item.
+     */
+    public function getCourtAttribute(): ?Court
+    {
+        return $this->items->first()?->court;
+    }
 }

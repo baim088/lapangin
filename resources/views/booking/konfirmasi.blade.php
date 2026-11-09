@@ -10,7 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="bg-canvas-bg font-body text-on-surface antialiased" x-data="{ mobileMenuOpen: false, countdown: 599, init() { setInterval(() => { if(this.countdown > 0) this.countdown--; }, 1000); }, formatTime(s) { return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0'); } }">
+<body class="bg-canvas-bg font-body text-on-surface antialiased" x-data="{ mobileMenuOpen: false, countdown: {{ $countdown }}, init() { setInterval(() => { if(this.countdown > 0) this.countdown--; }, 1000); }, formatTime(s) { return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0'); } }">
     <x-navbar active="lapangan" />
 
     <main class="w-full pt-20 pb-24">
@@ -22,7 +22,7 @@
                     <span class="material-symbols-outlined text-[18px] animate-pulse">timer</span>
                     <span class="font-semibold">Selesaikan pembayaran sebelum waktu habis!</span>
                 </div>
-                <div class="font-headline font-bold text-lg" x-text="formatTime(countdown)">09:59</div>
+                <div class="font-headline font-bold text-lg" x-text="formatTime(countdown)">{{ sprintf('%02d:%02d', floor($countdown/60), $countdown%60) }}</div>
             </div>
         </div>
 
@@ -33,8 +33,8 @@
                 <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-action-glow border-2 border-action-amber mx-auto">
                     <span class="material-symbols-outlined text-action-amber text-[32px]">qr_code_scanner</span>
                 </div>
-                <h1 class="font-headline text-2xl font-bold text-on-surface">Scan & Bayar QRIS</h1>
-                <p class="text-sm text-on-surface-variant">Gunakan aplikasi e-wallet atau m-banking untuk scan QR</p>
+                <h1 class="font-headline text-2xl font-bold text-on-surface">Instruksi Pembayaran</h1>
+                <p class="text-sm text-on-surface-variant">Metode: <strong class="uppercase">{{ str_replace('_', ' ', $booking->payment?->payment_method?->value ?? 'Transfer') }}</strong> • Kode Booking: <strong>{{ $booking->booking_code }}</strong></p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -56,11 +56,11 @@
                     </div>
                     <div class="text-center">
                         <p class="text-xs text-on-surface-variant">Total yang harus dibayar</p>
-                        <p class="font-headline text-2xl font-bold text-on-surface">Rp 240.000</p>
+                        <p class="font-headline text-2xl font-bold text-on-surface">Rp {{ number_format($booking->total_amount, 0, ',', '.') }}</p>
                     </div>
                     <div class="flex items-center gap-1.5 text-xs text-on-surface-variant">
                         <span class="material-symbols-outlined text-[14px]">verified_user</span>
-                        Didukung semua e-wallet & m-banking
+                        Didukung semua e-wallet & transfer bank
                     </div>
                 </div>
 
@@ -71,36 +71,37 @@
                         <div class="flex flex-col gap-2.5 text-sm">
                             <div class="flex justify-between">
                                 <span class="text-on-surface-variant">Lapangan</span>
-                                <span class="font-semibold">Futsal Arena A</span>
+                                <span class="font-semibold">{{ $booking->items->first()?->court->name ?? '-' }}</span>
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-on-surface-variant">Tanggal</span>
-                                <span class="font-semibold">Senin, 11 Nov 2026</span>
+                                <span class="font-semibold">{{ $booking->items->first()?->booking_date ? \Carbon\Carbon::parse($booking->items->first()->booking_date)->format('d M Y') : '-' }}</span>
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-on-surface-variant">Jam</span>
-                                <span class="font-semibold">09:00 – 11:00</span>
+                                <span class="font-semibold text-right">
+                                    {{ $booking->items->map(fn($it) => \Carbon\Carbon::parse($it->start_time)->format('H:i') . '–' . \Carbon\Carbon::parse($it->end_time)->format('H:i'))->implode(', ') }}
+                                </span>
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-on-surface-variant">Durasi</span>
-                                <span class="font-semibold">2 Jam</span>
+                                <span class="font-semibold">{{ $booking->total_hours }} Jam</span>
                             </div>
                             <div class="border-t border-surface-container-high pt-2 flex justify-between font-bold">
                                 <span>Total</span>
-                                <span class="text-action-orange">Rp 240.000</span>
+                                <span class="text-action-orange">Rp {{ number_format($booking->total_amount, 0, ',', '.') }}</span>
                             </div>
                         </div>
                     </div>
 
                     {{-- Instructions --}}
                     <div class="bg-pitch-surface rounded-xl border border-pitch-light/20 p-4 flex flex-col gap-2.5">
-                        <h4 class="text-xs font-bold text-pitch-deep uppercase tracking-wider">Cara Bayar QRIS</h4>
+                        <h4 class="text-xs font-bold text-pitch-deep uppercase tracking-wider">Petunjuk Pembayaran</h4>
                         @foreach([
-                            'Buka aplikasi GoPay, OVO, Dana, m-banking, atau e-wallet lainnya',
-                            'Pilih menu Bayar / Scan QR',
-                            'Arahkan kamera ke kode QR di sebelah kiri',
-                            'Konfirmasi jumlah Rp 240.000',
-                            'Pembayaran dikonfirmasi otomatis dalam 1-2 menit',
+                            'Transfer tepat sesuai nominal: Rp ' . number_format($booking->total_amount, 0, ',', '.'),
+                            'Simpan bukti transfer/struk pembayaran',
+                            'Unggah bukti transfer pada form di bawah ini',
+                            'Operator akan memverifikasi dan mengonfirmasi booking Anda',
                         ] as $i => $step)
                         <div class="flex items-start gap-2.5">
                             <div class="w-5 h-5 rounded-full bg-pitch-deep text-surface-white text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5">{{ $i + 1 }}</div>
@@ -111,36 +112,50 @@
                 </div>
             </div>
 
-            {{-- Upload bukti (manual transfer fallback) --}}
+            {{-- Upload bukti --}}
             <div class="bg-surface-white rounded-2xl border border-surface-container-high p-6 flex flex-col gap-4">
                 <div class="flex items-center justify-between">
                     <h3 class="font-headline text-base font-bold text-on-surface flex items-center gap-2">
                         <span class="material-symbols-outlined text-on-surface-variant text-[20px]">upload_file</span>
-                        Upload Bukti Transfer (Opsional)
+                        Upload Bukti Pembayaran
                     </h3>
-                    <span class="text-xs text-on-surface-variant bg-surface-container-low px-2.5 py-1 rounded-full">Khusus transfer manual</span>
+                    @if ($booking->payment?->proof_path)
+                        <span class="text-xs text-pitch-emerald bg-pitch-surface px-2.5 py-1 rounded-full font-bold">Bukti Sudah Diunggah</span>
+                    @else
+                        <span class="text-xs text-on-surface-variant bg-surface-container-low px-2.5 py-1 rounded-full">JPG, PNG, PDF maks 5MB</span>
+                    @endif
                 </div>
 
-                <div
-                    class="border-2 border-dashed border-surface-container-high rounded-xl p-8 flex flex-col items-center gap-3 text-center hover:border-pitch-light transition-colors cursor-pointer"
-                    @dragover.prevent
-                    @drop.prevent
-                >
-                    <span class="material-symbols-outlined text-[40px] text-surface-container-highest">add_photo_alternate</span>
-                    <div>
-                        <p class="text-sm font-semibold text-on-surface">Drag & drop bukti transfer</p>
-                        <p class="text-xs text-on-surface-variant mt-1">atau klik untuk pilih file (JPG, PNG, PDF maks 5MB)</p>
+                <form method="POST" action="{{ route('booking.upload-proof', $booking->id) }}" enctype="multipart/form-data">
+                    @csrf
+                    <div
+                        class="border-2 border-dashed border-surface-container-high rounded-xl p-8 flex flex-col items-center gap-3 text-center hover:border-pitch-light transition-colors"
+                    >
+                        <span class="material-symbols-outlined text-[40px] text-surface-container-highest">add_photo_alternate</span>
+                        <div>
+                            <p class="text-sm font-semibold text-on-surface">Pilih file bukti transfer Anda</p>
+                            <p class="text-xs text-on-surface-variant mt-1">Format JPG, PNG, atau PDF (maksimal 5MB)</p>
+                        </div>
+                        <input type="file" name="proof" id="proof-input" class="hidden" accept="image/jpeg,image/png,application/pdf" onchange="document.getElementById('file-chosen').textContent = this.files[0]?.name || ''">
+                        <span id="file-chosen" class="text-xs text-pitch-deep font-semibold"></span>
+                        <div class="flex items-center gap-3 mt-2">
+                            <button type="button" onclick="document.getElementById('proof-input').click()" class="text-xs font-semibold text-pitch-deep border border-pitch-light/40 px-4 py-2 rounded-lg hover:bg-pitch-surface transition-colors cursor-pointer">
+                                Pilih File
+                            </button>
+                            <button type="submit" class="text-xs font-bold text-surface-white bg-action-orange hover:bg-tertiary-container px-4 py-2 rounded-lg shadow-sm transition-all cursor-pointer">
+                                Unggah Bukti
+                            </button>
+                        </div>
                     </div>
-                    <input type="file" class="hidden" accept="image/*,.pdf">
-                    <button type="button" class="text-xs font-semibold text-pitch-deep border border-pitch-light/40 px-4 py-2 rounded-lg hover:bg-pitch-surface transition-colors">
-                        Pilih File
-                    </button>
-                </div>
+                    @error('proof')
+                        <p class="text-xs text-rose-600 mt-2">{{ $message }}</p>
+                    @enderror
+                </form>
             </div>
 
             {{-- Check status button --}}
             <div class="flex flex-col sm:flex-row gap-3">
-                <a href="{{ route('booking.sukses') }}" class="flex-1 flex items-center justify-center gap-2 bg-pitch-deep hover:bg-pitch-emerald text-surface-white font-bold text-sm py-3.5 rounded-xl transition-all">
+                <a href="{{ route('booking.sukses', ['code' => $booking->booking_code]) }}" class="flex-1 flex items-center justify-center gap-2 bg-pitch-deep hover:bg-pitch-emerald text-surface-white font-bold text-sm py-3.5 rounded-xl transition-all">
                     <span class="material-symbols-outlined text-[20px]">task_alt</span>
                     Saya Sudah Bayar
                 </a>

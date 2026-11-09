@@ -63,3 +63,29 @@ Dokumen ini mencatat keputusan arsitektur, asumsi implementasi, dan default yang
 - **API Endpoint JSON**:
   - `GET /api/lapangan/{slug}/slots?date=YYYY-MM-DD` untuk memperbarui slot Alpine.js saat user berganti tanggal di halaman detail.
   - `GET /api/quick-slots` untuk widget pemesanan cepat pada landing page.
+
+---
+
+## 4. Fase 3: Booking & Pembayaran
+- **Pembuatan Booking (`BookingService::createPending`)**:
+  - Validasi ketersediaan jam slot dilakukan sebelum reservasi.
+  - Penyisipan baris ke `court_slots` menggunakan transaksi database `DB::transaction(..., 3)`. Jika terjadi `UniqueConstraintViolationException`, ditangkap dan diterjemahkan menjadi pesan kegagalan user-friendly: *"Beberapa slot yang dipilih sudah diambil oleh penyewa lain. Silakan pilih jam lain."*
+  - Format kode booking unik: `LPN-{tahun}-{4 digit acak}` dengan retry otomatis hingga 5 kali bila terjadi collision.
+  - Snapshot harga per jam ke `booking_items.price_per_hour` (reguler atau prime time berdasarkan jam slot masing-masing).
+  - Nilai token check-in di-generate acak sepanjang 64 karakter alphanumeric via `Str::random(64)`.
+- **Pengunggahan Bukti Pembayaran (`BookingService::uploadProof`)**:
+  - File bukti (jpg, jpeg, png, webp, pdf maks 5MB) disimpan di disk privat (`local`, direktori `storage/app/private/payment-proofs`).
+  - File tidak dapat diakses langsung oleh publik. Pengunduhan/preview hanya dapat dilakukan melalui rute terproteksi `GET /bookings/{booking}/proof` yang diawasi oleh `BookingPolicy::view` dan rate limiting `30,1`.
+  - Setelah bukti diunggah tepat waktu, status `Payment` berubah menjadi `pending_verification`, `booking.expires_at = null`, dan seluruh `court_slots.locked_until = null` (kunci slot dibekukan sehingga tidak dihapus oleh `ExpireStaleBookings`).
+  - Bila bukti diunggah pada booking yang sudah terlanjur `expired`, sistem menolak dengan `ValidationException` yang mengarahkan user menghubungi admin.
+- **Otorisasi (`BookingPolicy`)**:
+  - `view`: Pemilik booking (customer), operator dari venue terkait (`venue_id` sama), atau super_admin.
+  - `update` (upload bukti): Hanya pemilik booking yang berhak mengunggah bukti pada booking miliknya.
+  - `cancel`: Customer hanya dapat membatalkan booking berstatus `pending`. Operator dari venue terkait dan super_admin dapat membatalkan booking confirmed/pending.
+- **Dukungan Jam Non-Berurutan**:
+  - Booking mengizinkan pemilihan jam tidak berurutan dalam satu hari (misal jam 09:00 dan 14:00).
+  - Rincian checkout dan e-tiket menampilkan daftar jam individual alih-alih rentang tunggal.
+- **Pembatalan oleh Penyewa**:
+  - Hanya diperbolehkan untuk booking berstatus `pending`.
+  - Menghapus baris `court_slots` terkait seketika, mengubah status booking menjadi `cancelled`, dan payment tetap `unpaid`.
+  - Pembatalan booking `confirmed` hanya dapat dilakukan oleh operator atau admin.
