@@ -3,186 +3,326 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detail Booking - {{ config('app.name', 'Lapangin') }}</title>
+    <title>Detail Booking #{{ $booking->booking_code }} - {{ config('app.name', 'Lapangin') }}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="bg-canvas-bg font-body text-on-surface antialiased" x-data="{ mobileMenuOpen: false }">
-    <x-navbar active="beranda" />
+<body class="bg-canvas-bg font-body text-on-surface antialiased" x-data="{ sidebarOpen: false }">
 
-    <main class="w-full pt-20 pb-12">
-        {{-- Breadcrumb --}}
-        <div class="bg-surface-white border-b border-surface-container-high">
-            <div class="max-w-4xl mx-auto px-4 sm:px-8 py-3 flex items-center gap-2 text-xs text-on-surface-variant">
-                <a href="{{ route('user.dashboard') }}" class="hover:text-pitch-deep">Dashboard</a>
-                <span class="material-symbols-outlined text-[14px]">chevron_right</span>
-                <span class="text-on-surface font-medium">Detail Booking #{{ $booking->booking_code }}</span>
+    {{-- Layout with sidebar --}}
+    <div class="flex min-h-screen">
+
+        {{-- Mobile Backdrop --}}
+        <div 
+            x-show="sidebarOpen" 
+            x-transition.opacity
+            @click="sidebarOpen = false" 
+            class="fixed inset-0 z-40 bg-black/50 lg:hidden"
+            style="display: none;"
+        ></div>
+
+        {{-- ============ SIDEBAR CUSTOMER ============ --}}
+        <aside
+            :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
+            class="fixed inset-y-0 left-0 z-50 w-64 bg-arena-night flex flex-col transition-transform duration-200 ease-in-out lg:translate-x-0 lg:static lg:z-auto"
+        >
+            {{-- Logo Header --}}
+            <div class="flex items-center justify-between px-6 py-5 border-b border-pitch-deep/50">
+                <a href="{{ route('user.dashboard') }}" class="flex items-center gap-2">
+                    <img src="{{ asset('images/logo-white.png') }}" alt="Lapangin" class="h-8 w-auto opacity-95">
+                </a>
+                <span class="text-xs font-bold text-pitch-light uppercase tracking-wider bg-pitch-emerald/20 px-2 py-0.5 rounded-md">Customer</span>
             </div>
-        </div>
 
-        <div class="max-w-4xl mx-auto px-4 sm:px-8 py-8 flex flex-col gap-6">
+            {{-- Main Navigation Links --}}
+            <nav class="flex-1 px-4 py-4 overflow-y-auto">
+                <div class="flex flex-col gap-1">
+                    <a
+                        href="{{ route('user.dashboard') }}"
+                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-surface-container-highest hover:text-surface-white hover:bg-surface-white/5"
+                    >
+                        <span class="material-symbols-outlined text-[20px]">dashboard</span>
+                        Dashboard
+                    </a>
 
-            {{-- Status banner --}}
-            <div class="bg-pitch-surface border border-pitch-light/30 rounded-2xl p-5 flex items-center gap-4">
-                <div class="w-12 h-12 rounded-xl bg-pitch-deep flex items-center justify-center shrink-0">
-                    <span class="material-symbols-outlined text-pitch-light text-[24px]" style="font-variation-settings:'FILL' 1">
-                        @if($booking->status->value === 'confirmed')
-                            verified
-                        @elseif($booking->status->value === 'pending')
-                            pending
-                        @elseif($booking->status->value === 'done')
-                            task_alt
-                        @else
-                            cancel
-                        @endif
-                    </span>
+                    <a
+                        href="{{ route('user.dashboard') }}"
+                        class="flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium transition-all bg-pitch-emerald/20 text-pitch-light font-bold"
+                    >
+                        <div class="flex items-center gap-3">
+                            <span class="material-symbols-outlined text-[20px]">receipt_long</span>
+                            Booking Saya
+                        </div>
+                    </a>
+
+                    <a
+                        href="{{ route('lapangan') }}"
+                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-surface-container-highest hover:text-surface-white hover:bg-surface-white/5"
+                    >
+                        <span class="material-symbols-outlined text-[20px]">sports_soccer</span>
+                        Cari Lapangan
+                    </a>
+
+                    <a
+                        href="{{ route('kontak') }}"
+                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-surface-container-highest hover:text-surface-white hover:bg-surface-white/5"
+                    >
+                        <span class="material-symbols-outlined text-[20px]">support_agent</span>
+                        Bantuan & CS
+                    </a>
                 </div>
-                <div class="flex-1">
-                    <h2 class="font-headline text-base font-bold text-pitch-deep">
-                        @if($booking->status->value === 'confirmed')
-                            Booking Terkonfirmasi
-                        @elseif($booking->status->value === 'pending')
-                            Menunggu Pembayaran / Verifikasi
-                        @elseif($booking->status->value === 'done')
-                            Booking Selesai
-                        @else
-                            Booking {{ $booking->status->label() }}
-                        @endif
-                    </h2>
-                    <p class="text-xs text-pitch-deep/70 mt-0.5">
-                        @if($booking->status->value === 'confirmed')
-                            Pembayaran berhasil. Silakan hadir tepat waktu.
-                        @elseif($booking->status->value === 'pending')
-                            @if($booking->payment?->status?->value === 'pending_verification')
-                                Bukti transfer sedang diverifikasi oleh operator.
-                            @else
-                                Selesaikan pembayaran sebelum batas waktu habis.
+
+                {{-- Divider --}}
+                <div class="mt-6 pt-4 border-t border-pitch-deep/50 flex flex-col gap-1">
+                    <a href="{{ route('beranda') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-surface-container-highest hover:text-surface-white hover:bg-surface-white/5 transition-all">
+                        <span class="material-symbols-outlined text-[20px]">open_in_new</span>
+                        Lihat Situs Publik
+                    </a>
+                    <form action="{{ route('logout') }}" method="POST">
+                        @csrf
+                        <button type="submit" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-surface-container-highest hover:text-rose-400 hover:bg-rose-500/10 transition-all text-left">
+                            <span class="material-symbols-outlined text-[20px]">logout</span>
+                            Keluar
+                        </button>
+                    </form>
+                </div>
+            </nav>
+
+            {{-- Bottom User Info --}}
+            <div class="px-4 py-4 border-t border-pitch-deep/50">
+                <div class="flex items-center gap-3 p-3 rounded-xl bg-surface-white/5">
+                    <div class="w-9 h-9 rounded-full bg-pitch-emerald/30 border border-pitch-light/30 flex items-center justify-center shrink-0">
+                        <span class="font-bold text-pitch-light text-sm">{{ strtoupper(substr(auth()->user()->name, 0, 2)) }}</span>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-xs font-bold text-surface-white truncate">{{ auth()->user()->name }}</p>
+                        <p class="text-[10px] text-surface-container-highest truncate">{{ auth()->user()->email }}</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        {{-- ============ MAIN CONTENT AREA ============ --}}
+        <div class="flex-1 min-w-0 flex flex-col bg-canvas-bg min-h-screen">
+
+            {{-- Topbar Header --}}
+            <header class="h-16 bg-surface-white border-b border-surface-container-high px-4 sm:px-8 flex items-center justify-between gap-4 sticky top-0 z-30 shadow-xs">
+                <div class="flex items-center gap-3">
+                    <button @click="sidebarOpen = !sidebarOpen" class="lg:hidden p-2 rounded-lg text-on-surface hover:bg-surface-container-low transition-colors" aria-label="Toggle Sidebar">
+                        <span class="material-symbols-outlined text-[24px]">menu</span>
+                    </button>
+                    <a href="{{ route('user.dashboard') }}" class="inline-flex items-center gap-1.5 text-xs font-semibold text-on-surface-variant hover:text-pitch-deep transition-colors bg-surface-container-low px-3 py-1.5 rounded-lg">
+                        <span class="material-symbols-outlined text-[16px]">arrow_back</span>
+                        <span>Kembali</span>
+                    </a>
+                    <div class="h-4 w-px bg-surface-container-high hidden sm:block"></div>
+                    <div>
+                        <h1 class="font-headline text-base sm:text-lg font-bold text-pitch-deep">Detail Booking #{{ $booking->booking_code }}</h1>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <a href="{{ route('lapangan') }}" class="flex items-center gap-2 bg-pitch-deep hover:bg-pitch-emerald text-surface-white text-xs sm:text-sm font-bold px-4 py-2 rounded-xl transition-all shadow-sm">
+                        <span class="material-symbols-outlined text-[18px]">add_circle</span>
+                        <span class="hidden sm:inline">Booking Baru</span>
+                        <span class="sm:hidden">Booking</span>
+                    </a>
+                </div>
+            </header>
+
+            {{-- Content Container --}}
+            <main class="p-4 sm:p-8 flex-1 flex flex-col gap-6 max-w-5xl w-full mx-auto">
+
+                {{-- Status banner --}}
+                <div class="bg-pitch-surface border border-pitch-light/30 rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-xl bg-pitch-deep flex items-center justify-center shrink-0">
+                            <span class="material-symbols-outlined text-pitch-light text-[24px]" style="font-variation-settings:'FILL' 1">
+                                @if($booking->status->value === 'confirmed')
+                                    verified
+                                @elseif($booking->status->value === 'pending')
+                                    pending
+                                @elseif($booking->status->value === 'done')
+                                    task_alt
+                                @else
+                                    cancel
+                                @endif
+                            </span>
+                        </div>
+                        <div>
+                            <h2 class="font-headline text-base font-bold text-pitch-deep">
+                                @if($booking->status->value === 'confirmed')
+                                    Booking Terkonfirmasi
+                                @elseif($booking->status->value === 'pending')
+                                    Menunggu Pembayaran / Verifikasi
+                                @elseif($booking->status->value === 'done')
+                                    Booking Selesai
+                                @else
+                                    Booking {{ $booking->status->label() }}
+                                @endif
+                            </h2>
+                            <p class="text-xs text-pitch-deep/70 mt-0.5">
+                                @if($booking->status->value === 'confirmed')
+                                    Pembayaran berhasil. Silakan hadir tepat waktu sebelum sesi dimulai.
+                                @elseif($booking->status->value === 'pending')
+                                    @if($booking->payment?->status?->value === 'pending_verification')
+                                        Bukti transfer sedang diverifikasi oleh operator kami.
+                                    @else
+                                        Selesaikan pembayaran sebelum batas waktu reservasi berakhir.
+                                    @endif
+                                @elseif($booking->status->value === 'done')
+                                    Terima kasih telah berolahraga di Lapangin.
+                                @else
+                                    {{ $booking->cancelled_reason ?? 'Pemesanan telah dibatalkan.' }}
+                                @endif
+                            </p>
+                        </div>
+                    </div>
+                    <span class="font-mono text-sm font-bold text-pitch-deep bg-surface-white px-3.5 py-1.5 rounded-xl border border-pitch-light/30 self-start sm:self-auto shadow-xs">{{ $booking->booking_code }}</span>
+                </div>
+
+                {{-- Grid Details --}}
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                    {{-- Booking detail card --}}
+                    <div class="bg-surface-white rounded-2xl border border-surface-container-high p-6 flex flex-col gap-5 shadow-xs">
+                        <h3 class="font-headline text-xs font-bold text-on-surface uppercase tracking-wider text-pitch-deep">Detail Pemesanan</h3>
+                        <div class="flex flex-col gap-3.5 text-sm">
+                            @php
+                                $court = $booking->items->first()?->court;
+                                $bookingDate = \Carbon\Carbon::parse($booking->booking_date)->translatedFormat('l, d F Y');
+                                $slots = $booking->items->map(fn($item) => substr($item->start_time, 0, 5) . ' - ' . substr($item->end_time, 0, 5) . ' WIB')->join(', ');
+                            @endphp
+                            <div class="flex justify-between py-2 border-b border-surface-container-high/60">
+                                <span class="text-xs text-on-surface-variant">Lapangan</span>
+                                <span class="text-xs font-bold text-on-surface text-right">{{ $court?->name ?? 'Lapangan Futsal' }}</span>
+                            </div>
+                            <div class="flex justify-between py-2 border-b border-surface-container-high/60">
+                                <span class="text-xs text-on-surface-variant">Tipe Olahraga</span>
+                                <span class="text-xs font-semibold text-on-surface uppercase">{{ $court?->type ?? 'Futsal' }}</span>
+                            </div>
+                            <div class="flex justify-between py-2 border-b border-surface-container-high/60">
+                                <span class="text-xs text-on-surface-variant">Tanggal Bermain</span>
+                                <span class="text-xs font-semibold text-on-surface text-right">{{ $bookingDate }}</span>
+                            </div>
+                            <div class="flex justify-between py-2 border-b border-surface-container-high/60">
+                                <span class="text-xs text-on-surface-variant">Jam / Slot</span>
+                                <span class="text-xs font-semibold text-on-surface text-right">{{ $slots }}</span>
+                            </div>
+                            <div class="flex justify-between py-2 border-b border-surface-container-high/60">
+                                <span class="text-xs text-on-surface-variant">Jumlah Durasi</span>
+                                <span class="text-xs font-semibold text-on-surface">{{ $booking->items->count() }} Jam</span>
+                            </div>
+                            <div class="flex justify-between py-2">
+                                <span class="text-xs text-on-surface-variant">Total Biaya</span>
+                                <span class="font-headline text-base font-bold text-pitch-deep">Rp {{ number_format($booking->total_amount, 0, ',', '.') }}</span>
+                            </div>
+                        </div>
+
+                        {{-- Payment Info --}}
+                        <div class="bg-surface-container-lowest p-4 rounded-xl flex flex-col gap-2 border border-surface-container-high/60 text-xs">
+                            <div class="flex justify-between">
+                                <span class="text-on-surface-variant">Status Pembayaran</span>
+                                <span class="font-bold text-on-surface">{{ $booking->payment?->status?->label() ?? 'Belum Dibayar' }}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-on-surface-variant">Metode</span>
+                                <span class="font-semibold text-on-surface">{{ $booking->payment?->method?->label() ?? 'Transfer Bank BCA' }}</span>
+                            </div>
+                            @if($booking->payment?->paid_at)
+                            <div class="flex justify-between">
+                                <span class="text-on-surface-variant">Waktu Bayar</span>
+                                <span class="text-on-surface">{{ $booking->payment->paid_at->translatedFormat('d M Y, H:i') }} WIB</span>
+                            </div>
                             @endif
-                        @elseif($booking->status->value === 'done')
-                            Terima kasih telah berolahraga di Lapangin.
-                        @else
-                            {{ $booking->cancelled_reason ?? 'Pemesanan telah dibatalkan.' }}
-                        @endif
-                    </p>
-                </div>
-                <span class="font-mono text-sm font-bold text-pitch-deep bg-pitch-light/20 px-3 py-1.5 rounded-lg">{{ $booking->booking_code }}</span>
-            </div>
+                        </div>
+                    </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {{-- Booking detail --}}
-                <div class="bg-surface-white rounded-2xl border border-surface-container-high p-6 flex flex-col gap-5">
-                    <h3 class="font-headline text-sm font-bold text-on-surface uppercase tracking-wider">Detail Pemesanan</h3>
-                    <div class="flex flex-col gap-3 text-sm">
-                        @php
-                            $court = $booking->items->first()?->court;
-                            $hoursList = $booking->items->pluck('start_time')->map(fn($t) => substr($t, 0, 5))->join(', ') . ' WIB (' . count($booking->items) . ' Jam)';
-                        @endphp
+                    {{-- E-Ticket card --}}
+                    <div class="bg-surface-white rounded-2xl border border-surface-container-high p-6 flex flex-col gap-5 shadow-xs">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-headline text-xs font-bold text-on-surface uppercase tracking-wider text-pitch-deep">E-Tiket Masuk</h3>
+                            <span class="text-[10px] font-bold text-pitch-deep bg-pitch-surface px-2.5 py-1 rounded-full uppercase">Check-In</span>
+                        </div>
+
+                        {{-- QR / Check-in Box representation --}}
+                        <div class="bg-surface-container-lowest border-2 border-dashed border-surface-container-high rounded-2xl p-6 flex flex-col items-center gap-3">
+                            <div class="w-36 h-36 bg-surface-white rounded-xl border border-surface-container-high p-3 flex items-center justify-center shadow-xs">
+                                <div class="w-full h-full grid grid-cols-7 gap-1">
+                                    @for($r = 0; $r < 7; $r++)
+                                        @for($c = 0; $c < 7; $c++)
+                                            @php
+                                                $isCorner = ($r < 2 && $c < 2) || ($r < 2 && $c > 4) || ($r > 4 && $c < 2);
+                                                $isDark = $isCorner || (($r + $c) % 2 === 0);
+                                            @endphp
+                                            <div class="{{ $isDark ? 'bg-pitch-deep' : 'bg-surface-white' }} rounded-[1px]"></div>
+                                        @endfor
+                                    @endfor
+                                </div>
+                            </div>
+                            <p class="text-xs text-on-surface-variant text-center">Tunjukkan kode QR atau token ini ke petugas lapangan saat check-in</p>
+                            <p class="font-mono text-xs font-bold text-pitch-deep bg-pitch-surface px-3 py-1.5 rounded-lg break-all text-center select-all border border-pitch-light/30">{{ $booking->checkin_token }}</p>
+                        </div>
+
+                        {{-- Actions --}}
+                        <div class="flex flex-col gap-2.5">
+                            <button onclick="window.print()" class="flex items-center justify-center gap-2 border border-surface-container-high text-on-surface font-semibold text-xs py-2.5 rounded-xl hover:bg-surface-container-low transition-all">
+                                <span class="material-symbols-outlined text-[18px]">print</span>
+                                Cetak / Simpan E-Tiket
+                            </button>
+                            <a href="https://wa.me/628001234567?text={{ urlencode('Halo CS Lapangin, saya ingin bertanya tentang booking ' . $booking->booking_code) }}" target="_blank"
+                                class="flex items-center justify-center gap-2 border border-pitch-light/40 text-pitch-deep font-semibold text-xs py-2.5 rounded-xl hover:bg-pitch-surface transition-all">
+                                <span class="material-symbols-outlined text-[18px]">chat</span>
+                                Hubungi CS via WhatsApp
+                            </a>
+                            @if($booking->status->value === 'pending')
+                                @if($booking->payment?->status?->value === 'unpaid')
+                                <a href="{{ route('booking.konfirmasi', ['code' => $booking->booking_code]) }}"
+                                    class="flex items-center justify-center gap-2 bg-action-orange text-surface-white font-semibold text-xs py-2.5 rounded-xl hover:bg-tertiary-container transition-all shadow-xs">
+                                    <span class="material-symbols-outlined text-[18px]">payments</span>
+                                    Bayar Sekarang
+                                </a>
+                                @endif
+                                <form action="{{ route('user.booking.cancel', $booking->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin membatalkan pesanan ini?')">
+                                    @csrf
+                                    <button type="submit" class="w-full flex items-center justify-center gap-2 border border-error/20 text-error font-semibold text-xs py-2.5 rounded-xl hover:bg-error-container/10 transition-all">
+                                        <span class="material-symbols-outlined text-[18px]">cancel</span>
+                                        Batalkan Booking
+                                    </button>
+                                </form>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Cancellation Policy Card --}}
+                <div class="bg-surface-container-low rounded-2xl border border-surface-container-high p-5 shadow-xs">
+                    <h4 class="text-xs font-bold text-on-surface uppercase tracking-wider flex items-center gap-2 mb-3 text-pitch-deep">
+                        <span class="material-symbols-outlined text-[18px] text-on-surface-variant">policy</span>
+                        Kebijakan Pembatalan & Reservasi
+                    </h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
                         @foreach([
-                            ['stadium', 'Lapangan', $court?->name ?? 'Lapangan'],
-                            ['calendar_today', 'Tanggal Main', \Carbon\Carbon::parse($booking->booking_date)->translatedFormat('l, d F Y')],
-                            ['schedule', 'Jam Main', $hoursList],
-                            ['person', 'Nama Pemesan', $booking->customer_name ?? $booking->user?->name],
-                            ['phone', 'WhatsApp', $booking->customer_phone ?? $booking->user?->phone],
-                            ['payments', 'Total Bayar', 'Rp ' . number_format($booking->total_amount, 0, ',', '.')],
-                            ['receipt', 'Metode Pembayaran', $booking->payment?->method?->label() ?? 'Transfer Bank'],
-                        ] as $detail)
-                        <div class="flex items-start gap-3 py-2 border-b border-surface-container-high last:border-0">
-                            <span class="material-symbols-outlined text-on-surface-variant text-[16px] mt-0.5 shrink-0">{{ $detail[0] }}</span>
-                            <div class="flex-1">
-                                <span class="text-on-surface-variant text-xs">{{ $detail[1] }}</span>
-                                <p class="font-semibold text-on-surface">{{ $detail[2] }}</p>
+                            ['check_circle', 'pitch-emerald', '> 24 jam sebelum jadwal', 'Refund 90%'],
+                            ['warning', 'action-amber', '< 24 jam sebelum jadwal', 'Refund 50%'],
+                            ['cancel', 'error', 'No-show / tidak hadir', 'Tidak ada refund'],
+                        ] as $pol)
+                        <div class="flex items-start gap-2 p-3 bg-surface-white rounded-xl border border-surface-container-high">
+                            <span class="material-symbols-outlined text-{{ $pol[1] }} text-[18px] shrink-0">{{ $pol[0] }}</span>
+                            <div>
+                                <p class="font-semibold text-on-surface">{{ $pol[2] }}</p>
+                                <p class="text-on-surface-variant mt-0.5">{{ $pol[3] }}</p>
                             </div>
                         </div>
                         @endforeach
                     </div>
                 </div>
 
-                {{-- QR check-in + actions --}}
-                <div class="flex flex-col gap-4">
-                    {{-- QR Code untuk check-in --}}
-                    <div class="bg-surface-white rounded-2xl border border-surface-container-high p-6 flex flex-col items-center gap-3">
-                        <h3 class="font-headline text-sm font-bold text-on-surface self-start">QR Check-In</h3>
-                        <div class="w-36 h-36 bg-on-surface rounded-xl flex items-center justify-center">
-                            <div class="w-28 h-28 bg-surface-white rounded-lg grid grid-cols-7 gap-0 p-1.5">
-                                @for($r = 0; $r < 7; $r++)
-                                    @for($c = 0; $c < 7; $c++)
-                                        @php $isDark = (($r < 2 && $c < 2) || ($r < 2 && $c >= 5) || ($r >= 5 && $c < 2) || rand(0,1)); @endphp
-                                        <div class="{{ $isDark ? 'bg-on-surface' : 'bg-surface-white' }}"></div>
-                                    @endfor
-                                @endfor
-                            </div>
-                        </div>
-                        <p class="text-xs text-on-surface-variant text-center">Tunjukkan kode atau QR ini ke petugas saat check-in</p>
-                        <p class="font-mono text-xs font-bold text-pitch-deep bg-pitch-surface px-3 py-1.5 rounded-lg break-all text-center select-all">{{ $booking->checkin_token }}</p>
-                    </div>
-
-                    {{-- Actions --}}
-                    <div class="flex flex-col gap-2">
-                        <button class="flex items-center justify-center gap-2 border border-surface-container-high text-on-surface font-semibold text-sm py-3 rounded-xl hover:bg-surface-container-low transition-all">
-                            <span class="material-symbols-outlined text-[18px]">download</span>
-                            Unduh Tiket PDF
-                        </button>
-                        <a href="https://wa.me/628001234567?text={{ urlencode('Halo CS Lapangin, saya ingin bertanya tentang booking ' . $booking->booking_code) }}" target="_blank"
-                            class="flex items-center justify-center gap-2 border border-pitch-light/40 text-pitch-deep font-semibold text-sm py-3 rounded-xl hover:bg-pitch-surface transition-all">
-                            <span class="material-symbols-outlined text-[18px]">chat</span>
-                            Hubungi CS via WhatsApp
-                        </button>
-                        @if($booking->status->value === 'pending')
-                            @if($booking->payment?->status?->value === 'unpaid')
-                            <a href="{{ route('booking.konfirmasi', ['code' => $booking->booking_code]) }}"
-                                class="flex items-center justify-center gap-2 bg-action-orange text-surface-white font-semibold text-sm py-3 rounded-xl hover:bg-tertiary-container transition-all">
-                                <span class="material-symbols-outlined text-[18px]">payments</span>
-                                Bayar Sekarang
-                            </a>
-                            @endif
-                            <form action="{{ route('user.booking.cancel', $booking->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin membatalkan pesanan ini?')">
-                                @csrf
-                                <button type="submit" class="w-full flex items-center justify-center gap-2 border border-error/20 text-error font-semibold text-sm py-3 rounded-xl hover:bg-error-container/10 transition-all">
-                                    <span class="material-symbols-outlined text-[18px]">cancel</span>
-                                    Batalkan Booking
-                                </button>
-                            </form>
-                        @endif
-                    </div>
-                </div>
-            </div>
-
-            {{-- Cancellation policy --}}
-            <div class="bg-surface-container-low rounded-xl border border-surface-container-high p-5">
-                <h4 class="text-sm font-bold text-on-surface flex items-center gap-2 mb-3">
-                    <span class="material-symbols-outlined text-[16px] text-on-surface-variant">policy</span>
-                    Kebijakan Pembatalan
-                </h4>
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
-                    @foreach([
-                        ['check_circle', 'pitch-emerald', '> 24 jam sebelum jadwal', 'Refund 90%'],
-                        ['warning', 'action-amber', '< 24 jam sebelum jadwal', 'Refund 50%'],
-                        ['cancel', 'error', 'No-show / tidak hadir', 'Tidak ada refund'],
-                    ] as $pol)
-                    <div class="flex items-start gap-2 p-3 bg-surface-white rounded-lg border border-surface-container-high">
-                        <span class="material-symbols-outlined text-{{ $pol[1] }} text-[16px] shrink-0">{{ $pol[0] }}</span>
-                        <div>
-                            <p class="font-semibold text-on-surface">{{ $pol[2] }}</p>
-                            <p class="text-on-surface-variant mt-0.5">{{ $pol[3] }}</p>
-                        </div>
-                    </div>
-                    @endforeach
-                </div>
-            </div>
-
-            <a href="{{ route('user.dashboard') }}" class="inline-flex items-center gap-2 text-sm font-semibold text-on-surface-variant hover:text-pitch-deep">
-                <span class="material-symbols-outlined text-[18px]">arrow_back</span>
-                Kembali ke Dashboard
-            </a>
-
+            </main>
         </div>
-    </main>
-
-    <x-footer />
+    </div>
 
 </body>
 </html>
-

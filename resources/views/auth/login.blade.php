@@ -22,7 +22,7 @@
 
             {{-- Logo --}}
             <a href="{{ route('beranda') }}" class="flex items-center relative z-10 mb-12">
-                <img src="{{ asset('images/logo.png') }}" alt="Lapangin" class="h-10 w-auto brightness-0 invert opacity-95">
+                <img src="{{ asset('images/logo-white.png') }}" alt="Lapangin" class="h-10 w-auto opacity-95">
             </a>
 
             {{-- Center Content --}}

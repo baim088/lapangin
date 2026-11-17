@@ -6,9 +6,9 @@
             <div class="lg:col-span-2 flex flex-col gap-4">
                 <a href="{{ route('beranda') }}" class="flex items-center">
                     <img 
-                        src="{{ asset('images/logo.png') }}" 
+                        src="{{ asset('images/logo-white.png') }}" 
                         alt="Lapangin" 
-                        class="h-10 w-auto object-contain brightness-0 invert opacity-95"
+                        class="h-10 w-auto object-contain opacity-95"
                     >
                 </a>
                 <p class="text-xs text-surface-container-highest max-w-sm leading-relaxed">

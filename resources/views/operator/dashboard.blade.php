@@ -22,7 +22,7 @@
         >
             {{-- Logo --}}
             <div class="flex items-center gap-3 px-6 py-5 border-b border-pitch-deep/50">
-                <img src="{{ asset('images/logo.png') }}" alt="Lapangin" class="h-8 w-auto brightness-0 invert opacity-90">
+                <img src="{{ asset('images/logo-white.png') }}" alt="Lapangin" class="h-8 w-auto opacity-95">
                 <div>
                     <span class="text-xs font-bold text-pitch-light uppercase tracking-wider block">Operator</span>
                 </div>

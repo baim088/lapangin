@@ -15,7 +15,7 @@
     <div class="flex min-h-screen">
         <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'" class="fixed inset-y-0 left-0 z-50 w-64 bg-arena-night flex flex-col transition-transform lg:translate-x-0 lg:static lg:z-auto">
             <div class="flex items-center gap-3 px-6 py-5 border-b border-pitch-deep/50">
-                <img src="{{ asset('images/logo.png') }}" alt="Lapangin" class="h-8 w-auto brightness-0 invert opacity-90">
+                <img src="{{ asset('images/logo-white.png') }}" alt="Lapangin" class="h-8 w-auto opacity-95">
                 <span class="text-xs font-bold text-pitch-light uppercase tracking-wider">Operator</span>
             </div>
             <nav class="flex-1 px-4 py-4 overflow-y-auto">

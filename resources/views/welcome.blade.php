@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Lapangin - Sistem booking lapangan olahraga online real-time. Futsal, Badminton, Mini Soccer, Padel. Anti double-booking dengan slot lock 10 menit.">
     <meta name="keywords" content="booking lapangan, sewa lapangan futsal, badminton, mini soccer, padel, lapangin, reservasi olahraga">
-    <title>{{ config('app.name', 'Lapangin') }} - Sistem Booking Lapangan Olahraga Real-Time</title>
+    <title>Sistem Booking Lapangan Olahraga Real-Time</title>
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -38,12 +38,7 @@
                     
                     <!-- Hero Left Column: Headline, Subhead & Proof Metrics -->
                     <div class="lg:col-span-7 flex flex-col gap-6 z-10">
-                        <div class="inline-flex items-center gap-2 bg-surface-white/10 px-3.5 py-1 rounded-full w-fit backdrop-blur-sm border border-surface-white/10">
-                            <span class="w-2.5 h-2.5 rounded-full bg-pitch-light animate-ping"></span>
-                            <span class="text-xs font-semibold text-pitch-light uppercase tracking-wider">
-                                Sistem Reservasi Real-Time • Anti Double-Booking
-                            </span>
-                        </div>
+                        
 
                         <h1 class="font-headline text-4xl sm:text-5xl lg:text-6xl text-surface-white tracking-tight uppercase font-bold leading-tight">
                             Ajak Tim, <span class="text-pitch-light">Pilih Jam,</span><br>

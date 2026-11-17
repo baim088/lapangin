@@ -20,7 +20,7 @@
             <div class="absolute bottom-0 -left-10 w-80 h-80 rounded-full bg-pitch-emerald/20 blur-3xl pointer-events-none"></div>
 
             <a href="{{ route('beranda') }}" class="flex items-center relative z-10 mb-12">
-                <img src="{{ asset('images/logo.png') }}" alt="Lapangin" class="h-10 w-auto brightness-0 invert opacity-95">
+                <img src="{{ asset('images/logo-white.png') }}" alt="Lapangin" class="h-10 w-auto opacity-95">
             </a>
 
             <div class="relative z-10 flex flex-col gap-6">
