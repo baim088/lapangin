@@ -37,7 +37,11 @@
                     @endforeach
                 </div>
                 <div class="mt-6 pt-4 border-t border-surface-white/10 flex flex-col gap-1">
-                    <a href="{{ route('operator.dashboard') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-surface-container-highest hover:text-surface-white hover:bg-surface-white/5 transition-all">
+                    <a href="{{ route('owner.dashboard') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-amber-300 hover:text-white hover:bg-white/5 transition-all">
+                        <span class="material-symbols-outlined text-[20px]">store</span>
+                        Lihat Panel Owner
+                    </a>
+                    <a href="{{ route('operator.dashboard') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-surface-container-highest hover:text-surface-white hover:bg-white/5 transition-all">
                         <span class="material-symbols-outlined text-[20px]">manage_accounts</span>
                         Lihat Panel Operator
                     </a>

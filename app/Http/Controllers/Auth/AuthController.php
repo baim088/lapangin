@@ -72,7 +72,11 @@ class AuthController extends Controller
             return redirect()->route('admin.dashboard');
         }
 
-        if ($user->isOwner() || $user->isOperator()) {
+        if ($user->isOwner()) {
+            return redirect()->route('owner.dashboard');
+        }
+
+        if ($user->isOperator()) {
             return redirect()->route('operator.dashboard');
         }
 

@@ -112,9 +112,10 @@
                         </select>
                     </div>
                     @else
-                    <div class="flex items-center gap-1.5 bg-pitch-surface px-3 py-1.5 rounded-full text-xs text-pitch-deep font-semibold">
+                    <div class="flex items-center gap-1.5 bg-pitch-surface px-3 py-1.5 rounded-full text-xs text-pitch-deep font-semibold" title="Venue Penugasan">
                         <span class="w-1.5 h-1.5 rounded-full bg-pitch-emerald animate-pulse"></span>
-                        {{ $venue->name }}
+                        <span class="text-[10px] uppercase font-bold text-pitch-light bg-pitch-deep px-1.5 py-0.5 rounded">Kasir</span>
+                        <span>{{ $venue->name }}</span>
                     </div>
                     @endif
                     <button class="relative p-2 rounded-lg hover:bg-surface-container-low text-on-surface-variant">

@@ -60,7 +60,9 @@
                 @php
                     $dashboardRoute = auth()->user()->isSuperAdmin()
                         ? route('admin.dashboard')
-                        : (auth()->user()->isOperator() ? route('operator.dashboard') : route('user.dashboard'));
+                        : (auth()->user()->isOwner()
+                            ? route('owner.dashboard')
+                            : (auth()->user()->isOperator() ? route('operator.dashboard') : route('user.dashboard')));
                 @endphp
                 <div class="hidden md:flex items-center gap-2">
                     <a href="{{ $dashboardRoute }}" class="text-xs uppercase tracking-wider px-3 py-2 rounded-lg text-[#f8b710] font-bold hover:bg-white/5 transition-colors flex items-center gap-1.5">
@@ -143,7 +145,9 @@
             @php
                 $mobileDashboardRoute = auth()->user()->isSuperAdmin()
                     ? route('admin.dashboard')
-                    : (auth()->user()->isOperator() ? route('operator.dashboard') : route('user.dashboard'));
+                    : (auth()->user()->isOwner()
+                        ? route('owner.dashboard')
+                        : (auth()->user()->isOperator() ? route('operator.dashboard') : route('user.dashboard')));
             @endphp
             <div class="pt-3 mt-2 border-t border-white/10 flex flex-col gap-2">
                 <a href="{{ $mobileDashboardRoute }}" class="py-2 px-3 rounded-lg text-sm font-semibold text-[#f8b710] hover:bg-white/5 flex items-center gap-2">

@@ -36,7 +36,8 @@ class OperatorController extends Controller
     ) {}
 
     /**
-     * Resolve the active venue and all accessible venues for the current user.
+     * Resolve the single venue that the operator / cashier is strictly assigned to.
+     * Prevents cross-venue tampering or access.
      *
      * @return array{activeVenue: Venue, accessibleVenues: Collection<int, Venue>}
      */
@@ -55,48 +56,28 @@ class OperatorController extends Controller
             return ['activeVenue' => $activeVenue, 'accessibleVenues' => $accessibleVenues];
         }
 
-        if ($user->isOwner()) {
-            $accessibleVenues = $user->ownedVenues()->get();
-            if ($accessibleVenues->isEmpty()) {
-                $first = Venue::first();
-                $accessibleVenues = $first ? collect([$first]) : collect();
-            }
+        // KASIR / OPERATOR: WAJIB TERIKAT HANYA PADA VENUE TEMPATNYA BERTUGAS
+        abort_if(! $user->venue_id, 403, 'Akun kasir Anda belum ditugaskan ke venue manapun. Silakan hubungi pemilik venue.');
 
-            if ($accessibleVenues->isEmpty()) {
-                abort(404, 'Belum ada venue yang terhubung dengan akun Owner Anda.');
-            }
-
-            $activeVenue = $requestedVenueId
-                ? ($accessibleVenues->firstWhere('id', $requestedVenueId) ?? $accessibleVenues->first())
-                : $accessibleVenues->first();
-
-            return ['activeVenue' => $activeVenue, 'accessibleVenues' => $accessibleVenues];
+        // Proteksi anti lintas venue: Kasir dilarang memanipulasi parameter venue_id
+        if ($requestedVenueId && (int) $requestedVenueId !== (int) $user->venue_id) {
+            abort(403, 'Akses ditolak: Anda hanya berwenang mengakses venue tempat Anda ditugaskan.');
         }
 
-        // Operator / Kasir Venue
-        $venue = $user->venue_id ? Venue::find($user->venue_id) : Venue::first();
+        $venue = Venue::find($user->venue_id);
         if (! $venue) {
-            abort(404, 'Operator belum ditugaskan ke venue manapun.');
+            abort(404, 'Venue penugasan tidak ditemukan.');
         }
 
         return ['activeVenue' => $venue, 'accessibleVenues' => collect([$venue])];
     }
 
     /**
-     * Backward-compatible helper to get the primary venue.
-     */
-    protected function getOperatorVenue(User $user, ?int $venueId = null): Venue
-    {
-        return $this->resolveVenues($user, $venueId)['activeVenue'];
-    }
-
-    /**
-     * Display operator dashboard with KPIs and today's incoming bookings.
+     * Display operator dashboard with KPIs and today's incoming bookings for their assigned venue.
      */
     public function dashboard(Request $request): View
     {
-        $requestedVenueId = $request->query('venue_id') ? (int) $request->query('venue_id') : null;
-        ['activeVenue' => $venue, 'accessibleVenues' => $accessibleVenues] = $this->resolveVenues($request->user(), $requestedVenueId);
+        ['activeVenue' => $venue, 'accessibleVenues' => $accessibleVenues] = $this->resolveVenues($request->user());
 
         $today = Carbon::today()->toDateString();
         $now = Carbon::now();
@@ -121,7 +102,6 @@ class OperatorController extends Controller
             ->whereHas('items', fn ($q) => $q->whereDate('booking_date', $today))
             ->sum('paid_amount');
 
-        // Fallback to total_amount if paid_amount is 0 for legacy records
         if ($todayRevenue === 0) {
             $todayRevenue = (int) Booking::where('venue_id', $venue->id)
                 ->whereIn('status', [BookingStatus::Confirmed, BookingStatus::PaidInFull, BookingStatus::Done, BookingStatus::Completed])
@@ -233,12 +213,12 @@ class OperatorController extends Controller
     }
 
     /**
-     * Operator confirms a pending booking.
+     * Operator confirms a pending booking for their venue only.
      */
     public function confirm(Booking $booking, Request $request): RedirectResponse
     {
-        ['accessibleVenues' => $accessibleVenues] = $this->resolveVenues($request->user());
-        abort_if(! $accessibleVenues->contains('id', $booking->venue_id), 403, 'Anda tidak memiliki hak akses untuk booking di venue ini.');
+        ['activeVenue' => $venue] = $this->resolveVenues($request->user());
+        abort_if((int) $booking->venue_id !== (int) $venue->id, 403, 'Akses ditolak: Anda hanya berwenang pada venue Anda.');
 
         $this->bookingService->confirmByOperator($booking, $request->user());
 
@@ -246,14 +226,14 @@ class OperatorController extends Controller
     }
 
     /**
-     * Process on-site settlement for a DP-paid booking.
+     * Process on-site settlement for a DP-paid booking in their venue only.
      */
     public function settle(Booking $booking, Request $request): RedirectResponse
     {
         $user = $request->user();
-        ['accessibleVenues' => $accessibleVenues] = $this->resolveVenues($user);
+        ['activeVenue' => $venue] = $this->resolveVenues($user);
 
-        abort_if(! $accessibleVenues->contains('id', $booking->venue_id), 403, 'Anda tidak memiliki hak akses untuk memproses pelunasan di venue ini.');
+        abort_if((int) $booking->venue_id !== (int) $venue->id, 403, 'Akses ditolak: Anda hanya berwenang memproses pelunasan di venue tempat Anda ditugaskan.');
 
         $validated = $request->validate([
             'settlement_method' => ['required', 'string', 'in:cash,qris,manual_transfer'],
@@ -269,16 +249,16 @@ class OperatorController extends Controller
             $validated['notes'] ?? null
         );
 
-        return back()->with('status', "Pelunasan sisa tagihan booking {$booking->booking_code} sebesar Rp ".number_format($remaining, 0, ',', '.').' berhasil dicatat!');
+        return back()->with('status', "Pelunasan sisa tagihan booking {$booking->booking_code} sebesar Rp ".number_format($remaining, 0, ',', '.').' berhasil dicatat oleh Kasir!');
     }
 
     /**
-     * Operator rejects a pending booking with required reason.
+     * Operator rejects a pending booking in their venue only.
      */
     public function reject(Booking $booking, RejectBookingRequest $request): RedirectResponse
     {
-        ['accessibleVenues' => $accessibleVenues] = $this->resolveVenues($request->user());
-        abort_if(! $accessibleVenues->contains('id', $booking->venue_id), 403, 'Anda tidak memiliki hak akses untuk booking di venue ini.');
+        ['activeVenue' => $venue] = $this->resolveVenues($request->user());
+        abort_if((int) $booking->venue_id !== (int) $venue->id, 403, 'Akses ditolak: Anda hanya berwenang pada venue Anda.');
 
         $this->bookingService->rejectByOperator($booking, $request->user(), $request->validated('reason'));
 
@@ -286,12 +266,12 @@ class OperatorController extends Controller
     }
 
     /**
-     * Operator cancels a confirmed booking with required reason.
+     * Operator cancels a confirmed booking in their venue only.
      */
     public function cancel(Booking $booking, CancelBookingRequest $request): RedirectResponse
     {
-        ['accessibleVenues' => $accessibleVenues] = $this->resolveVenues($request->user());
-        abort_if(! $accessibleVenues->contains('id', $booking->venue_id), 403, 'Anda tidak memiliki hak akses untuk booking di venue ini.');
+        ['activeVenue' => $venue] = $this->resolveVenues($request->user());
+        abort_if((int) $booking->venue_id !== (int) $venue->id, 403, 'Akses ditolak: Anda hanya berwenang pada venue Anda.');
 
         $this->bookingService->cancelConfirmedByOperator($booking, $request->user(), $request->validated('reason'));
 
@@ -299,12 +279,11 @@ class OperatorController extends Controller
     }
 
     /**
-     * Display operator booking list with search, status filters, and pagination.
+     * Display operator booking list strictly for their assigned venue.
      */
     public function bookingList(Request $request): View
     {
-        $requestedVenueId = $request->query('venue_id') ? (int) $request->query('venue_id') : null;
-        ['activeVenue' => $venue, 'accessibleVenues' => $accessibleVenues] = $this->resolveVenues($request->user(), $requestedVenueId);
+        ['activeVenue' => $venue, 'accessibleVenues' => $accessibleVenues] = $this->resolveVenues($request->user());
 
         $search = $request->query('search', '');
         $activeFilter = $request->query('status', 'all');
@@ -338,13 +317,12 @@ class OperatorController extends Controller
     }
 
     /**
-     * Financial Report scoped by Owner / Operator.
+     * Financial Report strictly for the cashier's assigned venue.
      */
     public function laporan(Request $request): View
     {
         $user = $request->user();
-        $requestedVenueId = $request->query('venue_id') ? (int) $request->query('venue_id') : null;
-        ['activeVenue' => $venue, 'accessibleVenues' => $accessibleVenues] = $this->resolveVenues($user, $requestedVenueId);
+        ['activeVenue' => $venue, 'accessibleVenues' => $accessibleVenues] = $this->resolveVenues($user);
 
         $period = $request->query('period', 'bulanan');
         $today = Carbon::today();
@@ -374,11 +352,8 @@ class OperatorController extends Controller
                 break;
         }
 
-        // Scope to current venue or all venues owned
-        $venueFilter = $request->query('venue_filter', (string) $venue->id);
-        $targetVenueIds = ($venueFilter === 'all' && ($user->isOwner() || $user->isSuperAdmin()))
-            ? $accessibleVenues->pluck('id')->all()
-            : [$venue->id];
+        // Strictly single venue
+        $targetVenueIds = [$venue->id];
 
         // 1. Total Nilai Transaksi (Gross Revenue)
         $grossRevenue = (int) Booking::whereIn('venue_id', $targetVenueIds)
@@ -431,7 +406,6 @@ class OperatorController extends Controller
             'periodLabel',
             'startDate',
             'endDate',
-            'venueFilter',
             'grossRevenue',
             'dpIncome',
             'settlementIncome',
@@ -443,12 +417,11 @@ class OperatorController extends Controller
     }
 
     /**
-     * Export filtered bookings to CSV.
+     * Export filtered bookings to CSV for their venue only.
      */
     public function exportCsv(Request $request): StreamedResponse
     {
-        $requestedVenueId = $request->query('venue_id') ? (int) $request->query('venue_id') : null;
-        ['activeVenue' => $venue] = $this->resolveVenues($request->user(), $requestedVenueId);
+        ['activeVenue' => $venue] = $this->resolveVenues($request->user());
 
         $search = $request->query('search', '');
         $activeFilter = $request->query('status', 'all');
@@ -472,7 +445,7 @@ class OperatorController extends Controller
 
         $headers = [
             'Content-Type' => 'text/csv',
-            'Content-Disposition' => 'attachment; filename="daftar-booking-'.now()->format('Ymd-His').'.csv"',
+            'Content-Disposition' => 'attachment; filename="kasir-booking-'.now()->format('Ymd-His').'.csv"',
         ];
 
         $callback = function () use ($bookings) {
@@ -509,12 +482,11 @@ class OperatorController extends Controller
     }
 
     /**
-     * Display multi-court schedule grid with manual blocking/unblocking.
+     * Display multi-court schedule grid for their venue only.
      */
     public function jadwal(Request $request): View
     {
-        $requestedVenueId = $request->query('venue_id') ? (int) $request->query('venue_id') : null;
-        ['activeVenue' => $venue, 'accessibleVenues' => $accessibleVenues] = $this->resolveVenues($request->user(), $requestedVenueId);
+        ['activeVenue' => $venue, 'accessibleVenues' => $accessibleVenues] = $this->resolveVenues($request->user());
 
         $selectedDate = $request->query('date', Carbon::today()->toDateString());
         $selectedCourt = $request->query('court', 'all');
@@ -549,7 +521,7 @@ class OperatorController extends Controller
     }
 
     /**
-     * Operator manually blocks a free slot.
+     * Operator manually blocks a free slot for their venue only.
      */
     public function blockSlot(BlockSlotRequest $request): RedirectResponse
     {
@@ -595,7 +567,7 @@ class OperatorController extends Controller
     }
 
     /**
-     * Operator unblocks a previously blocked slot.
+     * Operator unblocks a previously blocked slot for their venue only.
      */
     public function unblockSlot(int $id, Request $request): RedirectResponse
     {
@@ -612,12 +584,11 @@ class OperatorController extends Controller
     }
 
     /**
-     * Display court list for this venue.
+     * Display court list for their venue only.
      */
     public function lapangan(Request $request): View
     {
-        $requestedVenueId = $request->query('venue_id') ? (int) $request->query('venue_id') : null;
-        ['activeVenue' => $venue, 'accessibleVenues' => $accessibleVenues] = $this->resolveVenues($request->user(), $requestedVenueId);
+        ['activeVenue' => $venue, 'accessibleVenues' => $accessibleVenues] = $this->resolveVenues($request->user());
 
         $courts = Court::where('venue_id', $venue->id)
             ->withCount(['bookingItems'])
@@ -628,7 +599,7 @@ class OperatorController extends Controller
     }
 
     /**
-     * Store new court for this venue.
+     * Store new court for their venue only.
      */
     public function storeCourt(StoreCourtRequest $request): RedirectResponse
     {
@@ -655,12 +626,12 @@ class OperatorController extends Controller
     }
 
     /**
-     * Update court configuration.
+     * Update court configuration for their venue only.
      */
     public function updateCourt(Court $court, UpdateCourtRequest $request): RedirectResponse
     {
         ['activeVenue' => $venue] = $this->resolveVenues($request->user());
-        abort_if($court->venue_id !== $venue->id, 403, 'Akses ditolak.');
+        abort_if((int) $court->venue_id !== (int) $venue->id, 403, 'Akses ditolak: Lapangan ini bukan milik venue Anda.');
 
         $court->update([
             'name' => $request->validated('name'),
@@ -675,12 +646,12 @@ class OperatorController extends Controller
     }
 
     /**
-     * Toggle court operational status (active / maintenance).
+     * Toggle court operational status for their venue only.
      */
     public function toggleCourtStatus(Court $court, Request $request): RedirectResponse
     {
         ['activeVenue' => $venue] = $this->resolveVenues($request->user());
-        abort_if($court->venue_id !== $venue->id, 403, 'Akses ditolak.');
+        abort_if((int) $court->venue_id !== (int) $venue->id, 403, 'Akses ditolak: Lapangan ini bukan milik venue Anda.');
 
         $newStatus = $court->status === CourtStatus::Active ? CourtStatus::Maintenance : CourtStatus::Active;
         $court->status = $newStatus;

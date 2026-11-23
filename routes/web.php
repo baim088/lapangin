@@ -6,6 +6,7 @@ use App\Http\Controllers\BookingController;
 use App\Http\Controllers\CourtController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Operator\OperatorController;
+use App\Http\Controllers\Owner\OwnerController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -49,8 +50,8 @@ Route::middleware(['role:customer,operator,owner,super_admin'])->group(function 
     Route::post('/dashboard/booking/{booking}/cancel', [BookingController::class, 'cancelPending'])->name('user.booking.cancel');
 });
 
-// === OPERATOR ROUTES ===
-Route::prefix('operator')->name('operator.')->middleware(['role:operator,owner,super_admin'])->group(function () {
+// === OPERATOR / KASIR VENUE ROUTES ===
+Route::prefix('operator')->name('operator.')->middleware(['role:operator,super_admin'])->group(function () {
     Route::get('/dashboard', [OperatorController::class, 'dashboard'])->name('dashboard');
 
     Route::get('/booking', [OperatorController::class, 'bookingList'])->name('booking');
@@ -70,6 +71,15 @@ Route::prefix('operator')->name('operator.')->middleware(['role:operator,owner,s
     Route::post('/lapangan', [OperatorController::class, 'storeCourt'])->name('lapangan.store');
     Route::put('/lapangan/{court}', [OperatorController::class, 'updateCourt'])->name('lapangan.update');
     Route::patch('/lapangan/{court}/toggle-status', [OperatorController::class, 'toggleCourtStatus'])->name('lapangan.toggle-status');
+});
+
+// === OWNER / PEMILIK VENUE ROUTES ===
+Route::prefix('owner')->name('owner.')->middleware(['role:owner,super_admin'])->group(function () {
+    Route::get('/dashboard', [OwnerController::class, 'dashboard'])->name('dashboard');
+    Route::get('/laporan', [OwnerController::class, 'laporan'])->name('laporan');
+    Route::get('/booking', [OwnerController::class, 'bookingList'])->name('booking');
+    Route::get('/booking/export', [OwnerController::class, 'exportCsv'])->name('booking.export');
+    Route::get('/lapangan', [OwnerController::class, 'lapangan'])->name('lapangan');
 });
 
 // === ADMIN ROUTES ===
