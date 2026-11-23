@@ -25,7 +25,7 @@ class BookingService
     /**
      * Create a pending booking with slot locks.
      *
-     * State Machine (a):
+     * State Machine:
      * Booking: pending (expires_at = now + slot_lock_duration_minutes)
      * Payment: unpaid
      * CourtSlot: created with locked_until = expires_at
@@ -39,7 +39,9 @@ class BookingService
         string $bookingDate,
         array $startTimes,
         PaymentMethod $paymentMethod,
-        array $customerData
+        array $customerData,
+        string $paymentType = 'full',
+        int $dpPercentage = 50
     ): Booking {
         if ($court->status !== CourtStatus::Active) {
             throw ValidationException::withMessages([
@@ -91,7 +93,12 @@ class BookingService
         $subtotal = array_sum(array_column($normalizedSlots, 'price'));
         $totalAmount = $subtotal;
 
-        $expiresAt = $now->copy()->addMinutes($venue->slot_lock_duration_minutes ?? 10);
+        $isDp = ($paymentType === 'dp');
+        $dpPct = $isDp ? max(30, min(50, $dpPercentage)) : 50;
+        $dpAmount = $isDp ? (int) round($totalAmount * ($dpPct / 100)) : 0;
+        $initialPayAmount = $isDp ? $dpAmount : $totalAmount;
+
+        $expiresAt = $now->copy()->addMinutes($venue->slot_lock_duration_minutes ?? 15);
 
         return DB::transaction(function () use (
             $user,
@@ -101,6 +108,10 @@ class BookingService
             $totalHours,
             $subtotal,
             $totalAmount,
+            $paymentType,
+            $dpPct,
+            $dpAmount,
+            $initialPayAmount,
             $expiresAt,
             $paymentMethod,
             $customerData,
@@ -135,6 +146,11 @@ class BookingService
                 'customer_phone' => $customerData['phone'] ?? $user->phone,
                 'customer_email' => $customerData['email'] ?? $user->email,
                 'notes' => $customerData['notes'] ?? null,
+                'payment_type' => $paymentType,
+                'dp_percentage' => $dpPct,
+                'dp_amount' => $dpAmount,
+                'paid_amount' => 0,
+                'remaining_amount' => $totalAmount,
                 'total_hours' => $totalHours,
                 'subtotal' => $subtotal,
                 'total_amount' => $totalAmount,
@@ -174,8 +190,9 @@ class BookingService
             Payment::create([
                 'booking_id' => $booking->id,
                 'payment_method' => $paymentMethod,
+                'payment_type' => $paymentType === 'dp' ? 'dp' : 'full',
                 'status' => PaymentStatus::Unpaid,
-                'amount' => $totalAmount,
+                'amount' => $initialPayAmount,
             ]);
 
             return $booking;
@@ -184,10 +201,6 @@ class BookingService
 
     /**
      * Upload proof of payment on time.
-     *
-     * State Machine (b) & (h):
-     * On time: Payment: pending_verification, Booking: expires_at = NULL, Slot: locked_until = NULL
-     * Expired: Rejected with instruction to contact admin.
      */
     public function uploadProof(Booking $booking, UploadedFile $file): Payment
     {
@@ -224,13 +237,10 @@ class BookingService
 
     /**
      * Customer cancels a pending booking.
-     *
-     * State Machine (f):
-     * Booking: cancelled (cancelled_at), Payment: unpaid, Slot: DELETED.
      */
     public function cancelPendingByCustomer(Booking $booking, User $customer): void
     {
-        if ($booking->status !== BookingStatus::Pending) {
+        if (! in_array($booking->status, [BookingStatus::Pending, BookingStatus::PendingPayment], true)) {
             throw ValidationException::withMessages([
                 'booking' => 'Hanya booking yang berstatus pending yang dapat dibatalkan oleh penyewa.',
             ]);
@@ -247,17 +257,11 @@ class BookingService
     }
 
     /**
-     * Operator confirms payment.
-     *
-     * State Machine (d):
-     * Booking: confirmed, Payment: paid (verified_by, verified_at), Slot: locked_until stays NULL.
+     * Operator confirms initial payment (either Full Payment or Down Payment).
      */
     public function confirmByOperator(Booking $booking, User $operator): void
     {
         DB::transaction(function () use ($booking, $operator) {
-            $booking->status = BookingStatus::Confirmed;
-            $booking->save();
-
             /** @var Payment $payment */
             $payment = $booking->payment ?? Payment::where('booking_id', $booking->id)->latest()->firstOrFail();
             $payment->status = PaymentStatus::Paid;
@@ -265,7 +269,19 @@ class BookingService
             $payment->verified_at = Carbon::now();
             $payment->save();
 
-            // Slot remains with locked_until = NULL
+            if ($booking->payment_type === 'dp') {
+                $booking->status = BookingStatus::DpPaid;
+                $booking->paid_amount = $booking->dp_amount;
+                $booking->remaining_amount = max(0, $booking->total_amount - $booking->dp_amount);
+            } else {
+                $booking->status = BookingStatus::PaidInFull;
+                $booking->paid_amount = $booking->total_amount;
+                $booking->remaining_amount = 0;
+            }
+            $booking->expires_at = null;
+            $booking->save();
+
+            // Slot remains confirmed with locked_until = NULL
             CourtSlot::where('booking_id', $booking->id)->update([
                 'locked_until' => null,
             ]);
@@ -273,10 +289,53 @@ class BookingService
     }
 
     /**
+     * Operator / Cashier processes on-site settlement for dp_paid booking.
+     */
+    public function settlePaymentByOperator(
+        Booking $booking,
+        User $cashier,
+        PaymentMethod|string $settlementMethod,
+        ?string $notes = null
+    ): Payment {
+        if ($booking->remaining_amount <= 0 && $booking->status !== BookingStatus::DpPaid) {
+            throw ValidationException::withMessages([
+                'booking' => 'Booking ini sudah lunas atau tidak memerlukan pelunasan.',
+            ]);
+        }
+
+        $methodEnum = is_string($settlementMethod)
+            ? (PaymentMethod::tryFrom($settlementMethod) ?? PaymentMethod::Cash)
+            : $settlementMethod;
+
+        return DB::transaction(function () use ($booking, $cashier, $methodEnum, $notes) {
+            $settleAmount = $booking->remaining_amount;
+
+            $payment = Payment::create([
+                'booking_id' => $booking->id,
+                'payment_method' => $methodEnum,
+                'payment_type' => 'settlement',
+                'status' => PaymentStatus::Paid,
+                'amount' => $settleAmount,
+                'verified_by' => $cashier->id,
+                'verified_at' => Carbon::now(),
+                'cashier_id' => $cashier->id,
+                'notes' => $notes,
+            ]);
+
+            $booking->paid_amount += $settleAmount;
+            $booking->remaining_amount = 0;
+            $booking->status = BookingStatus::PaidInFull;
+            $booking->settlement_method = $methodEnum->value;
+            $booking->settled_at = Carbon::now();
+            $booking->settled_by = $cashier->id;
+            $booking->save();
+
+            return $payment;
+        }, 3);
+    }
+
+    /**
      * Operator rejects payment (reason required).
-     *
-     * State Machine (e):
-     * Booking: cancelled (cancelled_reason), Payment: rejected, Slot: DELETED.
      */
     public function rejectByOperator(Booking $booking, User $operator, string $reason): void
     {
@@ -303,9 +362,6 @@ class BookingService
 
     /**
      * Operator cancels confirmed booking.
-     *
-     * State Machine (g):
-     * Booking: cancelled, Payment: refund_pending, Slot: DELETED.
      */
     public function cancelConfirmedByOperator(Booking $booking, User $operator, string $reason): void
     {

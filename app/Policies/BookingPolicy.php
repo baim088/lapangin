@@ -17,6 +17,10 @@ class BookingPolicy
             return true;
         }
 
+        if ($user->isOwner()) {
+            return $user->ownedVenues()->where('venues.id', $booking->venue_id)->exists();
+        }
+
         if ($user->isOperator()) {
             return $user->venue_id === $booking->venue_id;
         }
@@ -33,20 +37,28 @@ class BookingPolicy
             return true;
         }
 
+        if ($user->isOwner()) {
+            return $user->ownedVenues()->where('venues.id', $booking->venue_id)->exists();
+        }
+
         if ($user->isOperator()) {
             return $user->venue_id === $booking->venue_id;
         }
 
-        return $user->id === $booking->user_id && $booking->status === BookingStatus::Pending;
+        return $user->id === $booking->user_id && in_array($booking->status, [BookingStatus::Pending, BookingStatus::PendingPayment], true);
     }
 
     /**
-     * Determine whether the user can update the booking.
+     * Determine whether the user can update or settle the booking.
      */
     public function update(User $user, Booking $booking): bool
     {
         if ($user->isSuperAdmin()) {
             return true;
+        }
+
+        if ($user->isOwner()) {
+            return $user->ownedVenues()->where('venues.id', $booking->venue_id)->exists();
         }
 
         if ($user->isOperator()) {

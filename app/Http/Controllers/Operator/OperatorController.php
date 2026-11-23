@@ -15,6 +15,7 @@ use App\Http\Requests\Operator\UpdateCourtRequest;
 use App\Models\Booking;
 use App\Models\Court;
 use App\Models\CourtSlot;
+use App\Models\Payment;
 use App\Models\User;
 use App\Models\Venue;
 use App\Services\BookingService;
@@ -22,6 +23,7 @@ use App\Services\ExpireStaleBookings;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -34,23 +36,58 @@ class OperatorController extends Controller
     ) {}
 
     /**
-     * Resolve the venue that belongs to the operator or fallback for super_admin.
+     * Resolve the active venue and all accessible venues for the current user.
+     *
+     * @return array{activeVenue: Venue, accessibleVenues: Collection<int, Venue>}
      */
-    protected function getOperatorVenue(User $user): Venue
+    protected function resolveVenues(User $user, ?int $requestedVenueId = null): array
     {
-        if ($user->venue_id) {
-            $venue = Venue::find($user->venue_id);
-            if ($venue) {
-                return $venue;
+        if ($user->isSuperAdmin()) {
+            $accessibleVenues = Venue::all();
+            $activeVenue = $requestedVenueId
+                ? ($accessibleVenues->firstWhere('id', $requestedVenueId) ?? $accessibleVenues->first())
+                : $accessibleVenues->first();
+
+            if (! $activeVenue) {
+                abort(404, 'Venue belum terdaftar dalam sistem.');
             }
+
+            return ['activeVenue' => $activeVenue, 'accessibleVenues' => $accessibleVenues];
         }
 
-        $firstVenue = Venue::first();
-        if (! $firstVenue) {
-            abort(404, 'Venue belum terdaftar dalam sistem.');
+        if ($user->isOwner()) {
+            $accessibleVenues = $user->ownedVenues()->get();
+            if ($accessibleVenues->isEmpty()) {
+                $first = Venue::first();
+                $accessibleVenues = $first ? collect([$first]) : collect();
+            }
+
+            if ($accessibleVenues->isEmpty()) {
+                abort(404, 'Belum ada venue yang terhubung dengan akun Owner Anda.');
+            }
+
+            $activeVenue = $requestedVenueId
+                ? ($accessibleVenues->firstWhere('id', $requestedVenueId) ?? $accessibleVenues->first())
+                : $accessibleVenues->first();
+
+            return ['activeVenue' => $activeVenue, 'accessibleVenues' => $accessibleVenues];
         }
 
-        return $firstVenue;
+        // Operator / Kasir Venue
+        $venue = $user->venue_id ? Venue::find($user->venue_id) : Venue::first();
+        if (! $venue) {
+            abort(404, 'Operator belum ditugaskan ke venue manapun.');
+        }
+
+        return ['activeVenue' => $venue, 'accessibleVenues' => collect([$venue])];
+    }
+
+    /**
+     * Backward-compatible helper to get the primary venue.
+     */
+    protected function getOperatorVenue(User $user, ?int $venueId = null): Venue
+    {
+        return $this->resolveVenues($user, $venueId)['activeVenue'];
     }
 
     /**
@@ -58,7 +95,9 @@ class OperatorController extends Controller
      */
     public function dashboard(Request $request): View
     {
-        $venue = $this->getOperatorVenue($request->user());
+        $requestedVenueId = $request->query('venue_id') ? (int) $request->query('venue_id') : null;
+        ['activeVenue' => $venue, 'accessibleVenues' => $accessibleVenues] = $this->resolveVenues($request->user(), $requestedVenueId);
+
         $today = Carbon::today()->toDateString();
         $now = Carbon::now();
 
@@ -70,28 +109,42 @@ class OperatorController extends Controller
             ->whereHas('items', fn ($q) => $q->whereDate('booking_date', $today))
             ->count();
 
-        // KPI 2: Today's Revenue (confirmed or done)
+        // KPI 2: Today's Revenue (confirmed, dp_paid, paid_in_full, done)
         $todayRevenue = (int) Booking::where('venue_id', $venue->id)
-            ->whereIn('status', [BookingStatus::Confirmed, BookingStatus::Done])
+            ->whereIn('status', [
+                BookingStatus::Confirmed,
+                BookingStatus::PaidInFull,
+                BookingStatus::DpPaid,
+                BookingStatus::Done,
+                BookingStatus::Completed,
+            ])
             ->whereHas('items', fn ($q) => $q->whereDate('booking_date', $today))
-            ->sum('total_amount');
+            ->sum('paid_amount');
+
+        // Fallback to total_amount if paid_amount is 0 for legacy records
+        if ($todayRevenue === 0) {
+            $todayRevenue = (int) Booking::where('venue_id', $venue->id)
+                ->whereIn('status', [BookingStatus::Confirmed, BookingStatus::PaidInFull, BookingStatus::Done, BookingStatus::Completed])
+                ->whereHas('items', fn ($q) => $q->whereDate('booking_date', $today))
+                ->sum('total_amount');
+        }
 
         // KPI 3: Pending verification / confirmation queue
         $pendingVerificationCount = Booking::where('venue_id', $venue->id)
             ->where(function ($q) {
-                $q->where('status', BookingStatus::Pending)
+                $q->whereIn('status', [BookingStatus::Pending, BookingStatus::PendingPayment])
                     ->orWhereHas('payment', fn ($pq) => $pq->where('status', PaymentStatus::PendingVerification));
             })
             ->count();
 
-        // KPI 4: Cancelled bookings today
+        // KPI 4: Cancelled / Expired bookings today
         $todayCancelledCount = Booking::where('venue_id', $venue->id)
             ->whereIn('status', [BookingStatus::Cancelled, BookingStatus::Expired])
             ->whereHas('items', fn ($q) => $q->whereDate('booking_date', $today))
             ->count();
 
         // Incoming bookings today (latest 10)
-        $todayBookings = Booking::with(['items.court', 'user', 'payment'])
+        $todayBookings = Booking::with(['items.court', 'user', 'payment', 'payments'])
             ->where('venue_id', $venue->id)
             ->whereHas('items', fn ($q) => $q->whereDate('booking_date', $today))
             ->latest()
@@ -139,20 +192,35 @@ class OperatorController extends Controller
         for ($i = 6; $i >= 0; $i--) {
             $dayDate = Carbon::today()->subDays($i)->toDateString();
             $dayRevenue = (int) Booking::where('venue_id', $venue->id)
-                ->whereIn('status', [BookingStatus::Confirmed, BookingStatus::Done])
+                ->whereIn('status', [
+                    BookingStatus::Confirmed,
+                    BookingStatus::PaidInFull,
+                    BookingStatus::DpPaid,
+                    BookingStatus::Done,
+                    BookingStatus::Completed,
+                ])
                 ->whereHas('items', fn ($q) => $q->whereDate('booking_date', $dayDate))
-                ->sum('total_amount');
+                ->sum('paid_amount');
+
+            if ($dayRevenue === 0) {
+                $dayRevenue = (int) Booking::where('venue_id', $venue->id)
+                    ->whereIn('status', [BookingStatus::Confirmed, BookingStatus::PaidInFull, BookingStatus::Done, BookingStatus::Completed])
+                    ->whereHas('items', fn ($q) => $q->whereDate('booking_date', $dayDate))
+                    ->sum('total_amount');
+            }
 
             $weeklyRevenue[] = [
                 'date' => $dayDate,
                 'label' => Carbon::parse($dayDate)->isoFormat('dd'),
                 'amount' => $dayRevenue,
             ];
+
             $weeklyTotal += $dayRevenue;
         }
 
         return view('operator.dashboard', compact(
             'venue',
+            'accessibleVenues',
             'todayBookingsCount',
             'todayRevenue',
             'pendingVerificationCount',
@@ -169,12 +237,39 @@ class OperatorController extends Controller
      */
     public function confirm(Booking $booking, Request $request): RedirectResponse
     {
-        $venue = $this->getOperatorVenue($request->user());
-        abort_if($booking->venue_id !== $venue->id, 403, 'Anda tidak memiliki hak akses untuk booking di venue ini.');
+        ['accessibleVenues' => $accessibleVenues] = $this->resolveVenues($request->user());
+        abort_if(! $accessibleVenues->contains('id', $booking->venue_id), 403, 'Anda tidak memiliki hak akses untuk booking di venue ini.');
 
         $this->bookingService->confirmByOperator($booking, $request->user());
 
-        return back()->with('status', "Booking {$booking->booking_code} berhasil dikonfirmasi.");
+        return back()->with('status', "Booking {$booking->booking_code} berhasil diverifikasi & dikonfirmasi.");
+    }
+
+    /**
+     * Process on-site settlement for a DP-paid booking.
+     */
+    public function settle(Booking $booking, Request $request): RedirectResponse
+    {
+        $user = $request->user();
+        ['accessibleVenues' => $accessibleVenues] = $this->resolveVenues($user);
+
+        abort_if(! $accessibleVenues->contains('id', $booking->venue_id), 403, 'Anda tidak memiliki hak akses untuk memproses pelunasan di venue ini.');
+
+        $validated = $request->validate([
+            'settlement_method' => ['required', 'string', 'in:cash,qris,manual_transfer'],
+            'notes' => ['nullable', 'string', 'max:500'],
+        ]);
+
+        $remaining = $booking->remaining_amount;
+
+        $this->bookingService->settlePaymentByOperator(
+            $booking,
+            $user,
+            $validated['settlement_method'],
+            $validated['notes'] ?? null
+        );
+
+        return back()->with('status', "Pelunasan sisa tagihan booking {$booking->booking_code} sebesar Rp ".number_format($remaining, 0, ',', '.').' berhasil dicatat!');
     }
 
     /**
@@ -182,8 +277,8 @@ class OperatorController extends Controller
      */
     public function reject(Booking $booking, RejectBookingRequest $request): RedirectResponse
     {
-        $venue = $this->getOperatorVenue($request->user());
-        abort_if($booking->venue_id !== $venue->id, 403, 'Anda tidak memiliki hak akses untuk booking di venue ini.');
+        ['accessibleVenues' => $accessibleVenues] = $this->resolveVenues($request->user());
+        abort_if(! $accessibleVenues->contains('id', $booking->venue_id), 403, 'Anda tidak memiliki hak akses untuk booking di venue ini.');
 
         $this->bookingService->rejectByOperator($booking, $request->user(), $request->validated('reason'));
 
@@ -195,8 +290,8 @@ class OperatorController extends Controller
      */
     public function cancel(Booking $booking, CancelBookingRequest $request): RedirectResponse
     {
-        $venue = $this->getOperatorVenue($request->user());
-        abort_if($booking->venue_id !== $venue->id, 403, 'Anda tidak memiliki hak akses untuk booking di venue ini.');
+        ['accessibleVenues' => $accessibleVenues] = $this->resolveVenues($request->user());
+        abort_if(! $accessibleVenues->contains('id', $booking->venue_id), 403, 'Anda tidak memiliki hak akses untuk booking di venue ini.');
 
         $this->bookingService->cancelConfirmedByOperator($booking, $request->user(), $request->validated('reason'));
 
@@ -208,15 +303,25 @@ class OperatorController extends Controller
      */
     public function bookingList(Request $request): View
     {
-        $venue = $this->getOperatorVenue($request->user());
+        $requestedVenueId = $request->query('venue_id') ? (int) $request->query('venue_id') : null;
+        ['activeVenue' => $venue, 'accessibleVenues' => $accessibleVenues] = $this->resolveVenues($request->user(), $requestedVenueId);
+
         $search = $request->query('search', '');
         $activeFilter = $request->query('status', 'all');
 
-        $query = Booking::with(['items.court', 'user', 'payment'])
+        $query = Booking::with(['items.court', 'user', 'payment', 'payments', 'settledBy'])
             ->where('venue_id', $venue->id);
 
         if ($activeFilter !== 'all' && ! empty($activeFilter)) {
-            $query->where('status', $activeFilter);
+            if ($activeFilter === 'pending') {
+                $query->whereIn('status', [BookingStatus::Pending, BookingStatus::PendingPayment]);
+            } elseif ($activeFilter === 'confirmed') {
+                $query->whereIn('status', [BookingStatus::Confirmed, BookingStatus::PaidInFull]);
+            } elseif ($activeFilter === 'done') {
+                $query->whereIn('status', [BookingStatus::Done, BookingStatus::Completed]);
+            } else {
+                $query->where('status', $activeFilter);
+            }
         }
 
         if (! empty($search)) {
@@ -229,7 +334,112 @@ class OperatorController extends Controller
 
         $allBookings = $query->latest()->paginate(10)->withQueryString();
 
-        return view('operator.booking', compact('venue', 'allBookings', 'search', 'activeFilter'));
+        return view('operator.booking', compact('venue', 'accessibleVenues', 'allBookings', 'search', 'activeFilter'));
+    }
+
+    /**
+     * Financial Report scoped by Owner / Operator.
+     */
+    public function laporan(Request $request): View
+    {
+        $user = $request->user();
+        $requestedVenueId = $request->query('venue_id') ? (int) $request->query('venue_id') : null;
+        ['activeVenue' => $venue, 'accessibleVenues' => $accessibleVenues] = $this->resolveVenues($user, $requestedVenueId);
+
+        $period = $request->query('period', 'bulanan');
+        $today = Carbon::today();
+
+        switch ($period) {
+            case 'harian':
+                $startDate = $today->copy()->startOfDay();
+                $endDate = $today->copy()->endOfDay();
+                $periodLabel = 'Hari Ini ('.$today->translatedFormat('d F Y').')';
+                break;
+            case 'mingguan':
+                $startDate = Carbon::now()->startOfWeek();
+                $endDate = Carbon::now()->endOfWeek();
+                $periodLabel = 'Minggu Ini ('.$startDate->translatedFormat('d M').' - '.$endDate->translatedFormat('d M Y').')';
+                break;
+            case 'custom':
+                $startDate = $request->query('start_date') ? Carbon::parse($request->query('start_date'))->startOfDay() : Carbon::now()->startOfMonth();
+                $endDate = $request->query('end_date') ? Carbon::parse($request->query('end_date'))->endOfDay() : Carbon::now()->endOfDay();
+                $periodLabel = 'Periode '.$startDate->translatedFormat('d M Y').' s/d '.$endDate->translatedFormat('d M Y');
+                break;
+            case 'bulanan':
+            default:
+                $period = 'bulanan';
+                $startDate = Carbon::now()->startOfMonth();
+                $endDate = Carbon::now()->endOfMonth();
+                $periodLabel = 'Bulan Ini ('.Carbon::now()->translatedFormat('F Y').')';
+                break;
+        }
+
+        // Scope to current venue or all venues owned
+        $venueFilter = $request->query('venue_filter', (string) $venue->id);
+        $targetVenueIds = ($venueFilter === 'all' && ($user->isOwner() || $user->isSuperAdmin()))
+            ? $accessibleVenues->pluck('id')->all()
+            : [$venue->id];
+
+        // 1. Total Nilai Transaksi (Gross Revenue)
+        $grossRevenue = (int) Booking::whereIn('venue_id', $targetVenueIds)
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->whereNotIn('status', [BookingStatus::Cancelled, BookingStatus::Expired])
+            ->sum('total_amount');
+
+        // 2. Uang Masuk dari DP
+        $dpIncome = (int) Payment::whereHas('booking', fn ($q) => $q->whereIn('venue_id', $targetVenueIds))
+            ->where('payment_type', 'dp')
+            ->where('status', PaymentStatus::Paid)
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->sum('amount');
+
+        // 3. Uang Masuk dari Pelunasan On-Site
+        $settlementIncome = (int) Payment::whereHas('booking', fn ($q) => $q->whereIn('venue_id', $targetVenueIds))
+            ->where('payment_type', 'settlement')
+            ->where('status', PaymentStatus::Paid)
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->sum('amount');
+
+        // 4. Uang Masuk dari Full Payment
+        $fullPaymentIncome = (int) Payment::whereHas('booking', fn ($q) => $q->whereIn('venue_id', $targetVenueIds))
+            ->where('payment_type', 'full')
+            ->where('status', PaymentStatus::Paid)
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->sum('amount');
+
+        // Total Kas Masuk Riil
+        $totalCashIn = $dpIncome + $settlementIncome + $fullPaymentIncome;
+
+        // 5. Sisa Tagihan (Piutang / Belum Lunas)
+        $receivables = (int) Booking::whereIn('venue_id', $targetVenueIds)
+            ->where('status', BookingStatus::DpPaid)
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->sum('remaining_amount');
+
+        // List Bookings in period
+        $reportBookings = Booking::with(['items.court', 'user', 'payments', 'settledBy'])
+            ->whereIn('venue_id', $targetVenueIds)
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->latest()
+            ->paginate(15)
+            ->withQueryString();
+
+        return view('operator.laporan', compact(
+            'venue',
+            'accessibleVenues',
+            'period',
+            'periodLabel',
+            'startDate',
+            'endDate',
+            'venueFilter',
+            'grossRevenue',
+            'dpIncome',
+            'settlementIncome',
+            'fullPaymentIncome',
+            'totalCashIn',
+            'receivables',
+            'reportBookings'
+        ));
     }
 
     /**
@@ -237,11 +447,13 @@ class OperatorController extends Controller
      */
     public function exportCsv(Request $request): StreamedResponse
     {
-        $venue = $this->getOperatorVenue($request->user());
+        $requestedVenueId = $request->query('venue_id') ? (int) $request->query('venue_id') : null;
+        ['activeVenue' => $venue] = $this->resolveVenues($request->user(), $requestedVenueId);
+
         $search = $request->query('search', '');
         $activeFilter = $request->query('status', 'all');
 
-        $query = Booking::with(['items.court', 'payment'])
+        $query = Booking::with(['items.court', 'payment', 'payments', 'settledBy'])
             ->where('venue_id', $venue->id);
 
         if ($activeFilter !== 'all' && ! empty($activeFilter)) {
@@ -265,7 +477,7 @@ class OperatorController extends Controller
 
         $callback = function () use ($bookings) {
             $handle = fopen('php://output', 'w');
-            fputcsv($handle, ['Kode Booking', 'Nama Pemesan', 'Nomor WhatsApp', 'Email', 'Lapangan', 'Tanggal Main', 'Jam Main', 'Total (Rp)', 'Status', 'Metode Bayar', 'Waktu Dibuat']);
+            fputcsv($handle, ['Kode Booking', 'Nama Pemesan', 'Nomor WhatsApp', 'Email', 'Lapangan', 'Tanggal Main', 'Jam Main', 'Total (Rp)', 'Uang Muka/DP (Rp)', 'Sisa (Rp)', 'Status', 'Metode Bayar', 'Waktu Dibuat']);
 
             foreach ($bookings as $b) {
                 $courtName = $b->items->first()?->court?->name ?? 'Lapangan';
@@ -282,6 +494,8 @@ class OperatorController extends Controller
                     $bookingDate,
                     $times,
                     $b->total_amount,
+                    $b->paid_amount,
+                    $b->remaining_amount,
                     $b->status->label(),
                     $method,
                     $b->created_at->format('Y-m-d H:i:s'),
@@ -299,7 +513,9 @@ class OperatorController extends Controller
      */
     public function jadwal(Request $request): View
     {
-        $venue = $this->getOperatorVenue($request->user());
+        $requestedVenueId = $request->query('venue_id') ? (int) $request->query('venue_id') : null;
+        ['activeVenue' => $venue, 'accessibleVenues' => $accessibleVenues] = $this->resolveVenues($request->user(), $requestedVenueId);
+
         $selectedDate = $request->query('date', Carbon::today()->toDateString());
         $selectedCourt = $request->query('court', 'all');
 
@@ -323,6 +539,7 @@ class OperatorController extends Controller
 
         return view('operator.jadwal', compact(
             'venue',
+            'accessibleVenues',
             'courts',
             'hours',
             'selectedDate',
@@ -336,7 +553,7 @@ class OperatorController extends Controller
      */
     public function blockSlot(BlockSlotRequest $request): RedirectResponse
     {
-        $venue = $this->getOperatorVenue($request->user());
+        ['activeVenue' => $venue] = $this->resolveVenues($request->user());
         $court = Court::where('id', $request->validated('court_id'))
             ->where('venue_id', $venue->id)
             ->firstOrFail();
@@ -349,21 +566,19 @@ class OperatorController extends Controller
 
         $now = Carbon::now();
 
-        // Ensure slot is completely free
-        $existing = CourtSlot::where('court_id', $court->id)
+        // Check if slot is occupied
+        $occupied = CourtSlot::where('court_id', $court->id)
             ->whereDate('booking_date', $bookingDate)
             ->where('start_time', $startTime)
             ->where(function ($q) use ($now) {
                 $q->whereNull('locked_until')
                     ->orWhere('locked_until', '>', $now);
             })
-            ->first();
+            ->exists();
 
-        if ($existing) {
-            return back()->withErrors(['start_time' => 'Slot pada jam tersebut sedang terisi atau terblokir.']);
+        if ($occupied) {
+            return back()->withErrors(['slot' => 'Slot waktu tersebut sudah terisi atau diblokir.']);
         }
-
-        $blockType = SlotBlockType::from($request->validated('block_type', SlotBlockType::Maintenance->value));
 
         CourtSlot::create([
             'court_id' => $court->id,
@@ -371,28 +586,25 @@ class OperatorController extends Controller
             'booking_date' => $bookingDate,
             'start_time' => $startTime,
             'end_time' => $endTime,
-            'block_type' => $blockType,
-            'note' => $request->validated('note'),
+            'block_type' => SlotBlockType::Maintenance,
             'locked_until' => null,
+            'notes' => $request->validated('reason') ?? 'Diblokir oleh operator',
         ]);
 
-        return back()->with('status', "Slot {$court->name} pada {$bookingDate} pukul {$startTime} berhasil diblokir.");
+        return back()->with('status', "Slot {$startTime} pada {$court->name} berhasil diblokir.");
     }
 
     /**
-     * Operator unblocks a manually blocked slot.
+     * Operator unblocks a previously blocked slot.
      */
     public function unblockSlot(int $id, Request $request): RedirectResponse
     {
-        $venue = $this->getOperatorVenue($request->user());
-        $slot = CourtSlot::with('court')->findOrFail($id);
+        ['activeVenue' => $venue] = $this->resolveVenues($request->user());
 
-        abort_if($slot->court->venue_id !== $venue->id, 403, 'Akses venue tidak sesuai.');
-
-        // User rule: "hanya slot blokir yang bisa dibuka, tidak slot booking"
-        if ($slot->block_type === SlotBlockType::Booking || $slot->booking_id !== null) {
-            return back()->withErrors(['error' => 'Slot reservasi customer tidak dapat dibuka langsung. Batalkan booking terlebih dahulu.']);
-        }
+        $slot = CourtSlot::where('id', $id)
+            ->whereHas('court', fn ($q) => $q->where('venue_id', $venue->id))
+            ->where('block_type', SlotBlockType::Maintenance)
+            ->firstOrFail();
 
         $slot->delete();
 
@@ -400,110 +612,82 @@ class OperatorController extends Controller
     }
 
     /**
-     * Display court management page.
+     * Display court list for this venue.
      */
     public function lapangan(Request $request): View
     {
-        $venue = $this->getOperatorVenue($request->user());
-        $today = Carbon::today()->toDateString();
-        $now = Carbon::now();
+        $requestedVenueId = $request->query('venue_id') ? (int) $request->query('venue_id') : null;
+        ['activeVenue' => $venue, 'accessibleVenues' => $accessibleVenues] = $this->resolveVenues($request->user(), $requestedVenueId);
 
-        $openHour = (int) substr($venue->open_time, 0, 2);
-        $closeHour = (int) substr($venue->close_time, 0, 2);
-        $totalOperatingHours = max(1, $closeHour - $openHour);
+        $courts = Court::where('venue_id', $venue->id)
+            ->withCount(['bookingItems'])
+            ->latest()
+            ->paginate(10);
 
-        $courts = Court::where('venue_id', $venue->id)->get();
-
-        $courtStats = [];
-        foreach ($courts as $court) {
-            if ($court->status === CourtStatus::Maintenance) {
-                $courtStats[$court->id] = 0;
-
-                continue;
-            }
-
-            $bookedCount = CourtSlot::where('court_id', $court->id)
-                ->whereDate('booking_date', $today)
-                ->where(function ($q) use ($now) {
-                    $q->whereNull('locked_until')
-                        ->orWhere('locked_until', '>', $now);
-                })
-                ->count();
-
-            $courtStats[$court->id] = min(100, (int) round(($bookedCount / $totalOperatingHours) * 100));
-        }
-
-        return view('operator.lapangan', compact('venue', 'courts', 'courtStats'));
+        return view('operator.lapangan', compact('venue', 'accessibleVenues', 'courts'));
     }
 
     /**
-     * Store new court with automatic unique slug.
+     * Store new court for this venue.
      */
     public function storeCourt(StoreCourtRequest $request): RedirectResponse
     {
-        $venue = $this->getOperatorVenue($request->user());
+        ['activeVenue' => $venue] = $this->resolveVenues($request->user());
 
-        $name = $request->validated('name');
-        $baseSlug = Str::slug($name);
-        $slug = $baseSlug;
-        $counter = 1;
-
-        while (Court::where('slug', $slug)->exists()) {
-            $slug = "{$baseSlug}-{$counter}";
-            $counter++;
+        $slug = Str::slug($request->validated('name'));
+        if (Court::where('slug', $slug)->exists()) {
+            $slug .= '-'.Str::random(4);
         }
 
         Court::create([
             'venue_id' => $venue->id,
-            'name' => $name,
+            'name' => $request->validated('name'),
             'slug' => $slug,
-            'sport_category' => $request->validated('sport_category'),
-            'surface_type' => $request->validated('surface_type'),
+            'sport_type' => $request->validated('sport_type'),
+            'floor_type' => $request->validated('floor_type'),
+            'is_indoor' => $request->validated('is_indoor'),
             'price_regular' => $request->validated('price_regular'),
             'price_prime' => $request->validated('price_prime'),
-            'status' => $request->validated('status', CourtStatus::Active->value),
-            'specs' => $request->validated('specs'),
+            'status' => CourtStatus::Active,
         ]);
 
-        return back()->with('status', "Lapangan {$name} berhasil ditambahkan.");
+        return back()->with('status', 'Lapangan baru berhasil ditambahkan.');
     }
 
     /**
-     * Update existing court details.
+     * Update court configuration.
      */
     public function updateCourt(Court $court, UpdateCourtRequest $request): RedirectResponse
     {
-        $venue = $this->getOperatorVenue($request->user());
-        abort_if($court->venue_id !== $venue->id, 403, 'Akses venue tidak sesuai.');
+        ['activeVenue' => $venue] = $this->resolveVenues($request->user());
+        abort_if($court->venue_id !== $venue->id, 403, 'Akses ditolak.');
 
         $court->update([
             'name' => $request->validated('name'),
-            'sport_category' => $request->validated('sport_category'),
-            'surface_type' => $request->validated('surface_type'),
+            'sport_type' => $request->validated('sport_type'),
+            'floor_type' => $request->validated('floor_type'),
+            'is_indoor' => $request->validated('is_indoor'),
             'price_regular' => $request->validated('price_regular'),
             'price_prime' => $request->validated('price_prime'),
-            'status' => $request->validated('status', $court->status->value),
-            'specs' => $request->validated('specs', $court->specs),
         ]);
 
         return back()->with('status', "Data lapangan {$court->name} berhasil diperbarui.");
     }
 
     /**
-     * Toggle court status between active and maintenance (nonaktifkan, bukan hapus).
+     * Toggle court operational status (active / maintenance).
      */
     public function toggleCourtStatus(Court $court, Request $request): RedirectResponse
     {
-        $venue = $this->getOperatorVenue($request->user());
-        abort_if($court->venue_id !== $venue->id, 403, 'Akses venue tidak sesuai.');
+        ['activeVenue' => $venue] = $this->resolveVenues($request->user());
+        abort_if($court->venue_id !== $venue->id, 403, 'Akses ditolak.');
 
-        $court->status = ($court->status === CourtStatus::Active)
-            ? CourtStatus::Maintenance
-            : CourtStatus::Active;
+        $newStatus = $court->status === CourtStatus::Active ? CourtStatus::Maintenance : CourtStatus::Active;
+        $court->status = $newStatus;
         $court->save();
 
-        $statusText = $court->status === CourtStatus::Active ? 'diaktifkan' : 'dinonaktifkan (maintenance)';
+        $label = $newStatus === CourtStatus::Active ? 'diaktifkan kembali' : 'dialihkan ke mode perawatan (maintenance)';
 
-        return back()->with('status', "Lapangan {$court->name} berhasil {$statusText}.");
+        return back()->with('status', "Lapangan {$court->name} berhasil {$label}.");
     }
 }

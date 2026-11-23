@@ -13,14 +13,17 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 #[Fillable([
     'booking_id',
     'payment_method',
+    'payment_type',
     'status',
     'amount',
     'proof_path',
     'proof_uploaded_at',
     'provider',
     'external_reference',
+    'notes',
     'verified_by',
     'verified_at',
+    'cashier_id',
 ])]
 class Payment extends Model
 {
@@ -57,5 +60,13 @@ class Payment extends Model
     public function verifier(): BelongsTo
     {
         return $this->belongsTo(User::class, 'verified_by');
+    }
+
+    /**
+     * Get the cashier who processed this on-site payment.
+     */
+    public function cashier(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'cashier_id');
     }
 }

@@ -43,14 +43,14 @@ Route::get('/booking/sukses', [BookingController::class, 'showSukses'])->name('b
 Route::get('/bookings/{booking}/proof', [BookingController::class, 'showProof'])->name('booking.proof')->middleware(['auth', 'throttle:30,1']);
 
 // === DASHBOARD USER ===
-Route::middleware(['role:customer,operator,super_admin'])->group(function () {
+Route::middleware(['role:customer,operator,owner,super_admin'])->group(function () {
     Route::get('/dashboard', [UserController::class, 'dashboard'])->name('user.dashboard');
     Route::get('/dashboard/booking/{id}', [UserController::class, 'bookingDetail'])->name('user.booking.detail');
     Route::post('/dashboard/booking/{booking}/cancel', [BookingController::class, 'cancelPending'])->name('user.booking.cancel');
 });
 
 // === OPERATOR ROUTES ===
-Route::prefix('operator')->name('operator.')->middleware(['role:operator,super_admin'])->group(function () {
+Route::prefix('operator')->name('operator.')->middleware(['role:operator,owner,super_admin'])->group(function () {
     Route::get('/dashboard', [OperatorController::class, 'dashboard'])->name('dashboard');
 
     Route::get('/booking', [OperatorController::class, 'bookingList'])->name('booking');
@@ -58,6 +58,9 @@ Route::prefix('operator')->name('operator.')->middleware(['role:operator,super_a
     Route::post('/booking/{booking}/confirm', [OperatorController::class, 'confirm'])->name('booking.confirm');
     Route::post('/booking/{booking}/reject', [OperatorController::class, 'reject'])->name('booking.reject');
     Route::post('/booking/{booking}/cancel', [OperatorController::class, 'cancel'])->name('booking.cancel');
+    Route::post('/booking/{booking}/settle', [OperatorController::class, 'settle'])->name('booking.settle');
+
+    Route::get('/laporan', [OperatorController::class, 'laporan'])->name('laporan');
 
     Route::get('/jadwal', [OperatorController::class, 'jadwal'])->name('jadwal');
     Route::post('/jadwal/block', [OperatorController::class, 'blockSlot'])->name('jadwal.block');
@@ -72,6 +75,7 @@ Route::prefix('operator')->name('operator.')->middleware(['role:operator,super_a
 // === ADMIN ROUTES ===
 Route::prefix('admin')->name('admin.')->middleware(['role:super_admin'])->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
+    Route::get('/laporan', [AdminController::class, 'laporan'])->name('laporan');
 
     Route::get('/venues', [AdminController::class, 'venues'])->name('venues');
     Route::put('/venues/{venue}', [AdminController::class, 'updateVenue'])->name('venues.update');

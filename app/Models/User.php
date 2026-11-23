@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'phone', 'password'])]
+#[Fillable(['name', 'email', 'phone', 'password', 'role', 'status', 'venue_id'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -46,11 +46,19 @@ class User extends Authenticatable
     }
 
     /**
-     * Get the venue managed by this user (operator).
+     * Get the venue managed by this user (operator / cashier).
      */
     public function venue(): BelongsTo
     {
         return $this->belongsTo(Venue::class);
+    }
+
+    /**
+     * Get venues owned by this user (owner).
+     */
+    public function ownedVenues(): HasMany
+    {
+        return $this->hasMany(Venue::class, 'owner_id');
     }
 
     /**
@@ -70,11 +78,27 @@ class User extends Authenticatable
     }
 
     /**
+     * Get on-site payments handled by this cashier.
+     */
+    public function cashierPayments(): HasMany
+    {
+        return $this->hasMany(Payment::class, 'cashier_id');
+    }
+
+    /**
      * Get bookings checked-in by this operator.
      */
     public function checkedInBookings(): HasMany
     {
         return $this->hasMany(Booking::class, 'checked_in_by');
+    }
+
+    /**
+     * Get bookings settled on-site by this cashier.
+     */
+    public function settledBookings(): HasMany
+    {
+        return $this->hasMany(Booking::class, 'settled_by');
     }
 
     public function isCustomer(): bool
@@ -85,6 +109,11 @@ class User extends Authenticatable
     public function isOperator(): bool
     {
         return $this->role === UserRole::Operator;
+    }
+
+    public function isOwner(): bool
+    {
+        return $this->role === UserRole::Owner;
     }
 
     public function isSuperAdmin(): bool

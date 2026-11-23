@@ -6,9 +6,11 @@ use Database\Factories\VenueFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Fillable([
+    'owner_id',
     'name',
     'slug',
     'address',
@@ -36,6 +38,14 @@ class Venue extends Model
         return [
             'slot_lock_duration_minutes' => 'integer',
         ];
+    }
+
+    /**
+     * Get the owner of this venue.
+     */
+    public function owner(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'owner_id');
     }
 
     /**

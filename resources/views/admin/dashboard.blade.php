@@ -26,6 +26,7 @@
                 <div class="flex flex-col gap-1">
                     @foreach([
                         ['dashboard', 'Dashboard', route('admin.dashboard'), true],
+                        ['bar_chart', 'Laporan Keuangan', route('admin.laporan'), false],
                         ['domain', 'Kelola Venue', route('admin.venues'), false],
                         ['people', 'Kelola User', route('admin.users'), false],
                     ] as $item)

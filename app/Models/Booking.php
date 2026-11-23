@@ -19,6 +19,14 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
     'customer_phone',
     'customer_email',
     'notes',
+    'payment_type',
+    'dp_percentage',
+    'dp_amount',
+    'paid_amount',
+    'remaining_amount',
+    'settlement_method',
+    'settled_at',
+    'settled_by',
     'total_hours',
     'subtotal',
     'total_amount',
@@ -47,8 +55,13 @@ class Booking extends Model
             'total_hours' => 'integer',
             'subtotal' => 'integer',
             'total_amount' => 'integer',
+            'dp_percentage' => 'integer',
+            'dp_amount' => 'integer',
+            'paid_amount' => 'integer',
+            'remaining_amount' => 'integer',
             'expires_at' => 'datetime',
             'checked_in_at' => 'datetime',
+            'settled_at' => 'datetime',
             'cancelled_at' => 'datetime',
         ];
     }
@@ -75,6 +88,14 @@ class Booking extends Model
     public function checkedInBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'checked_in_by');
+    }
+
+    /**
+     * Get the cashier/operator who processed the on-site settlement.
+     */
+    public function settledBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'settled_by');
     }
 
     /**
@@ -123,5 +144,42 @@ class Booking extends Model
     public function getCourtAttribute(): ?Court
     {
         return $this->items->first()?->court;
+    }
+
+    /**
+     * Check if this booking uses a Down Payment scheme.
+     */
+    public function isDp(): bool
+    {
+        return $this->payment_type === 'dp';
+    }
+
+    /**
+     * Check if DP has been paid and waiting for on-site settlement.
+     */
+    public function isDpPaid(): bool
+    {
+        return $this->status === BookingStatus::DpPaid;
+    }
+
+    /**
+     * Check if the booking has been fully paid.
+     */
+    public function isFullyPaid(): bool
+    {
+        return in_array($this->status, [
+            BookingStatus::Confirmed,
+            BookingStatus::PaidInFull,
+            BookingStatus::Done,
+            BookingStatus::Completed,
+        ], true) || ($this->remaining_amount <= 0 && $this->paid_amount > 0);
+    }
+
+    /**
+     * Check whether this booking can be settled on-site by cashier.
+     */
+    public function canBeSettled(): bool
+    {
+        return $this->status === BookingStatus::DpPaid && $this->remaining_amount > 0;
     }
 }

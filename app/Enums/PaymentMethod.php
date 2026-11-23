@@ -8,6 +8,7 @@ enum PaymentMethod: string
     case EWallet = 'e_wallet';
     case VirtualAccount = 'virtual_account';
     case ManualTransfer = 'manual_transfer';
+    case Cash = 'cash';
 
     public function label(): string
     {
@@ -15,7 +16,8 @@ enum PaymentMethod: string
             self::Qris => 'QRIS',
             self::EWallet => 'GoPay / OVO / Dana',
             self::VirtualAccount => 'Virtual Account Bank',
-            self::ManualTransfer => 'Transfer Manual',
+            self::ManualTransfer => 'Transfer Bank Manual',
+            self::Cash => 'Tunai / Cash (Di Tempat)',
         };
     }
 }

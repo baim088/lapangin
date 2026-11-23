@@ -3,14 +3,17 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Enums\BookingStatus;
+use App\Enums\PaymentStatus;
 use App\Enums\UserRole;
 use App\Enums\UserStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\UpdateUserRoleRequest;
 use App\Http\Requests\Admin\UpdateVenueRequest;
 use App\Models\Booking;
+use App\Models\Payment;
 use App\Models\User;
 use App\Models\Venue;
+use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -25,18 +28,40 @@ class AdminController extends Controller
         $totalVenues = Venue::count();
         $totalUsers = User::count();
         $totalBookings = Booking::count();
-        $totalRevenue = (int) Booking::whereIn('status', [BookingStatus::Confirmed, BookingStatus::Done])->sum('total_amount');
+        $totalRevenue = (int) Booking::whereIn('status', [
+            BookingStatus::Confirmed,
+            BookingStatus::PaidInFull,
+            BookingStatus::DpPaid,
+            BookingStatus::Done,
+            BookingStatus::Completed,
+        ])->sum('paid_amount');
+
+        if ($totalRevenue === 0) {
+            $totalRevenue = (int) Booking::whereIn('status', [BookingStatus::Confirmed, BookingStatus::PaidInFull, BookingStatus::Done, BookingStatus::Completed])->sum('total_amount');
+        }
 
         $recentUsers = User::latest()->take(5)->get();
 
-        $venues = Venue::withCount(['courts'])->get();
+        $venues = Venue::withCount(['courts'])->with('owner')->get();
 
         $venueStats = [];
         foreach ($venues as $v) {
             $venueBookingsCount = Booking::where('venue_id', $v->id)->count();
             $venueRevenue = (int) Booking::where('venue_id', $v->id)
-                ->whereIn('status', [BookingStatus::Confirmed, BookingStatus::Done])
-                ->sum('total_amount');
+                ->whereIn('status', [
+                    BookingStatus::Confirmed,
+                    BookingStatus::PaidInFull,
+                    BookingStatus::DpPaid,
+                    BookingStatus::Done,
+                    BookingStatus::Completed,
+                ])
+                ->sum('paid_amount');
+
+            if ($venueRevenue === 0) {
+                $venueRevenue = (int) Booking::where('venue_id', $v->id)
+                    ->whereIn('status', [BookingStatus::Confirmed, BookingStatus::PaidInFull, BookingStatus::Done, BookingStatus::Completed])
+                    ->sum('total_amount');
+            }
 
             $venueStats[$v->id] = [
                 'bookings_count' => $venueBookingsCount,
@@ -56,18 +81,126 @@ class AdminController extends Controller
     }
 
     /**
+     * Platform Global Financial Report.
+     */
+    public function laporan(Request $request): View
+    {
+        $venues = Venue::all();
+        $selectedVenueId = $request->query('venue_id', 'all');
+
+        $period = $request->query('period', 'bulanan');
+        $today = Carbon::today();
+
+        switch ($period) {
+            case 'harian':
+                $startDate = $today->copy()->startOfDay();
+                $endDate = $today->copy()->endOfDay();
+                $periodLabel = 'Hari Ini ('.$today->translatedFormat('d F Y').')';
+                break;
+            case 'mingguan':
+                $startDate = Carbon::now()->startOfWeek();
+                $endDate = Carbon::now()->endOfWeek();
+                $periodLabel = 'Minggu Ini ('.$startDate->translatedFormat('d M').' - '.$endDate->translatedFormat('d M Y').')';
+                break;
+            case 'custom':
+                $startDate = $request->query('start_date') ? Carbon::parse($request->query('start_date'))->startOfDay() : Carbon::now()->startOfMonth();
+                $endDate = $request->query('end_date') ? Carbon::parse($request->query('end_date'))->endOfDay() : Carbon::now()->endOfDay();
+                $periodLabel = 'Periode '.$startDate->translatedFormat('d M Y').' s/d '.$endDate->translatedFormat('d M Y');
+                break;
+            case 'bulanan':
+            default:
+                $period = 'bulanan';
+                $startDate = Carbon::now()->startOfMonth();
+                $endDate = Carbon::now()->endOfMonth();
+                $periodLabel = 'Bulan Ini ('.Carbon::now()->translatedFormat('F Y').')';
+                break;
+        }
+
+        $bookingQuery = Booking::query()->whereBetween('created_at', [$startDate, $endDate]);
+        $paymentQuery = Payment::query()->where('status', PaymentStatus::Paid)->whereBetween('created_at', [$startDate, $endDate]);
+
+        if ($selectedVenueId !== 'all' && is_numeric($selectedVenueId)) {
+            $bookingQuery->where('venue_id', (int) $selectedVenueId);
+            $paymentQuery->whereHas('booking', fn ($q) => $q->where('venue_id', (int) $selectedVenueId));
+        }
+
+        // 1. Gross Revenue
+        $grossRevenue = (int) (clone $bookingQuery)
+            ->whereNotIn('status', [BookingStatus::Cancelled, BookingStatus::Expired])
+            ->sum('total_amount');
+
+        // 2. DP Income
+        $dpIncome = (int) (clone $paymentQuery)
+            ->where('payment_type', 'dp')
+            ->sum('amount');
+
+        // 3. Settlement Income
+        $settlementIncome = (int) (clone $paymentQuery)
+            ->where('payment_type', 'settlement')
+            ->sum('amount');
+
+        // 4. Full Payment Income
+        $fullPaymentIncome = (int) (clone $paymentQuery)
+            ->where('payment_type', 'full')
+            ->sum('amount');
+
+        // Total Kas Masuk
+        $totalCashIn = $dpIncome + $settlementIncome + $fullPaymentIncome;
+
+        // 5. Piutang (Remaining)
+        $receivables = (int) (clone $bookingQuery)
+            ->where('status', BookingStatus::DpPaid)
+            ->sum('remaining_amount');
+
+        $reportBookings = (clone $bookingQuery)
+            ->with(['venue', 'items.court', 'user', 'payments', 'settledBy'])
+            ->latest()
+            ->paginate(15)
+            ->withQueryString();
+
+        return view('admin.laporan', compact(
+            'venues',
+            'selectedVenueId',
+            'period',
+            'periodLabel',
+            'startDate',
+            'endDate',
+            'grossRevenue',
+            'dpIncome',
+            'settlementIncome',
+            'fullPaymentIncome',
+            'totalCashIn',
+            'receivables',
+            'reportBookings'
+        ));
+    }
+
+    /**
      * Display venue list for admin management.
      */
     public function venues(): View
     {
-        $venues = Venue::withCount(['courts'])->get();
+        $venues = Venue::withCount(['courts'])->with('owner')->get();
 
         $venueStats = [];
         foreach ($venues as $v) {
             $venueBookingsCount = Booking::where('venue_id', $v->id)->count();
             $venueRevenue = (int) Booking::where('venue_id', $v->id)
-                ->whereIn('status', [BookingStatus::Confirmed, BookingStatus::Done])
-                ->sum('total_amount');
+                ->whereIn('status', [
+                    BookingStatus::Confirmed,
+                    BookingStatus::PaidInFull,
+                    BookingStatus::DpPaid,
+                    BookingStatus::Done,
+                    BookingStatus::Completed,
+                ])
+                ->sum('paid_amount');
+
+            if ($venueRevenue === 0) {
+                $venueRevenue = (int) Booking::where('venue_id', $v->id)
+                    ->whereIn('status', [BookingStatus::Confirmed, BookingStatus::PaidInFull, BookingStatus::Done, BookingStatus::Completed])
+                    ->sum('total_amount');
+            }
+
             $venueUsersCount = User::where('venue_id', $v->id)->count();
 
             $venueStats[$v->id] = [
@@ -135,7 +268,6 @@ class AdminController extends Controller
 
     /**
      * Toggle user status between active and suspended.
-     * Rule: Prevent super_admin from suspending their own account.
      */
     public function toggleUserStatus(User $user, Request $request): RedirectResponse
     {
@@ -156,7 +288,6 @@ class AdminController extends Controller
 
     /**
      * Update user role and assign venue_id if role is operator.
-     * Rule: Explicit forceFill (not mass assignment), operator requires venue_id, prevent super_admin self-demotion.
      */
     public function updateUserRole(User $user, UpdateUserRoleRequest $request): RedirectResponse
     {
@@ -171,7 +302,6 @@ class AdminController extends Controller
             ? (int) $request->validated('venue_id')
             : null;
 
-        // ForceFill explicitly to bypass mass assignment guard
         $user->forceFill([
             'role' => $newRole,
             'venue_id' => $venueId,

@@ -34,7 +34,7 @@ class ExpireStaleBookings
         $now = Carbon::now();
 
         $query = Booking::query()
-            ->where('status', BookingStatus::Pending)
+            ->whereIn('status', [BookingStatus::Pending, BookingStatus::PendingPayment])
             ->whereNotNull('expires_at')
             ->where('expires_at', '<=', $now);
 

@@ -215,8 +215,24 @@
                                 <span class="text-xs text-on-surface-variant">Jumlah Durasi</span>
                                 <span class="text-xs font-semibold text-on-surface">{{ $booking->items->count() }} Jam</span>
                             </div>
+                            <div class="flex justify-between py-2 border-b border-surface-container-high/60">
+                                <span class="text-xs text-on-surface-variant">Skema Pembayaran</span>
+                                <span class="text-xs font-bold text-pitch-deep">{{ $booking->isDp() ? 'Down Payment (DP ' . ($booking->dp_percentage ?? 50) . '%)' : 'Lunas (100%)' }}</span>
+                            </div>
+                            @if($booking->isDp())
+                            <div class="flex justify-between py-1 text-xs">
+                                <span class="text-on-surface-variant">DP Masuk</span>
+                                <span class="font-semibold text-indigo-700">Rp {{ number_format($booking->paid_amount, 0, ',', '.') }}</span>
+                            </div>
+                            <div class="flex justify-between py-1 text-xs">
+                                <span class="text-on-surface-variant">Sisa Tagihan (di Kasir)</span>
+                                <span class="font-bold {{ $booking->remaining_amount > 0 ? 'text-amber-700' : 'text-emerald-700' }}">
+                                    {{ $booking->remaining_amount > 0 ? 'Rp ' . number_format($booking->remaining_amount, 0, ',', '.') : 'LUNAS DI LOKASI' }}
+                                </span>
+                            </div>
+                            @endif
                             <div class="flex justify-between py-2">
-                                <span class="text-xs text-on-surface-variant">Total Biaya</span>
+                                <span class="text-xs text-on-surface-variant">Total Biaya Sewa</span>
                                 <span class="font-headline text-base font-bold text-pitch-deep">Rp {{ number_format($booking->total_amount, 0, ',', '.') }}</span>
                             </div>
                         </div>

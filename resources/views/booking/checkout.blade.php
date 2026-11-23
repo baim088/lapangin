@@ -149,6 +149,71 @@
                             </div>
                         </div>
 
+                        {{-- Section: Skema Pembayaran (Full vs DP) --}}
+                        <div class="bg-surface-white rounded-2xl border border-surface-container-high p-6 flex flex-col gap-5">
+                            <div class="flex items-center justify-between">
+                                <h2 class="font-headline text-lg font-bold text-on-surface flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-pitch-deep text-[22px]">tune</span>
+                                    Skema Pembayaran
+                                </h2>
+                                <span class="text-xs bg-pitch-surface text-pitch-deep font-semibold px-2.5 py-1 rounded-full border border-pitch-light/30">
+                                    Pilih Pembayaran
+                                </span>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                {{-- Full Payment --}}
+                                <label
+                                    class="relative flex flex-col p-4 rounded-xl border cursor-pointer transition-all"
+                                    :class="paymentType === 'full' ? 'border-pitch-emerald bg-pitch-surface shadow-sm' : 'border-surface-container-high bg-surface-white hover:border-pitch-light/40'"
+                                >
+                                    <input type="radio" name="payment_type" value="full" x-model="paymentType" class="sr-only">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center gap-2">
+                                            <span class="material-symbols-outlined text-pitch-deep text-[20px]">verified</span>
+                                            <span class="text-sm font-bold text-on-surface">Bayar Lunas (100%)</span>
+                                        </div>
+                                        <div
+                                            class="w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0"
+                                            :class="paymentType === 'full' ? 'border-pitch-emerald' : 'border-surface-container-high'"
+                                        >
+                                            <div class="w-2.5 h-2.5 rounded-full bg-pitch-emerald transition-all" :class="paymentType === 'full' ? 'opacity-100' : 'opacity-0'"></div>
+                                        </div>
+                                    </div>
+                                    <p class="text-xs text-on-surface-variant mt-2">Jadwal langsung terkonfirmasi aman. Bebas transaksi saat tiba di lapangan.</p>
+                                    <div class="mt-4 pt-3 border-t border-surface-container-high/60 flex items-center justify-between">
+                                        <span class="text-xs text-on-surface-variant">Bayar Sekarang:</span>
+                                        <span class="text-sm font-bold text-pitch-deep">Rp {{ number_format($totalPrice, 0, ',', '.') }}</span>
+                                    </div>
+                                </label>
+
+                                {{-- Down Payment (DP) --}}
+                                <label
+                                    class="relative flex flex-col p-4 rounded-xl border cursor-pointer transition-all"
+                                    :class="paymentType === 'dp' ? 'border-pitch-emerald bg-pitch-surface shadow-sm' : 'border-surface-container-high bg-surface-white hover:border-pitch-light/40'"
+                                >
+                                    <input type="radio" name="payment_type" value="dp" x-model="paymentType" class="sr-only">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center gap-2">
+                                            <span class="material-symbols-outlined text-pitch-deep text-[20px]">account_balance_wallet</span>
+                                            <span class="text-sm font-bold text-on-surface">Down Payment (DP 50%)</span>
+                                        </div>
+                                        <div
+                                            class="w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0"
+                                            :class="paymentType === 'dp' ? 'border-pitch-emerald' : 'border-surface-container-high'"
+                                        >
+                                            <div class="w-2.5 h-2.5 rounded-full bg-pitch-emerald transition-all" :class="paymentType === 'dp' ? 'opacity-100' : 'opacity-0'"></div>
+                                        </div>
+                                    </div>
+                                    <p class="text-xs text-on-surface-variant mt-2">Kunci jadwal dengan uang muka 50%. Sisa tagihan dibayarkan saat check-in di kasir venue.</p>
+                                    <div class="mt-4 pt-3 border-t border-surface-container-high/60 flex items-center justify-between">
+                                        <span class="text-xs text-on-surface-variant">DP Sekarang:</span>
+                                        <span class="text-sm font-bold text-pitch-deep">Rp {{ number_format(round($totalPrice * 0.5), 0, ',', '.') }}</span>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
                         {{-- Section: Metode Pembayaran --}}
                         <div class="bg-surface-white rounded-2xl border border-surface-container-high p-6 flex flex-col gap-5">
                             <h2 class="font-headline text-lg font-bold text-on-surface flex items-center gap-2">
@@ -273,9 +338,21 @@
                                         <span>Biaya platform</span>
                                         <span class="text-pitch-emerald font-semibold">Gratis</span>
                                     </div>
+                                    <div class="flex items-center justify-between text-xs text-on-surface-variant">
+                                        <span>Skema</span>
+                                        <span class="font-bold text-pitch-deep" x-text="paymentType === 'dp' ? 'Down Payment (DP 50%)' : 'Lunas (100%)'"></span>
+                                    </div>
                                     <div class="flex items-center justify-between font-bold text-base text-on-surface border-t border-surface-container-high pt-3 mt-1">
-                                        <span>Total Pembayaran</span>
+                                        <span>Total Sewa</span>
                                         <span>Rp {{ number_format($totalPrice, 0, ',', '.') }}</span>
+                                    </div>
+                                    <div x-show="paymentType === 'dp'" class="flex items-center justify-between text-xs font-semibold text-amber-700 bg-amber-50 p-2.5 rounded-lg border border-amber-200 mt-1">
+                                        <span>Sisa di Lokasi:</span>
+                                        <span x-text="'Rp ' + formatCurrency(remainingAmount)"></span>
+                                    </div>
+                                    <div class="flex items-center justify-between font-extrabold text-base text-pitch-deep bg-pitch-surface p-3 rounded-xl border border-pitch-light/30 mt-1">
+                                        <span x-text="paymentType === 'dp' ? 'Wajib Bayar Sekarang (DP)' : 'Wajib Bayar Sekarang'"></span>
+                                        <span x-text="'Rp ' + formatCurrency(payNowAmount)"></span>
                                     </div>
                                 </div>
 
@@ -283,7 +360,7 @@
                                 <label class="flex items-start gap-2.5 cursor-pointer">
                                     <input type="checkbox" x-model="agreed" class="w-4 h-4 mt-0.5 rounded border-surface-container-high text-pitch-emerald focus:ring-pitch-emerald flex-shrink-0">
                                     <span class="text-xs text-on-surface-variant leading-relaxed">
-                                        Saya menyetujui syarat, ketentuan, dan kebijakan pembatalan Lapangin
+                                        Saya menyetujui syarat, ketentuan, dan kebijakan pembayaran Lapangin
                                     </span>
                                 </label>
 
@@ -294,7 +371,7 @@
                                     class="w-full flex items-center justify-center gap-2 text-surface-white font-bold text-sm py-3.5 rounded-xl shadow-sm transition-all"
                                 >
                                     <span class="material-symbols-outlined text-[20px]">lock</span>
-                                    Bayar Rp {{ number_format($totalPrice, 0, ',', '.') }}
+                                    <span x-text="'Bayar Rp ' + formatCurrency(payNowAmount)"></span>
                                 </button>
 
                                 <p class="text-center text-xs text-on-surface-variant flex items-center justify-center gap-1">
@@ -315,9 +392,25 @@
             return {
                 mobileMenuOpen: false,
                 paymentMethod: 'qris',
+                paymentType: 'full',
+                dpPercentage: 50,
+                totalPrice: {{ $totalPrice }},
                 agreed: false,
                 countdown: 599,
                 timer: null,
+                get payNowAmount() {
+                    return this.paymentType === 'dp' 
+                        ? Math.round(this.totalPrice * (this.dpPercentage / 100))
+                        : this.totalPrice;
+                },
+                get remainingAmount() {
+                    return this.paymentType === 'dp' 
+                        ? (this.totalPrice - this.payNowAmount) 
+                        : 0;
+                },
+                formatCurrency(val) {
+                    return new Intl.NumberFormat('id-ID').format(val);
+                },
                 init() {
                     this.timer = setInterval(() => {
                         if (this.countdown > 0) { this.countdown--; }

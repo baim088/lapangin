@@ -95,6 +95,8 @@ class BookingController extends Controller
                 'email' => $request->validated('customer_email'),
                 'notes' => $request->validated('notes'),
             ],
+            paymentType: $request->validated('payment_type', 'full') ?? 'full',
+            dpPercentage: (int) ($request->validated('dp_percentage', 50) ?? 50),
         );
 
         return redirect()->route('booking.konfirmasi', ['code' => $booking->booking_code]);

@@ -36,6 +36,7 @@
                             ['dashboard', 'Dashboard', route('operator.dashboard'), true],
                             ['calendar_month', 'Kelola Jadwal', route('operator.jadwal'), false],
                             ['receipt_long', 'Daftar Booking', route('operator.booking'), false],
+                            ['bar_chart', 'Laporan Keuangan', route('operator.laporan'), false],
                             ['stadium', 'Kelola Lapangan', route('operator.lapangan'), false],
                         ];
                     @endphp
@@ -101,10 +102,21 @@
                     </div>
                 </div>
                 <div class="flex items-center gap-3">
+                    @if(isset($accessibleVenues) && $accessibleVenues->count() > 1)
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs text-on-surface-variant font-medium hidden sm:inline">Venue:</span>
+                        <select onchange="window.location.href = '?venue_id=' + this.value" class="text-xs font-bold border border-surface-container-high rounded-xl px-3 py-2 bg-surface-white text-on-surface focus:ring-2 focus:ring-pitch-emerald">
+                            @foreach($accessibleVenues as $v)
+                                <option value="{{ $v->id }}" {{ $venue->id === $v->id ? 'selected' : '' }}>{{ $v->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    @else
                     <div class="flex items-center gap-1.5 bg-pitch-surface px-3 py-1.5 rounded-full text-xs text-pitch-deep font-semibold">
                         <span class="w-1.5 h-1.5 rounded-full bg-pitch-emerald animate-pulse"></span>
                         {{ $venue->name }}
                     </div>
+                    @endif
                     <button class="relative p-2 rounded-lg hover:bg-surface-container-low text-on-surface-variant">
                         <span class="material-symbols-outlined text-[22px]">notifications</span>
                         <span class="absolute top-1 right-1 w-4 h-4 bg-action-orange rounded-full text-[9px] text-surface-white font-bold flex items-center justify-center">3</span>

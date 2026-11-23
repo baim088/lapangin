@@ -54,6 +54,8 @@ class CheckoutRequest extends FormRequest
             'customer_phone' => ['required', 'string', 'regex:/^(?:\+62|62|0)8[1-9][0-9]{6,11}$/'],
             'customer_email' => ['required', 'string', 'email', 'max:255'],
             'notes' => ['nullable', 'string', 'max:1000'],
+            'payment_type' => ['nullable', 'string', 'in:full,dp'],
+            'dp_percentage' => ['nullable', 'integer', 'min:30', 'max:50'],
             'payment_method' => ['required', 'string', Rule::enum(PaymentMethod::class)],
         ];
     }
