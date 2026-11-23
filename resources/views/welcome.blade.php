@@ -589,7 +589,7 @@
                                     >
                                         <span class="text-sm font-bold block whitespace-nowrap" x-text="slot.time"></span>
                                         <span 
-                                            :class="isSlotSelected(slot) ? 'text-slate-950 font-bold' : (slot.isPrime ? 'text-[#f37920] font-bold' : 'text-emerald-800 font-medium')"
+                                            :class="isSlotSelected(slot) ? 'text-slate-950 font-bold' : (slot.isPrime ? 'text-[#f37920]     font-bold' : 'text-emerald-800 font-medium')"
                                             class="text-xs mt-0.5 whitespace-nowrap"
                                             x-text="formatCurrency(slot.price)"
                                         ></span>
@@ -1353,63 +1353,83 @@
     <!-- FOOTER COMPONENT -->
     <x-footer />
 
+    @php
+        $dateOptionsData = [];
+        for ($i = 0; $i < 7; $i++) {
+            $d = now()->addDays($i);
+            $dayLbl = $i === 0 ? 'HARI INI' : match($d->dayOfWeek) {
+                1 => 'SEN', 2 => 'SEL', 3 => 'RAB', 4 => 'KAM', 5 => 'JUM', 6 => 'SAB', 0 => 'MIN'
+            };
+            $dateOptionsData[] = [
+                'date' => $d->toDateString(),
+                'dayLabel' => $dayLbl,
+                'dateLabel' => $d->format('j M'),
+                'isWeekend' => in_array($d->dayOfWeek, [0, 6]),
+            ];
+        }
+
+        $bookingConfigData = [
+            'isLoggedIn' => auth()->check(),
+            'selectedDate' => now()->toDateString(),
+            'bookingBaseUrl' => url('/booking'),
+            'dateOptions' => $dateOptionsData,
+            'sportCatalog' => [
+                'futsal' => [
+                    'name' => $futsalCourt->name ?? 'Lapangan Futsal A',
+                    'slug' => $futsalCourt->slug ?? 'futsal-arena-a',
+                    'regularPrice' => (int) ($futsalCourt->price_regular ?? 150000),
+                    'primePrice' => (int) ($futsalCourt->price_prime ?? 220000),
+                    'bookedSlots' => [],
+                ],
+                'badminton' => [
+                    'name' => $badmintonCourt->name ?? 'Badminton Court 1',
+                    'slug' => $badmintonCourt->slug ?? 'badminton-court-1',
+                    'regularPrice' => (int) ($badmintonCourt->price_regular ?? 45000),
+                    'primePrice' => (int) ($badmintonCourt->price_prime ?? 65000),
+                    'bookedSlots' => [],
+                ],
+                'minisoccer' => [
+                    'name' => $miniSoccerCourt->name ?? 'Mini Soccer 7v7',
+                    'slug' => $miniSoccerCourt->slug ?? 'mini-soccer-7v7',
+                    'regularPrice' => (int) ($miniSoccerCourt->price_regular ?? 450000),
+                    'primePrice' => (int) ($miniSoccerCourt->price_prime ?? 650000),
+                    'bookedSlots' => [],
+                ],
+                'padel' => [
+                    'name' => $padelCourt->name ?? 'Padel Court Glass',
+                    'slug' => $padelCourt->slug ?? 'padel-court-glass',
+                    'regularPrice' => (int) ($padelCourt->price_regular ?? 250000),
+                    'primePrice' => (int) ($padelCourt->price_prime ?? 330000),
+                    'bookedSlots' => [],
+                ],
+            ],
+        ];
+    @endphp
+
+    <!-- INITIAL DATA CONFIG (JSON - SAFE FROM JS PARSER) -->
+    <script id="booking-app-data" type="application/json">
+        {!! json_encode($bookingConfigData) !!}
+    </script>
+
     <!-- ALPINE.JS COMPONENT LOGIC -->
     <script>
         function bookingApp() {
+            const configEl = document.getElementById('booking-app-data');
+            const cfg = configEl ? JSON.parse(configEl.textContent || '{}') : {};
+
             return {
                 mobileMenuOpen: false,
                 showAuthModal: false,
-                isLoggedIn: {{ auth()->check() ? 'true' : 'false' }},
+                isLoggedIn: Boolean(cfg.isLoggedIn),
                 currentSport: 'futsal',
-                selectedDate: '{{ now()->toDateString() }}',
+                selectedDate: cfg.selectedDate || '',
                 filterTimeType: 'all',
                 selectedSlots: [],
                 activeFaq: 1,
 
-                dateOptions: [
-                    @for ($i = 0; $i < 7; $i++)
-                        @php
-                            $d = now()->addDays($i);
-                            $dayLbl = $i === 0 ? 'HARI INI' : match($d->dayOfWeek) {
-                                1 => 'SEN', 2 => 'SEL', 3 => 'RAB', 4 => 'KAM', 5 => 'JUM', 6 => 'SAB', 0 => 'MIN'
-                            };
-                            $dateLbl = $d->format('j M');
-                            $isWknd = in_array($d->dayOfWeek, [0, 6]);
-                        @endphp
-                        { date: '{{ $d->toDateString() }}', dayLabel: '{{ $dayLbl }}', dateLabel: '{{ $dateLbl }}', isWeekend: {{ $isWknd ? 'true' : 'false' }} },
-                    @endfor
-                ],
-
-                sportCatalog: {
-                    'futsal': {
-                        name: '{{ $futsalCourt->name ?? "Lapangan Futsal A" }}',
-                        slug: '{{ $futsalCourt->slug ?? "futsal-arena-a" }}',
-                        regularPrice: {{ $futsalCourt->price_regular ?? 150000 }},
-                        primePrice: {{ $futsalCourt->price_prime ?? 220000 }},
-                        bookedSlots: []
-                    },
-                    'badminton': {
-                        name: '{{ $badmintonCourt->name ?? "Badminton Court 1" }}',
-                        slug: '{{ $badmintonCourt->slug ?? "badminton-court-1" }}',
-                        regularPrice: {{ $badmintonCourt->price_regular ?? 45000 }},
-                        primePrice: {{ $badmintonCourt->price_prime ?? 65000 }},
-                        bookedSlots: []
-                    },
-                    'minisoccer': {
-                        name: '{{ $miniSoccerCourt->name ?? "Mini Soccer 7v7" }}',
-                        slug: '{{ $miniSoccerCourt->slug ?? "mini-soccer-7v7" }}',
-                        regularPrice: {{ $miniSoccerCourt->price_regular ?? 450000 }},
-                        primePrice: {{ $miniSoccerCourt->price_prime ?? 650000 }},
-                        bookedSlots: []
-                    },
-                    'padel': {
-                        name: '{{ $padelCourt->name ?? "Padel Court Glass" }}',
-                        slug: '{{ $padelCourt->slug ?? "padel-court-glass" }}',
-                        regularPrice: {{ $padelCourt->price_regular ?? 250000 }},
-                        primePrice: {{ $padelCourt->price_prime ?? 330000 }},
-                        bookedSlots: []
-                    }
-                },
+                dateOptions: cfg.dateOptions || [],
+                sportCatalog: cfg.sportCatalog || {},
+                bookingBaseUrl: cfg.bookingBaseUrl || '/booking',
 
                 timeSlotsConfig: [
                     { id: 1, time: '08.00 - 09.00', isPrime: false },
@@ -1430,7 +1450,7 @@
                 ],
 
                 get activeCourtSlots() {
-                    const sport = this.sportCatalog[this.currentSport] || this.sportCatalog['futsal'];
+                    const sport = this.sportCatalog[this.currentSport] || this.sportCatalog['futsal'] || { bookedSlots: [], primePrice: 0, regularPrice: 0 };
                     return this.timeSlotsConfig
                         .filter(slot => {
                             if (this.filterTimeType === 'regular') return !slot.isPrime;
@@ -1438,7 +1458,7 @@
                             return true;
                         })
                         .map(slot => {
-                            const isBooked = sport.bookedSlots.includes(slot.time);
+                            const isBooked = Array.isArray(sport.bookedSlots) && sport.bookedSlots.includes(slot.time);
                             const price = slot.isPrime ? sport.primePrice : sport.regularPrice;
                             return {
                                 id: `${this.currentSport}_${slot.id}`,
@@ -1451,7 +1471,7 @@
                 },
 
                 get summaryTitle() {
-                    const sport = this.sportCatalog[this.currentSport] || this.sportCatalog['futsal'];
+                    const sport = this.sportCatalog[this.currentSport] || this.sportCatalog['futsal'] || { name: 'Lapangan' };
                     const foundDate = this.dateOptions.find(d => d.date === this.selectedDate);
                     const dateText = foundDate ? `${foundDate.dayLabel} (${foundDate.dateLabel})` : this.selectedDate;
                     return `${sport.name} &bull; ${dateText}`;
@@ -1462,7 +1482,7 @@
                 },
 
                 get whatsAppLink() {
-                    const sport = this.sportCatalog[this.currentSport] || this.sportCatalog['futsal'];
+                    const sport = this.sportCatalog[this.currentSport] || this.sportCatalog['futsal'] || { name: 'Lapangan' };
                     if (this.selectedSlots.length === 0) {
                         return `https://wa.me/6280012345678?text=Halo%20Admin%20Lapangin%2C%20saya%20ingin%20tanya%20jadwal%20tersedia%20untuk%20${encodeURIComponent(sport.name)}`;
                     }
@@ -1508,7 +1528,7 @@
                     if (!this.isLoggedIn) {
                         this.showAuthModal = true;
                     } else {
-                        window.location.href = "{{ url('/booking') }}/" + sport.slug;
+                        window.location.href = this.bookingBaseUrl + "/" + (sport ? sport.slug : 'futsal-arena-a');
                     }
                 }
             };
