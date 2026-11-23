@@ -5,14 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Lapangin - Sistem booking lapangan olahraga online real-time. Futsal, Badminton, Mini Soccer, Padel. Anti double-booking dengan slot lock 10 menit.">
     <meta name="keywords" content="booking lapangan, sewa lapangan futsal, badminton, mini soccer, padel, lapangin, reservasi olahraga">
-    <title>Sistem Booking Lapangan Olahraga Real-Time</title>
+    <title>LapangIn - Sistem Booking Lapangan Olahraga Real-Time</title>
 
-    <!-- Google Fonts -->
+    <!-- Google Fonts: Teko (Headings), Nunito Sans & Plus Jakarta Sans (Body & UI) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Teko:wght@500;600;700&family=Nunito+Sans:ital,wght@0,400;0,600;0,700;0,800;1,400;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
-    <!-- Material Symbols -->
+    <!-- Material Symbols Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
 
     <!-- Styles & Scripts via Vite -->
@@ -20,92 +20,114 @@
 </head>
 <body 
     x-data="bookingApp()"
-    class="bg-surface font-body text-on-surface antialiased selection:bg-secondary-container selection:text-on-secondary-container"
+    class="bg-canvas-bg font-body text-slate-800 antialiased selection:bg-[#f8b710] selection:text-slate-950"
 >
     <!-- TOP NAVBAR COMPONENT -->
     <x-navbar active="beranda" />
 
-    <main class="w-full pt-20 bg-surface min-h-[calc(100vh-80px)]">
+    <main class="w-full pt-20 bg-canvas-bg min-h-[calc(100vh-80px)]">
         
         <!-- SECTION 1: HERO SECTION -->
-        <section id="beranda" class="relative w-full bg-arena-night text-surface-container-lowest overflow-hidden pb-16 pt-8">
-            <!-- Ambient Glow Background Graphics -->
-            <div class="absolute -top-32 -right-32 w-96 h-96 rounded-full bg-pitch-emerald/20 blur-3xl pointer-events-none"></div>
-            <div class="absolute bottom-0 -left-20 w-80 h-80 rounded-full bg-action-orange/15 blur-3xl pointer-events-none"></div>
+        <section id="beranda" class="relative w-full bg-[#0f2444] text-white overflow-hidden pt-12 pb-24 border-b border-white/10">
+            <!-- Ambient Glow Stadium Lighting -->
+            <div class="absolute -top-32 -right-32 w-96 h-96 rounded-full bg-[#f8b710]/15 blur-3xl pointer-events-none"></div>
+            <div class="absolute bottom-0 -left-20 w-80 h-80 rounded-full bg-orange-500/15 blur-3xl pointer-events-none"></div>
 
-            <div class="w-full max-w-7xl mx-auto px-4 sm:px-8 pt-6">
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+            <div class="w-full max-w-7xl mx-auto px-4 sm:px-8 pt-4">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
                     
-                    <!-- Hero Left Column: Headline, Subhead & Proof Metrics -->
+                    <!-- Hero Left Column: Headline, Subhead & Action Buttons -->
                     <div class="lg:col-span-7 flex flex-col gap-6 z-10">
                         
+                        <!-- Badge -->
+                        <div class="inline-flex items-center gap-2 bg-white/10 border border-white/20 px-4 py-1.5 rounded-full text-xs font-bold text-[#f8b710] tracking-wider uppercase w-fit">
+                            <span class="w-2 h-2 rounded-full bg-[#f8b710] animate-pulse"></span>
+                            <span>Sistem Reservasi Olahraga Real-Time</span>
+                        </div>
 
-                        <h1 class="font-headline text-4xl sm:text-5xl lg:text-6xl text-surface-white tracking-tight uppercase font-bold leading-tight">
-                            Ajak Tim, <span class="text-pitch-light">Pilih Jam,</span><br>
-                            <span class="text-action-orange">Langsung Main!</span>
+                        <!-- Main Big Display Headline in Teko -->
+                        <h1 class="font-teko text-6xl sm:text-7xl lg:text-8xl text-white font-bold tracking-tight uppercase leading-[0.92]">
+                            AJAK TIM, <span class="text-[#f8b710]">PILIH JAM,</span><br>
+                            LANGSUNG MAIN!
                         </h1>
 
-                        <p class="font-body text-base sm:text-lg text-surface-container-highest max-w-xl leading-relaxed">
+                        <!-- Accent bar -->
+                        <div class="w-16 h-1 bg-[#f8b710] rounded-full -mt-2"></div>
+
+                        <!-- Value Proposition Subtitle -->
+                        <p class="font-body text-base sm:text-lg text-slate-200/90 max-w-xl leading-relaxed">
                             Booking 4 kategori arena berstandar turnamen nasional & internasional dalam hitungan detik. Kunci slot 10 menit tanpa takut bentrok jadwal, didukung pencahayaan LED 800 Lux dan sistem pembayaran otomatis terverifikasi.
                         </p>
 
                         <!-- Action Buttons -->
                         <div class="flex flex-wrap items-center gap-4 pt-2">
-                            <a href="#jadwal-interaktif" class="inline-flex items-center justify-center gap-2 bg-action-orange hover:bg-tertiary-container text-surface-white font-bold text-sm px-6 py-3.5 rounded-lg shadow-lg shadow-action-orange/20 transition-all transform hover:-translate-y-0.5 whitespace-nowrap">
+                            <a 
+                                href="#jadwal-interaktif" 
+                                class="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-[#f8b710] to-[#f37920] hover:from-[#f37920] hover:to-[#f8b710] text-slate-950 font-bold text-sm uppercase tracking-wider px-7 py-4 rounded-full shadow-lg shadow-amber-500/25 transition-all transform hover:-translate-y-0.5 whitespace-nowrap"
+                            >
                                 <span class="material-symbols-outlined text-[20px]">calendar_month</span>
                                 Pilih Jam Main Sekarang
                             </a>
-                            <a href="{{ route('lapangan') }}" class="inline-flex items-center justify-center gap-2 bg-surface-white/10 hover:bg-surface-white/20 text-surface-white font-semibold text-sm px-5 py-3.5 rounded-lg transition-colors border border-surface-white/15 whitespace-nowrap">
+                            <a 
+                                href="{{ route('lapangan') }}" 
+                                class="inline-flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 text-white font-bold text-sm uppercase tracking-wider px-6 py-4 rounded-full transition-colors border border-white/20 whitespace-nowrap"
+                            >
                                 <span class="material-symbols-outlined text-[20px]">sports</span>
                                 Jelajahi Lapangan
                             </a>
                         </div>
 
-                        <!-- Proof Metrics Bar (Aligned with PRD KPIs) -->
-                        <div class="grid grid-cols-3 gap-3 pt-4">
-                            <div class="bg-surface-white/5 p-4 rounded-xl backdrop-blur-sm border border-surface-white/10">
-                                <span class="text-xs text-surface-container-highest block uppercase font-medium">Jam Operasional</span>
-                                <span class="font-headline text-lg sm:text-xl text-surface-white font-bold">08.00–23.00</span>
+                        <!-- Quick Feature Chips -->
+                        <div class="flex flex-wrap items-center gap-6 pt-2 text-xs text-slate-300 font-semibold">
+                            <div class="flex items-center gap-2">
+                                <span class="material-symbols-outlined text-[#f8b710] text-[18px]">verified</span>
+                                <span>Anti Double-Booking Guarantee</span>
                             </div>
-                            <div class="bg-surface-white/5 p-4 rounded-xl backdrop-blur-sm border border-surface-white/10">
-                                <span class="text-xs text-surface-container-highest block uppercase font-medium">Total Lapangan</span>
-                                <span class="font-headline text-lg sm:text-xl text-pitch-light font-bold">4 Kategori</span>
+                            <div class="flex items-center gap-2">
+                                <span class="material-symbols-outlined text-[#f8b710] text-[18px]">timer</span>
+                                <span>10 Menit Slot Lock</span>
                             </div>
-                            <div class="bg-surface-white/5 p-4 rounded-xl backdrop-blur-sm border border-surface-white/10">
-                                <span class="text-xs text-surface-container-highest block uppercase font-medium">Lock Guarantee</span>
-                                <span class="font-headline text-lg sm:text-xl text-action-amber font-bold">10 Menit</span>
+                            <div class="flex items-center gap-2">
+                                <span class="material-symbols-outlined text-[#f8b710] text-[18px]">bolt</span>
+                                <span>Konfirmasi Instan</span>
                             </div>
                         </div>
                     </div>
 
                     <!-- Hero Right Column: Graphic Showcase with Active Match Badge -->
                     <div class="lg:col-span-5 relative">
-                        <div class="relative rounded-2xl overflow-hidden shadow-2xl bg-pitch-deep border border-pitch-light/20">
+                        <div class="relative rounded-3xl overflow-hidden shadow-2xl bg-[#0b1a30] border border-white/15 group">
                             <img 
                                 src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=800&q=80" 
                                 alt="Pertandingan Futsal Lapangin Arena" 
-                                class="w-full h-[400px] object-cover"
+                                class="w-full h-[420px] object-cover group-hover:scale-105 transition-transform duration-700"
                             >
-                            <div class="absolute inset-0 bg-gradient-to-t from-arena-night via-arena-night/30 to-transparent"></div>
+                            <div class="absolute inset-0 bg-gradient-to-t from-[#0f2444] via-[#0f2444]/40 to-transparent"></div>
 
                             <!-- Live Active Match Badge Floating -->
-                            <div class="absolute bottom-4 left-4 right-4 bg-arena-night/90 backdrop-blur-md p-3.5 rounded-xl flex items-center justify-between border border-surface-white/15 shadow-xl">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-lg bg-pitch-emerald flex items-center justify-center text-surface-white">
-                                        <span class="material-symbols-outlined text-[22px]">sports_soccer</span>
+                            <div class="absolute bottom-5 left-5 right-5 bg-[#0f2444]/95 backdrop-blur-md p-4 rounded-2xl flex items-center justify-between border border-white/20 shadow-2xl">
+                                <div class="flex items-center gap-3.5">
+                                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-[#f8b710] to-[#f37920] flex items-center justify-center text-slate-950 font-bold shadow-md">
+                                        <span class="material-symbols-outlined text-[24px]">sports_soccer</span>
                                     </div>
                                     <div>
-                                        <h4 class="font-bold text-sm text-surface-white leading-tight">Mini Soccer A • Court 1</h4>
-                                        <p class="text-xs text-pitch-light flex items-center gap-1.5 font-medium">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-pitch-light animate-pulse"></span>
-                                            Live: Sparring Sore Sedang Berlangsung
+                                        <h4 class="font-bold text-sm text-white leading-tight">Mini Soccer A &bull; Court 1</h4>
+                                        <p class="text-xs text-[#f8b710] flex items-center gap-1.5 font-semibold mt-0.5">
+                                            <span class="w-2 h-2 rounded-full bg-[#f8b710] animate-pulse"></span>
+                                            Sedang Bertanding (19.00 - 21.00)
                                         </p>
                                     </div>
                                 </div>
-                                <span class="bg-surface-white/15 text-surface-white text-xs font-semibold px-2.5 py-1 rounded">
-                                    16:00 - 18:00
+                                <span class="text-[11px] font-bold text-slate-950 bg-[#f8b710] px-2.5 py-1 rounded-full uppercase tracking-wider">
+                                    LIVE
                                 </span>
                             </div>
+
+                            <!-- Floating Lock Guarantee Pill Badge (Top Right) -->
+                            <div class="absolute top-4 right-4 bg-[#0b1a30]/90 backdrop-blur-md border border-white/20 text-white text-xs px-3.5 py-1.5 rounded-full flex items-center gap-1.5 font-bold shadow-lg">
+                                <span class="material-symbols-outlined text-[#f8b710] text-[16px]">lock_clock</span>
+                                <span>Pessimistic Lock Active</span>
+                            </div>
                         </div>
                     </div>
 
@@ -113,294 +135,350 @@
             </div>
         </section>
 
-        <!-- SECTION 2: QUICK SEARCH FILTER TRAY -->
-        <section class="w-full max-w-7xl mx-auto px-4 sm:px-8 -mt-8 relative z-20">
-            <div class="bg-surface-white rounded-2xl shadow-xl p-5 lg:p-6 border border-slate-200">
-                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 items-end">
+        <!-- SECTION 2: STATS & NUMBERS COUNTER (Inspired by Skydiving Template Counter Grid) -->
+        <section class="w-full bg-surface-white py-14 border-b border-slate-200/80 shadow-xs">
+            <div class="max-w-7xl mx-auto px-4 sm:px-8">
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-8 text-center sm:text-left">
                     
-                    <div class="flex flex-col gap-1.5">
-                        <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider flex items-center gap-1">
-                            <span class="material-symbols-outlined text-[16px] text-pitch-emerald">sports</span> 
-                            Pilih Cabang
-                        </label>
-                        <select 
-                            x-model="currentSport"
-                            @change="selectSport(currentSport)"
-                            class="w-full bg-surface-container-low text-on-surface py-2.5 px-3 rounded-lg text-sm font-medium border border-transparent focus:border-pitch-emerald focus:outline-none focus:bg-surface-white transition-all cursor-pointer"
-                        >
-                            <option value="futsal">Futsal (Interlock & Vinyl)</option>
-                            <option value="badminton">Badminton (BWF Vinyl)</option>
-                            <option value="minisoccer">Mini Soccer (Sintetis 7v7)</option>
-                            <option value="padel">Padel Court (Panoramic Glass)</option>
-                        </select>
+                    <!-- Stat 1 -->
+                    <div class="flex flex-col items-center sm:items-start p-2">
+                        <span class="font-teko text-5xl sm:text-6xl font-bold text-[#f8b710] leading-none">100%</span>
+                        <div class="w-10 h-1 bg-[#f8b710] rounded-full my-2.5"></div>
+                        <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider">JAMINAN BEBAS DOUBLE-BOOKING</h4>
+                        <p class="text-[11px] text-slate-500 mt-0.5">Sistem kunci waktu otomatis saat checkout</p>
                     </div>
 
-                    <div class="flex flex-col gap-1.5">
-                        <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider flex items-center gap-1">
-                            <span class="material-symbols-outlined text-[16px] text-pitch-emerald">event</span> 
-                            Tanggal Main
-                        </label>
-                        <input 
-                            type="date" 
-                            x-model="selectedDate"
-                            class="w-full bg-surface-container-low text-on-surface py-2 px-3 rounded-lg text-sm font-medium border border-transparent focus:border-pitch-emerald focus:outline-none focus:bg-surface-white transition-all"
-                        >
+                    <!-- Stat 2 -->
+                    <div class="flex flex-col items-center sm:items-start p-2">
+                        <span class="font-teko text-5xl sm:text-6xl font-bold text-[#f8b710] leading-none">4+</span>
+                        <div class="w-10 h-1 bg-[#f8b710] rounded-full my-2.5"></div>
+                        <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider">KATEGORI LAPANGAN STANDAR</h4>
+                        <p class="text-[11px] text-slate-500 mt-0.5">Futsal, Badminton, Mini Soccer, Padel</p>
                     </div>
 
-                    <div class="flex flex-col gap-1.5">
-                        <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider flex items-center gap-1">
-                            <span class="material-symbols-outlined text-[16px] text-pitch-emerald">schedule</span> 
-                            Kategori Jam
-                        </label>
-                        <select 
-                            x-model="filterTimeType"
-                            class="w-full bg-surface-container-low text-on-surface py-2.5 px-3 rounded-lg text-sm font-medium border border-transparent focus:border-pitch-emerald focus:outline-none focus:bg-surface-white transition-all cursor-pointer"
-                        >
-                            <option value="all">Semua Jam (08.00 - 23.00)</option>
-                            <option value="regular">Siang / Reguler (08.00 - 16.00)</option>
-                            <option value="prime">Prime Time Malam (17.00 - 23.00)</option>
-                        </select>
+                    <!-- Stat 3 -->
+                    <div class="flex flex-col items-center sm:items-start p-2">
+                        <span class="font-teko text-5xl sm:text-6xl font-bold text-[#f8b710] leading-none">1.200+</span>
+                        <div class="w-10 h-1 bg-[#f8b710] rounded-full my-2.5"></div>
+                        <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider">PERTANDINGAN SUKSES</h4>
+                        <p class="text-[11px] text-slate-500 mt-0.5">Komunitas & instansi terdaftar aktif</p>
                     </div>
 
-                    <div>
-                        <a 
-                            href="#jadwal-interaktif" 
-                            class="w-full bg-pitch-deep hover:bg-pitch-emerald text-surface-white font-bold text-sm py-2.5 px-4 rounded-lg flex items-center justify-center gap-2 transition-all shadow-sm whitespace-nowrap"
-                        >
-                            <span class="material-symbols-outlined text-[20px]">filter_alt</span>
-                            Tampilkan Jadwal
-                        </a>
+                    <!-- Stat 4 -->
+                    <div class="flex flex-col items-center sm:items-start p-2">
+                        <span class="font-teko text-5xl sm:text-6xl font-bold text-[#f8b710] leading-none">10 MENIT</span>
+                        <div class="w-10 h-1 bg-[#f8b710] rounded-full my-2.5"></div>
+                        <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider">INSTANT SLOT LOCK</h4>
+                        <p class="text-[11px] text-slate-500 mt-0.5">Waktu aman untuk proses pembayaran</p>
                     </div>
 
                 </div>
             </div>
         </section>
 
-        <!-- SECTION 3: VENUE COURTS CATALOG -->
-        <section id="katalog" class="w-full max-w-7xl mx-auto px-4 sm:px-8 py-16">
-            <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
-                <div>
-                    <span class="text-xs text-action-orange uppercase tracking-wider font-bold block mb-1">Katalog Lapangan</span>
-                    <h2 class="font-headline text-3xl text-on-surface tracking-tight uppercase font-bold">Pilih Lapanganmu</h2>
-                </div>
-                <div class="flex items-center gap-3">
-                    <a href="{{ route('lapangan') }}" class="text-xs font-bold text-pitch-deep hover:text-pitch-emerald flex items-center gap-1 underline underline-offset-4 whitespace-nowrap">
-                        Lihat Detail Semua Lapangan &rarr;
-                    </a>
-                </div>
-            </div>
-
-            <!-- Court Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- SECTION 3: TOP EXPERIENCES / LAPANGAN UNGGULAN (Anatomy like Weblium Services Grid) -->
+        <section id="katalog" class="w-full bg-[#f8f9fa] py-20 border-b border-slate-200">
+            <div class="w-full max-w-7xl mx-auto px-4 sm:px-8">
                 
-                <!-- Card 1: Futsal -->
-                <div class="group bg-surface-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-slate-200 flex flex-col justify-between">
-                    <div>
-                        <div class="relative aspect-video overflow-hidden">
-                            <img 
-                                src="{{ asset('images/courts/futsal.jpg') }}" 
-                                alt="Lapangan Futsal A"
-                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                            >
-                            <span class="absolute top-3 left-3 bg-pitch-deep text-surface-white text-xs font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shadow">
-                                Futsal
-                            </span>
-                            <span class="absolute bottom-3 right-3 bg-surface-white/95 text-on-surface text-xs font-semibold px-2 py-0.5 rounded backdrop-blur-sm">
-                                25 × 15 m
-                            </span>
-                        </div>
-                        <div class="p-5 flex flex-col gap-2">
-                            <h3 class="font-headline text-lg font-bold text-on-surface group-hover:text-primary transition-colors">
-                                Lapangan Futsal A
-                            </h3>
-                            <p class="text-xs text-on-surface-variant flex items-center gap-1.5">
-                                <span class="material-symbols-outlined text-[16px] text-pitch-light">check_circle</span> 
-                                Rumput Sintetis Monofilament 5cm
-                            </p>
-                            <div class="grid grid-cols-2 gap-2 mt-2 pt-2 bg-surface-container-low p-2.5 rounded-xl border border-slate-100">
-                                <div>
-                                    <span class="text-xs text-on-surface-variant block">Siang (08-16)</span>
-                                    <span class="text-sm text-pitch-deep font-bold">Rp 150.000</span>
-                                </div>
-                                <div>
-                                    <span class="text-xs text-on-surface-variant block">Malam (17-23)</span>
-                                    <span class="text-sm text-action-orange font-bold">Rp 220.000</span>
-                                </div>
-                            </div>
-                        </div>
+                <!-- Section Header with Signature Bar + Dot Accent -->
+                <div class="text-center max-w-2xl mx-auto mb-14">
+                    <span class="text-xs font-bold text-[#f37920] uppercase tracking-widest block mb-1">KATALOG ARENA RESMI</span>
+                    <h2 class="font-teko text-4xl sm:text-5xl lg:text-6xl uppercase font-bold text-slate-900 tracking-tight leading-none">
+                        PILIHAN LAPANGAN OLAHRAGA TERBAIK KAMI
+                    </h2>
+                    <div class="flex items-center justify-center gap-1.5 mt-3 mb-3">
+                        <span class="w-14 h-1 bg-[#f8b710] rounded-full inline-block"></span>
+                        <span class="w-1.5 h-1.5 bg-[#f8b710] rounded-xs inline-block"></span>
                     </div>
-                    <div class="p-5 pt-0">
-                        <a 
-                            href="#jadwal-interaktif" 
-                            @click="selectSport('futsal')"
-                            class="w-full bg-pitch-surface hover:bg-secondary-container text-pitch-deep font-bold text-sm py-2.5 rounded-lg flex items-center justify-center gap-2 transition-colors whitespace-nowrap"
-                        >
-                            Pilih Jam / Slot <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
-                        </a>
-                    </div>
+                    <p class="text-sm sm:text-base text-slate-600 leading-relaxed">
+                        Arena berstandar federasi nasional & internasional dengan fasilitas lengkap, lantai terawat, dan pencahayaan LED 800 Lux.
+                    </p>
                 </div>
 
-                <!-- Card 2: Badminton -->
-                <div class="group bg-surface-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-slate-200 flex flex-col justify-between">
-                    <div>
-                        <div class="relative aspect-video overflow-hidden">
-                            <img 
-                                src="{{ asset('images/courts/badminton.jpg') }}" 
-                                alt="Badminton Court 1-4"
-                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                            >
-                            <span class="absolute top-3 left-3 bg-pitch-deep text-surface-white text-xs font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shadow">
-                                Badminton
-                            </span>
-                            <span class="absolute bottom-3 right-3 bg-surface-white/95 text-on-surface text-xs font-semibold px-2 py-0.5 rounded backdrop-blur-sm">
-                                13.4 × 6.1 m
-                            </span>
-                        </div>
-                        <div class="p-5 flex flex-col gap-2">
-                            <h3 class="font-headline text-lg font-bold text-on-surface group-hover:text-primary transition-colors">
-                                Badminton Court 1–4
-                            </h3>
-                            <p class="text-xs text-on-surface-variant flex items-center gap-1.5">
-                                <span class="material-symbols-outlined text-[16px] text-pitch-light">check_circle</span> 
-                                Karpet Karakal BWF Approved
-                            </p>
-                            <div class="grid grid-cols-2 gap-2 mt-2 pt-2 bg-surface-container-low p-2.5 rounded-xl border border-slate-100">
-                                <div>
-                                    <span class="text-xs text-on-surface-variant block">Siang (08-16)</span>
-                                    <span class="text-sm text-pitch-deep font-bold">Rp 45.000</span>
-                                </div>
-                                <div>
-                                    <span class="text-xs text-on-surface-variant block">Malam (17-23)</span>
-                                    <span class="text-sm text-action-orange font-bold">Rp 65.000</span>
+                <!-- 4-Column Courts Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    
+                    <!-- Card 1: Futsal Arena A -->
+                    <div class="group bg-surface-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-slate-200 flex flex-col justify-between">
+                        <div>
+                            <div class="relative aspect-video overflow-hidden">
+                                <img 
+                                    src="{{ asset('images/courts/futsal.jpg') }}" 
+                                    alt="Lapangan Futsal A"
+                                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                >
+                                <span class="absolute top-3 left-3 bg-[#f8b710] text-slate-950 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow">
+                                    Futsal
+                                </span>
+                                <span class="absolute bottom-3 right-3 bg-slate-950/80 text-white text-[11px] font-semibold px-2 py-0.5 rounded backdrop-blur-sm">
+                                    Vinyl 8mm &bull; 26 &times; 16 m
+                                </span>
+                            </div>
+                            <div class="p-5 flex flex-col gap-2">
+                                <h3 class="font-teko text-2xl sm:text-3xl font-bold text-slate-900 uppercase tracking-wide group-hover:text-[#f37920] transition-colors leading-none">
+                                    Lapangan Futsal A
+                                </h3>
+                                <div class="w-8 h-0.5 bg-[#f8b710] rounded-full my-0.5"></div>
+                                <p class="text-xs text-slate-600 flex items-center gap-1.5 font-medium">
+                                    <span class="material-symbols-outlined text-[16px] text-emerald-600">check_circle</span> 
+                                    Lantai Vinyl Interlock & LED 800 Lux
+                                </p>
+                                <div class="grid grid-cols-2 gap-2 mt-3 pt-3 bg-slate-50 p-2.5 rounded-xl border border-slate-100 text-xs">
+                                    <div>
+                                        <span class="text-slate-500 block">Siang (08-16)</span>
+                                        <span class="text-sm font-bold text-slate-900">Rp 150.000</span>
+                                    </div>
+                                    <div>
+                                        <span class="text-slate-500 block">Malam (17-23)</span>
+                                        <span class="text-sm font-bold text-[#f37920]">Rp 220.000</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+                        <div class="p-5 pt-0">
+                            <a 
+                                href="#jadwal-interaktif" 
+                                @click="selectSport('futsal')"
+                                class="w-full bg-[#0f2444] hover:bg-[#0b1a30] text-white font-bold text-xs uppercase tracking-wider py-3 rounded-xl flex items-center justify-center gap-2 transition-all shadow-sm"
+                            >
+                                Pilih Jam / Slot <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+                            </a>
+                        </div>
                     </div>
-                    <div class="p-5 pt-0">
-                        <a 
-                            href="#jadwal-interaktif" 
-                            @click="selectSport('badminton')"
-                            class="w-full bg-pitch-surface hover:bg-secondary-container text-pitch-deep font-bold text-sm py-2.5 rounded-lg flex items-center justify-center gap-2 transition-colors whitespace-nowrap"
-                        >
-                            Pilih Jam / Slot <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
-                        </a>
-                    </div>
-                </div>
 
-                <!-- Card 3: Mini Soccer -->
-                <div class="group bg-surface-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-slate-200 flex flex-col justify-between">
-                    <div>
-                        <div class="relative aspect-video overflow-hidden">
-                            <img 
-                                src="{{ asset('images/courts/minisoccer.jpg') }}" 
-                                alt="Mini Soccer 7v7"
-                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                            >
-                            <span class="absolute top-3 left-3 bg-pitch-deep text-surface-white text-xs font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shadow">
-                                Mini Soccer
-                            </span>
-                            <span class="absolute bottom-3 right-3 bg-surface-white/95 text-on-surface text-xs font-semibold px-2 py-0.5 rounded backdrop-blur-sm">
-                                50 × 30 m
-                            </span>
-                        </div>
-                        <div class="p-5 flex flex-col gap-2">
-                            <h3 class="font-headline text-lg font-bold text-on-surface group-hover:text-primary transition-colors">
-                                Mini Soccer 7v7
-                            </h3>
-                            <p class="text-xs text-on-surface-variant flex items-center gap-1.5">
-                                <span class="material-symbols-outlined text-[16px] text-pitch-light">check_circle</span> 
-                                FIFA Standard Turf + 800 Lux
-                            </p>
-                            <div class="grid grid-cols-2 gap-2 mt-2 pt-2 bg-surface-container-low p-2.5 rounded-xl border border-slate-100">
-                                <div>
-                                    <span class="text-xs text-on-surface-variant block">Siang (08-16)</span>
-                                    <span class="text-sm text-pitch-deep font-bold">Rp 450.000</span>
-                                </div>
-                                <div>
-                                    <span class="text-xs text-on-surface-variant block">Malam (17-23)</span>
-                                    <span class="text-sm text-action-orange font-bold">Rp 650.000</span>
+                    <!-- Card 2: Badminton Court -->
+                    <div class="group bg-surface-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-slate-200 flex flex-col justify-between">
+                        <div>
+                            <div class="relative aspect-video overflow-hidden">
+                                <img 
+                                    src="{{ asset('images/courts/badminton.jpg') }}" 
+                                    alt="Badminton Court 1-4"
+                                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                >
+                                <span class="absolute top-3 left-3 bg-[#f8b710] text-slate-950 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow">
+                                    Badminton
+                                </span>
+                                <span class="absolute bottom-3 right-3 bg-slate-950/80 text-white text-[11px] font-semibold px-2 py-0.5 rounded backdrop-blur-sm">
+                                    BWF Mat &bull; 13.4 &times; 6.1 m
+                                </span>
+                            </div>
+                            <div class="p-5 flex flex-col gap-2">
+                                <h3 class="font-teko text-2xl sm:text-3xl font-bold text-slate-900 uppercase tracking-wide group-hover:text-[#f37920] transition-colors leading-none">
+                                    Badminton Court 1-4
+                                </h3>
+                                <div class="w-8 h-0.5 bg-[#f8b710] rounded-full my-0.5"></div>
+                                <p class="text-xs text-slate-600 flex items-center gap-1.5 font-medium">
+                                    <span class="material-symbols-outlined text-[16px] text-emerald-600">check_circle</span> 
+                                    Karpet Li-Ning BWF Standard
+                                </p>
+                                <div class="grid grid-cols-2 gap-2 mt-3 pt-3 bg-slate-50 p-2.5 rounded-xl border border-slate-100 text-xs">
+                                    <div>
+                                        <span class="text-slate-500 block">Siang (08-16)</span>
+                                        <span class="text-sm font-bold text-slate-900">Rp 45.000</span>
+                                    </div>
+                                    <div>
+                                        <span class="text-slate-500 block">Malam (17-23)</span>
+                                        <span class="text-sm font-bold text-[#f37920]">Rp 65.000</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+                        <div class="p-5 pt-0">
+                            <a 
+                                href="#jadwal-interaktif" 
+                                @click="selectSport('badminton')"
+                                class="w-full bg-[#0f2444] hover:bg-[#0b1a30] text-white font-bold text-xs uppercase tracking-wider py-3 rounded-xl flex items-center justify-center gap-2 transition-all shadow-sm"
+                            >
+                                Pilih Jam / Slot <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+                            </a>
+                        </div>
                     </div>
-                    <div class="p-5 pt-0">
-                        <a 
-                            href="#jadwal-interaktif" 
-                            @click="selectSport('minisoccer')"
-                            class="w-full bg-pitch-surface hover:bg-secondary-container text-pitch-deep font-bold text-sm py-2.5 rounded-lg flex items-center justify-center gap-2 transition-colors whitespace-nowrap"
-                        >
-                            Pilih Jam / Slot <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
-                        </a>
-                    </div>
-                </div>
 
-                <!-- Card 4: Padel Court -->
-                <div class="group bg-surface-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-slate-200 flex flex-col justify-between">
-                    <div>
-                        <div class="relative aspect-video overflow-hidden">
-                            <img 
-                                src="{{ asset('images/courts/padel.jpg') }}" 
-                                alt="Padel Court Glass"
-                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                            >
-                            <span class="absolute top-3 left-3 bg-pitch-deep text-surface-white text-xs font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shadow">
-                                Padel
-                            </span>
-                            <span class="absolute bottom-3 right-3 bg-surface-white/95 text-on-surface text-xs font-semibold px-2 py-0.5 rounded backdrop-blur-sm">
-                                20 × 10 m
-                            </span>
-                        </div>
-                        <div class="p-5 flex flex-col gap-2">
-                            <h3 class="font-headline text-lg font-bold text-on-surface group-hover:text-primary transition-colors">
-                                Padel Court Glass
-                            </h3>
-                            <p class="text-xs text-on-surface-variant flex items-center gap-1.5">
-                                <span class="material-symbols-outlined text-[16px] text-pitch-light">check_circle</span> 
-                                Kaca Tempered 12mm & Blue Turf
-                            </p>
-                            <div class="grid grid-cols-2 gap-2 mt-2 pt-2 bg-surface-container-low p-2.5 rounded-xl border border-slate-100">
-                                <div>
-                                    <span class="text-xs text-on-surface-variant block">Siang (08-16)</span>
-                                    <span class="text-sm text-pitch-deep font-bold">Rp 250.000</span>
-                                </div>
-                                <div>
-                                    <span class="text-xs text-on-surface-variant block">Malam (17-23)</span>
-                                    <span class="text-sm text-action-orange font-bold">Rp 330.000</span>
+                    <!-- Card 3: Mini Soccer 7v7 -->
+                    <div class="group bg-surface-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-slate-200 flex flex-col justify-between">
+                        <div>
+                            <div class="relative aspect-video overflow-hidden">
+                                <img 
+                                    src="{{ asset('images/courts/minisoccer.jpg') }}" 
+                                    alt="Mini Soccer 7v7"
+                                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                >
+                                <span class="absolute top-3 left-3 bg-[#f8b710] text-slate-950 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow">
+                                    Mini Soccer
+                                </span>
+                                <span class="absolute bottom-3 right-3 bg-slate-950/80 text-white text-[11px] font-semibold px-2 py-0.5 rounded backdrop-blur-sm">
+                                    Rumput FIFA &bull; 45 &times; 25 m
+                                </span>
+                            </div>
+                            <div class="p-5 flex flex-col gap-2">
+                                <h3 class="font-teko text-2xl sm:text-3xl font-bold text-slate-900 uppercase tracking-wide group-hover:text-[#f37920] transition-colors leading-none">
+                                    Mini Soccer 7v7
+                                </h3>
+                                <div class="w-8 h-0.5 bg-[#f8b710] rounded-full my-0.5"></div>
+                                <p class="text-xs text-slate-600 flex items-center gap-1.5 font-medium">
+                                    <span class="material-symbols-outlined text-[16px] text-emerald-600">check_circle</span> 
+                                    Sintetis Monofilament 50mm
+                                </p>
+                                <div class="grid grid-cols-2 gap-2 mt-3 pt-3 bg-slate-50 p-2.5 rounded-xl border border-slate-100 text-xs">
+                                    <div>
+                                        <span class="text-slate-500 block">Siang (08-16)</span>
+                                        <span class="text-sm font-bold text-slate-900">Rp 450.000</span>
+                                    </div>
+                                    <div>
+                                        <span class="text-slate-500 block">Malam (17-23)</span>
+                                        <span class="text-sm font-bold text-[#f37920]">Rp 650.000</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+                        <div class="p-5 pt-0">
+                            <a 
+                                href="#jadwal-interaktif" 
+                                @click="selectSport('minisoccer')"
+                                class="w-full bg-[#0f2444] hover:bg-[#0b1a30] text-white font-bold text-xs uppercase tracking-wider py-3 rounded-xl flex items-center justify-center gap-2 transition-all shadow-sm"
+                            >
+                                Pilih Jam / Slot <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+                            </a>
+                        </div>
                     </div>
-                    <div class="p-5 pt-0">
-                        <a 
-                            href="#jadwal-interaktif" 
-                            @click="selectSport('padel')"
-                            class="w-full bg-pitch-surface hover:bg-secondary-container text-pitch-deep font-bold text-sm py-2.5 rounded-lg flex items-center justify-center gap-2 transition-colors whitespace-nowrap"
-                        >
-                            Pilih Jam / Slot <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
-                        </a>
+
+                    <!-- Card 4: Padel Court -->
+                    <div class="group bg-surface-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-slate-200 flex flex-col justify-between">
+                        <div>
+                            <div class="relative aspect-video overflow-hidden">
+                                <img 
+                                    src="{{ asset('images/courts/padel.jpg') }}" 
+                                    alt="Padel Court Glass"
+                                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                >
+                                <span class="absolute top-3 left-3 bg-[#f8b710] text-slate-950 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow">
+                                    Padel
+                                </span>
+                                <span class="absolute bottom-3 right-3 bg-slate-950/80 text-white text-[11px] font-semibold px-2 py-0.5 rounded backdrop-blur-sm">
+                                    Panoramic &bull; 20 &times; 10 m
+                                </span>
+                            </div>
+                            <div class="p-5 flex flex-col gap-2">
+                                <h3 class="font-teko text-2xl sm:text-3xl font-bold text-slate-900 uppercase tracking-wide group-hover:text-[#f37920] transition-colors leading-none">
+                                    Padel Court Glass
+                                </h3>
+                                <div class="w-8 h-0.5 bg-[#f8b710] rounded-full my-0.5"></div>
+                                <p class="text-xs text-slate-600 flex items-center gap-1.5 font-medium">
+                                    <span class="material-symbols-outlined text-[16px] text-emerald-600">check_circle</span> 
+                                    Kaca Tempered 12mm & Blue Turf
+                                </p>
+                                <div class="grid grid-cols-2 gap-2 mt-3 pt-3 bg-slate-50 p-2.5 rounded-xl border border-slate-100 text-xs">
+                                    <div>
+                                        <span class="text-slate-500 block">Siang (08-16)</span>
+                                        <span class="text-sm font-bold text-slate-900">Rp 250.000</span>
+                                    </div>
+                                    <div>
+                                        <span class="text-slate-500 block">Malam (17-23)</span>
+                                        <span class="text-sm font-bold text-[#f37920]">Rp 330.000</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-5 pt-0">
+                            <a 
+                                href="#jadwal-interaktif" 
+                                @click="selectSport('padel')"
+                                class="w-full bg-[#0f2444] hover:bg-[#0b1a30] text-white font-bold text-xs uppercase tracking-wider py-3 rounded-xl flex items-center justify-center gap-2 transition-all shadow-sm"
+                            >
+                                Pilih Jam / Slot <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+                            </a>
+                        </div>
                     </div>
+
                 </div>
 
             </div>
         </section>
 
-        <!-- SECTION 4: INTERACTIVE BOOKING SCHEDULE ENGINE (#jadwal-interaktif) -->
-        <section id="jadwal-interaktif" class="w-full bg-arena-night text-surface-container-lowest py-16 px-4 sm:px-8 relative">
+        <!-- SECTION 4: ABOUT US / MENGAPA MEMILIH LAPANGIN (Deep Royal Navy High-Contrast Section) -->
+        <section class="w-full bg-[#0f2444] text-white py-20 border-y border-white/10">
+            <div class="max-w-7xl mx-auto px-4 sm:px-8">
+                
+                <div class="text-center max-w-2xl mx-auto mb-16">
+                    <span class="text-xs font-bold text-[#f8b710] uppercase tracking-widest block mb-1">MENGAPA KAMI BERBEDA</span>
+                    <h2 class="font-teko text-4xl sm:text-5xl lg:text-6xl uppercase font-bold text-white tracking-tight leading-none">
+                        STANDAR TERTINGGI UNTUK SETIAP PERTANDINGAN
+                    </h2>
+                    <div class="flex items-center justify-center gap-1.5 mt-3 mb-3">
+                        <span class="w-14 h-1 bg-[#f8b710] rounded-full inline-block"></span>
+                        <span class="w-1.5 h-1.5 bg-[#f8b710] rounded-xs inline-block"></span>
+                    </div>
+                    <p class="text-sm sm:text-base text-slate-300 leading-relaxed">
+                        Teknologi reservasi canggih dipadukan dengan kualitas infrastruktur gelanggang olahraga bertaraf internasional.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                    
+                    <!-- Feature 1 -->
+                    <div class="flex flex-col items-center sm:items-start text-center sm:text-left bg-white/5 p-6 rounded-2xl border border-white/10 hover:border-[#f8b710]/50 transition-colors">
+                        <div class="w-14 h-14 rounded-full border border-white/20 bg-white/10 flex items-center justify-center text-[#f8b710] mb-4 shadow-inner">
+                            <span class="material-symbols-outlined text-[28px]">lock_clock</span>
+                        </div>
+                        <h3 class="font-teko text-2xl font-bold uppercase tracking-wider text-white mb-1">PESSIMISTIC LOCK SYSTEM</h3>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Jaminan slot terkunci 10 menit saat Anda melakukan pemesanan. Tidak ada risiko jadwal bentrok atau diserobot orang lain.
+                        </p>
+                    </div>
+
+                    <!-- Feature 2 -->
+                    <div class="flex flex-col items-center sm:items-start text-center sm:text-left bg-white/5 p-6 rounded-2xl border border-white/10 hover:border-[#f8b710]/50 transition-colors">
+                        <div class="w-14 h-14 rounded-full border border-white/20 bg-white/10 flex items-center justify-center text-[#f8b710] mb-4 shadow-inner">
+                            <span class="material-symbols-outlined text-[28px]">military_tech</span>
+                        </div>
+                        <h3 class="font-teko text-2xl font-bold uppercase tracking-wider text-white mb-1">STANDAR TURNAMEN RESMI</h3>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Lantai vinyl Teraflex empuk, rumput sintetis bersertifikasi FIFA, dan pencahayaan LED 800 Lux anti silau untuk performa maksimal.
+                        </p>
+                    </div>
+
+                    <!-- Feature 3 -->
+                    <div class="flex flex-col items-center sm:items-start text-center sm:text-left bg-white/5 p-6 rounded-2xl border border-white/10 hover:border-[#f8b710]/50 transition-colors">
+                        <div class="w-14 h-14 rounded-full border border-white/20 bg-white/10 flex items-center justify-center text-[#f8b710] mb-4 shadow-inner">
+                            <span class="material-symbols-outlined text-[28px]">verified</span>
+                        </div>
+                        <h3 class="font-teko text-2xl font-bold uppercase tracking-wider text-white mb-1">E-TIKET & VERIFIKASI REAL-TIME</h3>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Konfirmasi otomatis dan e-tiket QR Code instan langsung ke dashboard Anda. Cukup tunjukkan ke resepsionis untuk check-in.
+                        </p>
+                    </div>
+
+                    <!-- Feature 4 -->
+                    <div class="flex flex-col items-center sm:items-start text-center sm:text-left bg-white/5 p-6 rounded-2xl border border-white/10 hover:border-[#f8b710]/50 transition-colors">
+                        <div class="w-14 h-14 rounded-full border border-white/20 bg-white/10 flex items-center justify-center text-[#f8b710] mb-4 shadow-inner">
+                            <span class="material-symbols-outlined text-[28px]">support_agent</span>
+                        </div>
+                        <h3 class="font-teko text-2xl font-bold uppercase tracking-wider text-white mb-1">FASILITAS & CS STANDBY</h3>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Shower air hangat, ruang ganti ber-AC, mushola, loker aman, tribun penonton, serta tim CS responsif siap membantu Anda.
+                        </p>
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+
+        <!-- SECTION 5: INTERACTIVE BOOKING SCHEDULE ENGINE (#jadwal-interaktif) -->
+        <section id="jadwal-interaktif" class="w-full bg-[#edf0f5] py-20 px-4 sm:px-8 border-b border-slate-200">
             <div class="w-full max-w-7xl mx-auto">
                 
-                <div class="flex flex-col gap-2 mb-8">
-                    <div class="flex items-center gap-2">
-                        <span class="bg-action-orange text-surface-white text-xs px-2.5 py-0.5 rounded uppercase font-bold tracking-wider">
-                            Jadwal Real-Time
-                        </span>
-                        <span class="text-pitch-light text-xs font-semibold flex items-center gap-1">
-                            <span class="w-2 h-2 rounded-full bg-pitch-light animate-pulse"></span> Diperbarui otomatis
-                        </span>
-                    </div>
-                    <h2 class="font-headline text-3xl sm:text-4xl text-surface-white tracking-tight uppercase font-bold">
-                        PILIH JAM MAIN
+                <!-- Section Title with Bar + Dot Accent -->
+                <div class="text-center max-w-2xl mx-auto mb-12">
+                    <span class="text-xs font-bold text-[#f37920] uppercase tracking-widest block mb-1">CEK KETERSEDIAAN HARI INI</span>
+                    <h2 class="font-teko text-4xl sm:text-5xl lg:text-6xl uppercase font-bold text-slate-900 tracking-tight leading-none">
+                        PILIH JAM & KUNCI JADWAL PERTANDINGAN
                     </h2>
-                    <p class="font-body text-sm sm:text-base text-surface-container-highest max-w-2xl leading-relaxed">
+                    <div class="flex items-center justify-center gap-1.5 mt-3 mb-3">
+                        <span class="w-14 h-1 bg-[#f8b710] rounded-full inline-block"></span>
+                        <span class="w-1.5 h-1.5 bg-[#f8b710] rounded-xs inline-block"></span>
+                    </div>
+                    <p class="text-sm sm:text-base text-slate-600 leading-relaxed">
                         Ketuk slot jam yang diinginkan (bisa pilih lebih dari satu jam berurutan). Jam malam dan weekend bertarif prime time. Slot terkunci selama 10 menit saat Anda melanjutkan ke checkout.
                     </p>
                 </div>
@@ -409,39 +487,39 @@
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                     
                     <!-- Left Schedule Timetable Matrix (Col 8) -->
-                    <div class="lg:col-span-8 bg-surface-white text-on-surface rounded-2xl p-5 md:p-6 shadow-xl border border-slate-200">
+                    <div class="lg:col-span-8 bg-surface-white text-slate-800 rounded-2xl p-5 md:p-6 shadow-xl border border-slate-200">
                         
-                        <!-- Arena Selector Pills (Sebaris & Responsif) -->
+                        <!-- Arena Selector Pills -->
                         <div class="flex flex-wrap gap-2 mb-5">
                             <button 
                                 type="button"
                                 @click="selectSport('futsal')"
-                                :class="currentSport === 'futsal' ? 'bg-pitch-deep text-surface-white shadow' : 'bg-surface-container-low text-on-surface hover:bg-surface-container'"
-                                class="text-sm font-bold px-4 py-2 rounded-lg transition-all whitespace-nowrap"
+                                :class="currentSport === 'futsal' ? 'bg-[#0f2444] text-white shadow-md' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'"
+                                class="text-xs uppercase font-bold tracking-wider px-4 py-2.5 rounded-xl transition-all whitespace-nowrap"
                             >
                                 Lapangan Futsal A
                             </button>
                             <button 
                                 type="button"
                                 @click="selectSport('badminton')"
-                                :class="currentSport === 'badminton' ? 'bg-pitch-deep text-surface-white shadow' : 'bg-surface-container-low text-on-surface hover:bg-surface-container'"
-                                class="text-sm font-bold px-4 py-2 rounded-lg transition-all whitespace-nowrap"
+                                :class="currentSport === 'badminton' ? 'bg-[#0f2444] text-white shadow-md' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'"
+                                class="text-xs uppercase font-bold tracking-wider px-4 py-2.5 rounded-xl transition-all whitespace-nowrap"
                             >
-                                Badminton Court 1–4
+                                Badminton Court 1-4
                             </button>
                             <button 
                                 type="button"
                                 @click="selectSport('minisoccer')"
-                                :class="currentSport === 'minisoccer' ? 'bg-pitch-deep text-surface-white shadow' : 'bg-surface-container-low text-on-surface hover:bg-surface-container'"
-                                class="text-sm font-bold px-4 py-2 rounded-lg transition-all whitespace-nowrap"
+                                :class="currentSport === 'minisoccer' ? 'bg-[#0f2444] text-white shadow-md' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'"
+                                class="text-xs uppercase font-bold tracking-wider px-4 py-2.5 rounded-xl transition-all whitespace-nowrap"
                             >
                                 Mini Soccer 7v7
                             </button>
                             <button 
                                 type="button"
                                 @click="selectSport('padel')"
-                                :class="currentSport === 'padel' ? 'bg-pitch-deep text-surface-white shadow' : 'bg-surface-container-low text-on-surface hover:bg-surface-container'"
-                                class="text-sm font-bold px-4 py-2 rounded-lg transition-all whitespace-nowrap"
+                                :class="currentSport === 'padel' ? 'bg-[#0f2444] text-white shadow-md' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'"
+                                class="text-xs uppercase font-bold tracking-wider px-4 py-2.5 rounded-xl transition-all whitespace-nowrap"
                             >
                                 Padel Court
                             </button>
@@ -454,44 +532,44 @@
                                     <button 
                                         type="button"
                                         @click="selectDate(day.date)"
-                                        :class="selectedDate === day.date ? 'bg-pitch-deep text-surface-white shadow' : 'bg-surface-container-low hover:bg-surface-container text-on-surface'"
-                                        class="px-4 py-2 rounded-xl text-center flex flex-col items-center min-w-[72px] transition-all whitespace-nowrap"
+                                        :class="selectedDate === day.date ? 'bg-[#0f2444] text-white shadow-md' : 'bg-slate-100 hover:bg-slate-200 text-slate-800'"
+                                        class="px-4 py-2.5 rounded-xl text-center flex flex-col items-center min-w-[76px] transition-all whitespace-nowrap"
                                     >
-                                        <span :class="selectedDate === day.date ? 'text-pitch-light' : (day.isWeekend ? 'text-action-orange' : 'text-on-surface-variant')" class="text-xs font-bold block" x-text="day.dayLabel"></span>
+                                        <span :class="selectedDate === day.date ? 'text-[#f8b710]' : (day.isWeekend ? 'text-[#f37920]' : 'text-slate-500')" class="text-xs font-bold block uppercase" x-text="day.dayLabel"></span>
                                         <span class="text-sm font-bold" x-text="day.dateLabel"></span>
                                     </button>
                                 </template>
                             </div>
                         </div>
 
-                        <!-- Slot Status Legend (PRD Aligned) -->
-                        <div class="flex flex-wrap items-center gap-4 py-2.5 mb-5 bg-surface-container-low px-4 rounded-xl border border-slate-100 text-xs font-medium">
+                        <!-- Slot Status Legend -->
+                        <div class="flex flex-wrap items-center gap-4 py-2.5 mb-5 bg-slate-50 px-4 rounded-xl border border-slate-100 text-xs font-medium">
                             <div class="flex items-center gap-1.5 whitespace-nowrap">
-                                <span class="w-3 h-3 rounded bg-pitch-surface border border-pitch-light"></span>
+                                <span class="w-3 h-3 rounded bg-emerald-50 border border-emerald-400"></span>
                                 <span>Tersedia (Siang)</span>
                             </div>
                             <div class="flex items-center gap-1.5 whitespace-nowrap">
-                                <span class="w-3 h-3 rounded bg-action-glow border border-action-amber"></span>
+                                <span class="w-3 h-3 rounded bg-amber-50 border border-[#f8b710]"></span>
                                 <span>Jam Ramai / Prime</span>
                             </div>
                             <div class="flex items-center gap-1.5 whitespace-nowrap">
-                                <span class="w-3 h-3 rounded bg-action-orange border border-action-orange"></span>
-                                <span class="font-bold text-action-orange">Dipilih Anda</span>
+                                <span class="w-3 h-3 rounded bg-[#f37920] border border-[#f37920]"></span>
+                                <span class="font-bold text-[#f37920]">Dipilih Anda</span>
                             </div>
                             <div class="flex items-center gap-1.5 whitespace-nowrap">
-                                <span class="w-3 h-3 rounded bg-court-booked-surface border border-slate-200"></span>
-                                <span class="text-court-booked line-through">Terisi / Booked</span>
+                                <span class="w-3 h-3 rounded bg-slate-100 border border-slate-200"></span>
+                                <span class="text-slate-400 line-through">Terisi / Booked</span>
                             </div>
                         </div>
 
-                        <!-- Slot Matrix Time Grid (Multi-slot selection with alpine.js) -->
+                        <!-- Slot Matrix Time Grid -->
                         <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-2.5">
                             <template x-for="slot in activeCourtSlots" :key="slot.id">
                                 <div>
                                     <!-- Booked Slot -->
                                     <div 
                                         x-show="slot.status === 'booked'"
-                                        class="p-2.5 rounded-xl text-center bg-court-booked-surface text-court-booked cursor-not-allowed border border-slate-200 select-none"
+                                        class="p-2.5 rounded-xl text-center bg-slate-100 text-slate-400 cursor-not-allowed border border-slate-200 select-none"
                                     >
                                         <span class="text-sm font-bold block line-through whitespace-nowrap" x-text="slot.time"></span>
                                         <span class="text-xs">Terisi</span>
@@ -503,15 +581,15 @@
                                         type="button"
                                         @click="toggleSlot(slot)"
                                         :class="{
-                                            'bg-action-orange text-surface-white ring-2 ring-action-orange shadow-md transform scale-[1.02]': isSlotSelected(slot),
-                                            'bg-action-glow text-on-surface hover:bg-action-amber/30 border border-action-amber/40': !isSlotSelected(slot) && slot.isPrime,
-                                            'bg-pitch-surface text-pitch-deep hover:bg-secondary-container border border-pitch-light/30': !isSlotSelected(slot) && !slot.isPrime
+                                            'bg-gradient-to-r from-[#f8b710] to-[#f37920] text-slate-950 font-bold ring-2 ring-[#f8b710] shadow-md transform scale-[1.02]': isSlotSelected(slot),
+                                            'bg-amber-50/80 text-slate-900 hover:bg-amber-100/80 border border-[#f8b710]/40': !isSlotSelected(slot) && slot.isPrime,
+                                            'bg-emerald-50 text-slate-900 hover:bg-emerald-100 border border-emerald-300': !isSlotSelected(slot) && !slot.isPrime
                                         }"
                                         class="w-full p-2.5 rounded-xl text-center transition-all cursor-pointer font-body flex flex-col items-center justify-center"
                                     >
                                         <span class="text-sm font-bold block whitespace-nowrap" x-text="slot.time"></span>
                                         <span 
-                                            :class="isSlotSelected(slot) ? 'text-surface-white' : (slot.isPrime ? 'text-action-orange font-bold' : 'text-pitch-deep font-medium')"
+                                            :class="isSlotSelected(slot) ? 'text-slate-950 font-bold' : (slot.isPrime ? 'text-[#f37920] font-bold' : 'text-emerald-800 font-medium')"
                                             class="text-xs mt-0.5 whitespace-nowrap"
                                             x-text="formatCurrency(slot.price)"
                                         ></span>
@@ -522,47 +600,47 @@
                     </div>
 
                     <!-- Right Column: Sticky Real-Time Booking Tray (Col 4) -->
-                    <div class="lg:col-span-4 bg-surface-white text-on-surface rounded-2xl p-6 shadow-2xl sticky top-24 border border-slate-200">
+                    <div class="lg:col-span-4 bg-surface-white text-slate-800 rounded-2xl p-6 shadow-2xl sticky top-24 border border-slate-200">
                         
-                        <!-- Pessimistic Lock Banner (Aligned with PRD FR-12) -->
-                        <div class="flex items-center justify-between pb-2 mb-4 bg-surface-container-low p-3 rounded-xl border border-slate-100">
+                        <!-- Pessimistic Lock Banner -->
+                        <div class="flex items-center justify-between pb-2 mb-4 bg-amber-50/80 p-3 rounded-xl border border-[#f8b710]/30">
                             <div class="flex items-center gap-2">
-                                <span class="material-symbols-outlined text-[20px] text-pitch-emerald">lock_clock</span>
-                                <span class="text-xs font-bold text-on-surface">Slot Lock Guarantee</span>
+                                <span class="material-symbols-outlined text-[20px] text-[#f37920]">lock_clock</span>
+                                <span class="text-xs font-bold text-slate-800">Slot Lock Guarantee</span>
                             </div>
-                            <span class="text-xs text-action-orange font-bold bg-action-glow px-2 py-0.5 rounded-md">
+                            <span class="text-xs text-slate-950 font-bold bg-[#f8b710] px-2 py-0.5 rounded-md">
                                 10 Menit
                             </span>
                         </div>
 
-                        <h3 class="font-headline text-lg font-bold text-on-surface mb-1">Ringkasan Reservasi</h3>
-                        <p class="text-xs text-on-surface-variant mb-4" x-text="summaryTitle"></p>
+                        <h3 class="font-teko text-2xl font-bold uppercase tracking-wide text-slate-900 leading-none">Ringkasan Reservasi</h3>
+                        <p class="text-xs text-slate-500 mb-4 font-medium" x-text="summaryTitle"></p>
 
                         <!-- Selected Slots List -->
                         <div class="min-h-[110px] flex flex-col gap-2 mb-4">
                             <!-- Empty State -->
                             <div 
                                 x-show="selectedSlots.length === 0" 
-                                class="p-4 bg-surface-container-low rounded-xl text-center text-on-surface-variant text-xs leading-relaxed border border-dashed border-slate-200"
+                                class="p-4 bg-slate-50 rounded-xl text-center text-slate-500 text-xs leading-relaxed border border-dashed border-slate-200"
                             >
-                                <span class="material-symbols-outlined text-[28px] text-outline mb-1 block">touch_app</span>
+                                <span class="material-symbols-outlined text-[28px] text-slate-400 mb-1 block">touch_app</span>
                                 Belum ada jam yang dipilih.<br>
                                 Ketuk satu atau beberapa slot jam di tabel sebelah kiri.
                             </div>
 
                             <!-- List of chosen slots -->
                             <template x-for="(item, idx) in selectedSlots" :key="idx">
-                                <div class="flex justify-between items-center bg-surface-container-low px-3 py-2 rounded-xl text-xs font-medium border border-slate-100">
-                                    <div class="flex items-center gap-1.5 text-on-surface">
-                                        <span class="w-2 h-2 rounded-full bg-pitch-emerald"></span>
+                                <div class="flex justify-between items-center bg-slate-50 px-3 py-2 rounded-xl text-xs font-medium border border-slate-100">
+                                    <div class="flex items-center gap-1.5 text-slate-800">
+                                        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
                                         <span class="font-bold whitespace-nowrap" x-text="item.time"></span>
                                     </div>
                                     <div class="flex items-center gap-2">
-                                        <span class="text-action-orange font-bold whitespace-nowrap" x-text="formatCurrency(item.price)"></span>
+                                        <span class="text-[#f37920] font-bold whitespace-nowrap" x-text="formatCurrency(item.price)"></span>
                                         <button 
                                             type="button" 
                                             @click="toggleSlot(item)" 
-                                            class="text-outline hover:text-red-500 transition-colors"
+                                            class="text-slate-400 hover:text-red-500 transition-colors"
                                             title="Hapus slot"
                                         >
                                             <span class="material-symbols-outlined text-[16px]">close</span>
@@ -573,41 +651,41 @@
                         </div>
 
                         <!-- Total Price Block -->
-                        <div class="bg-arena-night text-surface-white p-4 rounded-xl mb-4 shadow-inner">
-                            <div class="flex justify-between items-center text-surface-container-highest text-xs mb-1">
+                        <div class="bg-[#0f2444] text-white p-4 rounded-xl mb-4 shadow-inner">
+                            <div class="flex justify-between items-center text-slate-300 text-xs mb-1">
                                 <span>Durasi Main</span>
                                 <span class="font-bold" x-text="selectedSlots.length + ' Jam'"></span>
                             </div>
-                            <div class="flex justify-between items-center text-surface-white pt-1 border-t border-surface-white/10">
+                            <div class="flex justify-between items-center text-white pt-1 border-t border-white/10">
                                 <span class="text-sm font-semibold">Total Tagihan</span>
-                                <span class="font-headline text-xl text-pitch-light font-bold whitespace-nowrap" x-text="formatCurrency(totalPrice)"></span>
+                                <span class="font-teko text-2xl sm:text-3xl text-[#f8b710] font-bold whitespace-nowrap leading-none" x-text="formatCurrency(totalPrice)"></span>
                             </div>
                         </div>
 
-                        <!-- Dual Action CTA Buttons (PRD Compliant) -->
+                        <!-- Dual Action CTA Buttons -->
                         <div class="flex flex-col gap-2.5">
                             <button 
                                 type="button"
                                 :disabled="selectedSlots.length === 0"
                                 @click="proceedBooking()"
-                                class="w-full bg-action-orange disabled:opacity-40 disabled:cursor-not-allowed hover:bg-tertiary-container text-surface-white font-bold text-sm py-3.5 rounded-xl flex items-center justify-center gap-2 transition-all shadow-md transform active:scale-95 whitespace-nowrap cursor-pointer"
+                                class="w-full bg-gradient-to-r from-[#f8b710] to-[#f37920] hover:from-[#f37920] hover:to-[#f8b710] disabled:opacity-40 disabled:cursor-not-allowed text-slate-950 font-bold text-xs uppercase tracking-wider py-4 rounded-xl flex items-center justify-center gap-2 transition-all shadow-md transform active:scale-95 whitespace-nowrap cursor-pointer"
                             >
                                 <span class="material-symbols-outlined text-[20px]">lock</span>
-                                Kunci Slot & Booking
+                                Kunci Slot & Booking Sekarang
                             </button>
 
                             <a 
                                 :href="whatsAppLink"
                                 target="_blank"
-                                class="w-full bg-pitch-deep hover:bg-pitch-emerald text-surface-white font-bold text-sm py-3 rounded-xl flex items-center justify-center gap-2 transition-colors whitespace-nowrap"
+                                class="w-full bg-[#0f2444] hover:bg-[#0b1a30] text-white font-bold text-xs uppercase tracking-wider py-3.5 rounded-xl flex items-center justify-center gap-2 transition-colors whitespace-nowrap"
                             >
                                 <span class="material-symbols-outlined text-[20px]">chat</span>
                                 Booking Cepat via WhatsApp
                             </a>
                         </div>
 
-                        <p class="text-[11px] text-on-surface-variant text-center mt-3 leading-relaxed flex items-center justify-center gap-1.5">
-                            <span class="material-symbols-outlined text-[14px] text-pitch-emerald">verified_user</span>
+                        <p class="text-[11px] text-slate-500 text-center mt-3 leading-relaxed flex items-center justify-center gap-1.5">
+                            <span class="material-symbols-outlined text-[14px] text-emerald-600">verified_user</span>
                             Slot dikunci 10 menit anti double-booking setelah masuk/daftar.
                         </p>
                     </div>
@@ -617,62 +695,252 @@
             </div>
         </section>
 
+        <!-- SECTION 6: PILIHAN PAKET SEWA ARENA (Pricing Cards anatomy like Weblium) -->
+        <section class="w-full bg-surface-white py-20 border-b border-slate-200">
+            <div class="max-w-7xl mx-auto px-4 sm:px-8">
+                
+                <div class="text-center max-w-2xl mx-auto mb-16">
+                    <span class="text-xs font-bold text-[#f37920] uppercase tracking-widest block mb-1">PAKET & HARGA SEWA</span>
+                    <h2 class="font-teko text-4xl sm:text-5xl lg:text-6xl uppercase font-bold text-slate-900 tracking-tight leading-none">
+                        PILIHAN PAKET SEWA GELANGGANG
+                    </h2>
+                    <div class="flex items-center justify-center gap-1.5 mt-3 mb-3">
+                        <span class="w-14 h-1 bg-[#f8b710] rounded-full inline-block"></span>
+                        <span class="w-1.5 h-1.5 bg-[#f8b710] rounded-xs inline-block"></span>
+                    </div>
+                    <p class="text-sm sm:text-base text-slate-600 leading-relaxed">
+                        Fleksibilitas reservasi lengkap, mulai dari sparring santai per jam, paket komunitas mingguan, hingga turnamen akbar.
+                    </p>
+                </div>
 
-        <!-- SECTION 6: ALUR BOOKING 4 LANGKAH (SESUAI PRD WORKFLOW) -->
-        <section id="cara-booking" class="w-full bg-surface-white py-16 border-y border-slate-200">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
+                    
+                    <!-- Pricing Card 1: Reguler -->
+                    <div class="bg-surface-white rounded-3xl p-8 border border-slate-200 shadow-sm hover:shadow-xl transition-all flex flex-col justify-between">
+                        <div>
+                            <span class="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-1">LATIHAN & SPARRING</span>
+                            <h3 class="font-teko text-3xl font-bold uppercase text-slate-900 leading-none">PAKET REGULER</h3>
+                            <div class="w-8 h-1 bg-[#f8b710] rounded-full my-3"></div>
+                            
+                            <div class="my-5">
+                                <span class="text-xs text-slate-500 block">Mulai dari</span>
+                                <div class="flex items-baseline gap-1">
+                                    <span class="font-teko text-5xl font-bold text-[#f8b710] leading-none">Rp 45.000</span>
+                                    <span class="text-xs text-slate-500">/ jam</span>
+                                </div>
+                            </div>
+
+                            <p class="text-xs text-slate-600 leading-relaxed mb-6">
+                                Pilihan praktis untuk tim yang ingin bermain fleksibel per sesi tanpa komitmen jangka panjang.
+                            </p>
+
+                            <ul class="flex flex-col gap-3 text-xs text-slate-700">
+                                <li class="flex items-center gap-2.5">
+                                    <span class="material-symbols-outlined text-[18px] text-emerald-600">check_circle</span>
+                                    <span>Bebas pilih jam siang atau prime time malam</span>
+                                </li>
+                                <li class="flex items-center gap-2.5">
+                                    <span class="material-symbols-outlined text-[18px] text-emerald-600">check_circle</span>
+                                    <span>Slot terkunci aman 10 menit saat checkout</span>
+                                </li>
+                                <li class="flex items-center gap-2.5">
+                                    <span class="material-symbols-outlined text-[18px] text-emerald-600">check_circle</span>
+                                    <span>Akses shower & ruang ganti ber-AC</span>
+                                </li>
+                                <li class="flex items-center gap-2.5">
+                                    <span class="material-symbols-outlined text-[18px] text-emerald-600">check_circle</span>
+                                    <span>E-Tiket kode QR instan</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="pt-8">
+                            <a 
+                                href="#jadwal-interaktif" 
+                                class="w-full border-2 border-[#0f2444] text-[#0f2444] hover:bg-[#0f2444] hover:text-white font-bold text-xs uppercase tracking-wider py-3.5 rounded-full flex items-center justify-center gap-2 transition-all"
+                            >
+                                Booking Sekarang
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Pricing Card 2: Member Komunitas (Featured / Highlight) -->
+                    <div class="bg-surface-white rounded-3xl p-8 border-2 border-[#f8b710] shadow-xl relative flex flex-col justify-between transform md:-translate-y-2">
+                        <!-- Popular Badge -->
+                        <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-[#f8b710] to-[#f37920] text-slate-950 font-bold text-xs uppercase tracking-wider px-4 py-1 rounded-full shadow-md">
+                            REKOMENDASI KOMUNITAS
+                        </div>
+
+                        <div>
+                            <span class="text-xs font-bold text-[#f37920] uppercase tracking-wider block mb-1">LANGGANAN RUTIN</span>
+                            <h3 class="font-teko text-3xl font-bold uppercase text-slate-900 leading-none">PAKET MEMBER KOMUNITAS</h3>
+                            <div class="w-8 h-1 bg-[#f8b710] rounded-full my-3"></div>
+                            
+                            <div class="my-5">
+                                <span class="text-xs text-slate-500 block">Mulai dari</span>
+                                <div class="flex items-baseline gap-1">
+                                    <span class="font-teko text-5xl font-bold text-[#f37920] leading-none">DISKON 15%</span>
+                                    <span class="text-xs text-slate-500">/ bulan</span>
+                                </div>
+                            </div>
+
+                            <p class="text-xs text-slate-600 leading-relaxed mb-6">
+                                Amankan jadwal favorit Anda secara rutin setiap minggu tanpa takut kehabisan slot oleh tim lain.
+                            </p>
+
+                            <ul class="flex flex-col gap-3 text-xs text-slate-700">
+                                <li class="flex items-center gap-2.5">
+                                    <span class="material-symbols-outlined text-[18px] text-emerald-600">check_circle</span>
+                                    <span><strong>Prioritas jadwal tetap</strong> mingguan terjaga</span>
+                                </li>
+                                <li class="flex items-center gap-2.5">
+                                    <span class="material-symbols-outlined text-[18px] text-emerald-600">check_circle</span>
+                                    <span>Diskon 15% setiap total transaksi bulanan</span>
+                                </li>
+                                <li class="flex items-center gap-2.5">
+                                    <span class="material-symbols-outlined text-[18px] text-emerald-600">check_circle</span>
+                                    <span>Gratis 1 galon air mineral setiap sesi main</span>
+                                </li>
+                                <li class="flex items-center gap-2.5">
+                                    <span class="material-symbols-outlined text-[18px] text-emerald-600">check_circle</span>
+                                    <span>Fleksibilitas reschedule 1x per bulan</span>
+                                </li>
+                                <li class="flex items-center gap-2.5">
+                                    <span class="material-symbols-outlined text-[18px] text-emerald-600">check_circle</span>
+                                    <span>Prioritas loker tim & ruang simpan perlengkapan</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="pt-8">
+                            <a 
+                                href="{{ route('kontak') }}" 
+                                class="w-full bg-gradient-to-r from-[#f8b710] to-[#f37920] hover:from-[#f37920] hover:to-[#f8b710] text-slate-950 font-bold text-xs uppercase tracking-wider py-4 rounded-full flex items-center justify-center gap-2 shadow-lg shadow-amber-500/25 transition-all transform hover:-translate-y-0.5"
+                            >
+                                Daftar Member Komunitas
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Pricing Card 3: Turnamen / Event Organizer -->
+                    <div class="bg-surface-white rounded-3xl p-8 border border-slate-200 shadow-sm hover:shadow-xl transition-all flex flex-col justify-between">
+                        <div>
+                            <span class="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-1">EVENT & TURNAMEN</span>
+                            <h3 class="font-teko text-3xl font-bold uppercase text-slate-900 leading-none">PAKET TURNAMEN & EVENT</h3>
+                            <div class="w-8 h-1 bg-[#f8b710] rounded-full my-3"></div>
+                            
+                            <div class="my-5">
+                                <span class="text-xs text-slate-500 block">Sewa Venue Penuh</span>
+                                <div class="flex items-baseline gap-1">
+                                    <span class="font-teko text-5xl font-bold text-slate-900 leading-none">CUSTOM</span>
+                                    <span class="text-xs text-slate-500">/ seharian</span>
+                                </div>
+                            </div>
+
+                            <p class="text-xs text-slate-600 leading-relaxed mb-6">
+                                Solusi sewa gelanggang menyeluruh untuk event perusahaan, liga amatir, atau kejuaraan antarsekolah.
+                            </p>
+
+                            <ul class="flex flex-col gap-3 text-xs text-slate-700">
+                                <li class="flex items-center gap-2.5">
+                                    <span class="material-symbols-outlined text-[18px] text-emerald-600">check_circle</span>
+                                    <span>Sewa arena penuh seharian (08.00 - 23.00)</span>
+                                </li>
+                                <li class="flex items-center gap-2.5">
+                                    <span class="material-symbols-outlined text-[18px] text-emerald-600">check_circle</span>
+                                    <span>Akses sound system, mic wireless, & tribun</span>
+                                </li>
+                                <li class="flex items-center gap-2.5">
+                                    <span class="material-symbols-outlined text-[18px] text-emerald-600">check_circle</span>
+                                    <span>Ruang panitia ber-AC khusus</span>
+                                </li>
+                                <li class="flex items-center gap-2.5">
+                                    <span class="material-symbols-outlined text-[18px] text-emerald-600">check_circle</span>
+                                    <span>Papan skor digital & meja wasit resmi</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="pt-8">
+                            <a 
+                                href="{{ route('kontak') }}" 
+                                class="w-full border-2 border-[#0f2444] text-[#0f2444] hover:bg-[#0f2444] hover:text-white font-bold text-xs uppercase tracking-wider py-3.5 rounded-full flex items-center justify-center gap-2 transition-all"
+                            >
+                                Konsultasi Event CS
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+
+        <!-- SECTION 7: ALUR BOOKING 4 LANGKAH (Step Cards) -->
+        <section id="cara-booking" class="w-full bg-[#f8f9fa] py-20 border-b border-slate-200">
             <div class="w-full max-w-7xl mx-auto px-4 sm:px-8">
                 
-                <div class="text-center max-w-xl mx-auto mb-12">
-                    <span class="text-xs text-action-orange uppercase tracking-wider font-bold block mb-1">Proses Mudah</span>
-                    <h2 class="font-headline text-3xl text-on-surface tracking-tight uppercase font-bold">4 Langkah Reservasi</h2>
-                    <p class="text-sm text-on-surface-variant mt-2">
-                        Booking lapangan olahraga di Lapangin selesai dalam waktu kurang dari 2 menit.
+                <div class="text-center max-w-2xl mx-auto mb-16">
+                    <span class="text-xs font-bold text-[#f37920] uppercase tracking-widest block mb-1">PROSES MUDAH & CEPAT</span>
+                    <h2 class="font-teko text-4xl sm:text-5xl lg:text-6xl uppercase font-bold text-slate-900 tracking-tight leading-none">
+                        4 LANGKAH RESERVASI PRAKTIS
+                    </h2>
+                    <div class="flex items-center justify-center gap-1.5 mt-3 mb-3">
+                        <span class="w-14 h-1 bg-[#f8b710] rounded-full inline-block"></span>
+                        <span class="w-1.5 h-1.5 bg-[#f8b710] rounded-xs inline-block"></span>
+                    </div>
+                    <p class="text-sm sm:text-base text-slate-600">
+                        Booking lapangan olahraga di LapangIn selesai dalam waktu kurang dari 2 menit.
                     </p>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                     
-                    <div class="bg-surface-container-low p-6 rounded-2xl relative border border-slate-100">
-                        <span class="font-headline text-4xl text-pitch-deep/10 absolute top-3 right-4 font-bold select-none">01</span>
-                        <div class="w-10 h-10 rounded-xl bg-pitch-deep text-surface-white flex items-center justify-center mb-4 font-bold shadow">
-                            1
+                    <div class="bg-surface-white p-6 rounded-2xl relative border border-slate-200 shadow-sm">
+                        <span class="font-teko text-5xl text-slate-200 absolute top-3 right-4 font-bold select-none leading-none">01</span>
+                        <div class="w-12 h-12 rounded-xl bg-[#0f2444] text-white flex items-center justify-center mb-4 font-bold shadow-md">
+                            <span class="material-symbols-outlined text-[24px]">sports_soccer</span>
                         </div>
-                        <h3 class="text-base font-bold text-on-surface mb-1">Pilih Arena & Jam</h3>
-                        <p class="text-xs text-on-surface-variant leading-relaxed">
-                            Pilih cabang olahraga, tentukan tanggal pertandingan, dan pilih satu atau beberapa jam yang kosong di kalender.
+                        <h3 class="font-teko text-2xl font-bold uppercase text-slate-900 mb-1 leading-none">PILIH ARENA & JAM</h3>
+                        <div class="w-6 h-0.5 bg-[#f8b710] rounded-full my-2"></div>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Pilih cabang olahraga, tentukan tanggal pertandingan, dan pilih satu atau beberapa jam yang kosong di kalender interaktif.
                         </p>
                     </div>
 
-                    <div class="bg-surface-container-low p-6 rounded-2xl relative border border-slate-100">
-                        <span class="font-headline text-4xl text-pitch-deep/10 absolute top-3 right-4 font-bold select-none">02</span>
-                        <div class="w-10 h-10 rounded-xl bg-action-orange text-surface-white flex items-center justify-center mb-4 font-bold shadow">
-                            2
+                    <div class="bg-surface-white p-6 rounded-2xl relative border border-slate-200 shadow-sm">
+                        <span class="font-teko text-5xl text-slate-200 absolute top-3 right-4 font-bold select-none leading-none">02</span>
+                        <div class="w-12 h-12 rounded-xl bg-[#f8b710] text-slate-950 flex items-center justify-center mb-4 font-bold shadow-md">
+                            <span class="material-symbols-outlined text-[24px]">lock_clock</span>
                         </div>
-                        <h3 class="text-base font-bold text-on-surface mb-1">Slot Lock 10 Menit</h3>
-                        <p class="text-xs text-on-surface-variant leading-relaxed">
+                        <h3 class="font-teko text-2xl font-bold uppercase text-slate-900 mb-1 leading-none">SLOT LOCK 10 MENIT</h3>
+                        <div class="w-6 h-0.5 bg-[#f8b710] rounded-full my-2"></div>
+                        <p class="text-xs text-slate-600 leading-relaxed">
                             Sistem secara instan mengunci slot pilihan Anda selama 10 menit agar tidak dapat dipesan atau diserobot orang lain.
                         </p>
                     </div>
 
-                    <div class="bg-surface-container-low p-6 rounded-2xl relative border border-slate-100">
-                        <span class="font-headline text-4xl text-pitch-deep/10 absolute top-3 right-4 font-bold select-none">03</span>
-                        <div class="w-10 h-10 rounded-xl bg-pitch-deep text-surface-white flex items-center justify-center mb-4 font-bold shadow">
-                            3
+                    <div class="bg-surface-white p-6 rounded-2xl relative border border-slate-200 shadow-sm">
+                        <span class="font-teko text-5xl text-slate-200 absolute top-3 right-4 font-bold select-none leading-none">03</span>
+                        <div class="w-12 h-12 rounded-xl bg-[#0f2444] text-white flex items-center justify-center mb-4 font-bold shadow-md">
+                            <span class="material-symbols-outlined text-[24px]">payments</span>
                         </div>
-                        <h3 class="text-base font-bold text-on-surface mb-1">Bayar Otomatis</h3>
-                        <p class="text-xs text-on-surface-variant leading-relaxed">
-                            Bayar instan via QRIS, Virtual Account, E-Wallet otomatis, atau gunakan opsi upload bukti transfer manual.
+                        <h3 class="font-teko text-2xl font-bold uppercase text-slate-900 mb-1 leading-none">BAYAR INSTAN / MANUAL</h3>
+                        <div class="w-6 h-0.5 bg-[#f8b710] rounded-full my-2"></div>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Selesaikan pembayaran melalui transfer bank BCA resmi dan upload bukti transfer untuk diverifikasi operator kami.
                         </p>
                     </div>
 
-                    <div class="bg-surface-container-low p-6 rounded-2xl relative border border-slate-100">
-                        <span class="font-headline text-4xl text-pitch-deep/10 absolute top-3 right-4 font-bold select-none">04</span>
-                        <div class="w-10 h-10 rounded-xl bg-pitch-emerald text-surface-white flex items-center justify-center mb-4 font-bold shadow">
-                            4
+                    <div class="bg-surface-white p-6 rounded-2xl relative border border-slate-200 shadow-sm">
+                        <span class="font-teko text-5xl text-slate-200 absolute top-3 right-4 font-bold select-none leading-none">04</span>
+                        <div class="w-12 h-12 rounded-xl bg-emerald-600 text-white flex items-center justify-center mb-4 font-bold shadow-md">
+                            <span class="material-symbols-outlined text-[24px]">qr_code_scanner</span>
                         </div>
-                        <h3 class="text-base font-bold text-on-surface mb-1">Tiket QR & Main!</h3>
-                        <p class="text-xs text-on-surface-variant leading-relaxed">
-                            Invoice PDF dan kode reservasi unik langsung terkirim ke email Anda. Tunjukkan ke staf kasir untuk cek-in!
+                        <h3 class="font-teko text-2xl font-bold uppercase text-slate-900 mb-1 leading-none">E-TIKET QR & MAIN!</h3>
+                        <div class="w-6 h-0.5 bg-[#f8b710] rounded-full my-2"></div>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Tiket QR Code unik dan kode booking langsung tersedia di dashboard Anda. Tunjukkan ke kasir untuk mulai bertanding!
                         </p>
                     </div>
 
@@ -681,150 +949,207 @@
             </div>
         </section>
 
-        <!-- SECTION 7: SUASANA ARENA (GALERI FOTO) -->
-        <section class="w-full max-w-7xl mx-auto px-4 sm:px-8 py-16">
-            <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
-                <div>
-                    <span class="text-xs text-pitch-emerald uppercase tracking-wider font-bold block mb-1">Galeri Foto</span>
-                    <h2 class="font-headline text-3xl text-on-surface tracking-tight uppercase font-bold">Suasana Arena</h2>
+        <!-- SECTION 8: HIGH-ENERGY FULL-WIDTH ACTION BANNER (Like Skydiving "Sky is Not the Limit" Banner) -->
+        <section class="w-full bg-[#0f2444] text-white py-20 relative overflow-hidden border-b border-white/10 text-center">
+            <div class="absolute inset-0 bg-radial from-white/5 to-transparent pointer-events-none"></div>
+            <div class="absolute -top-24 -left-24 w-80 h-80 rounded-full bg-[#f8b710]/15 blur-3xl pointer-events-none"></div>
+            <div class="absolute -bottom-24 -right-24 w-80 h-80 rounded-full bg-orange-500/15 blur-3xl pointer-events-none"></div>
+
+            <div class="max-w-4xl mx-auto px-4 sm:px-8 relative z-10">
+                <span class="text-xs font-bold text-[#f8b710] uppercase tracking-widest block mb-2">SIAPKAN SEPATU & ATUR JADWAL</span>
+                <h2 class="font-teko text-5xl sm:text-6xl lg:text-7xl font-bold uppercase text-white tracking-tight leading-none mb-4">
+                    JADWALKAN PERTANDINGAN TIM ANDA SEKARANG!
+                </h2>
+                <div class="flex items-center justify-center gap-1.5 my-3">
+                    <span class="w-16 h-1 bg-[#f8b710] rounded-full inline-block"></span>
+                    <span class="w-2 h-2 bg-[#f8b710] rounded-xs inline-block"></span>
                 </div>
-                <p class="text-sm text-on-surface-variant">
-                    Kualitas arena terawat dan standar fasilitas bersertifikasi resmi untuk kepuasan bermain Anda.
+                <p class="text-sm sm:text-base text-slate-300 max-w-2xl mx-auto mb-8 leading-relaxed">
+                    Slot lapangan favorit terutama di akhir pekan dan jam malam cepat terisi. Jangan biarkan rencana pertandingan tim Anda tertunda!
                 </p>
-            </div>
-
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div class="relative rounded-2xl overflow-hidden aspect-square group shadow-sm">
-                    <img 
-                        src="https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&w=600&q=80" 
-                        alt="Hall Indoor Utama Lapangin"
-                        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                <div class="flex flex-wrap items-center justify-center gap-4">
+                    <a 
+                        href="#jadwal-interaktif" 
+                        class="bg-gradient-to-r from-[#f8b710] to-[#f37920] hover:from-[#f37920] hover:to-[#f8b710] text-slate-950 font-bold text-xs uppercase tracking-wider px-8 py-4 rounded-full shadow-lg shadow-amber-500/25 transition-all transform hover:-translate-y-0.5"
                     >
-                    <div class="absolute inset-0 bg-gradient-to-t from-arena-night/80 via-transparent to-transparent flex items-end p-4">
-                        <span class="text-surface-white text-xs font-bold">Hall Indoor Utama</span>
-                    </div>
-                </div>
-
-                <div class="relative rounded-2xl overflow-hidden aspect-square group shadow-sm">
-                    <img 
-                        src="https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?auto=format&fit=crop&w=600&q=80" 
-                        alt="Court Badminton BWF"
-                        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        Booking Lapangan Sekarang
+                    </a>
+                    <a 
+                        href="https://wa.me/6280012345678" 
+                        target="_blank"
+                        class="border-2 border-white/30 hover:border-white text-white font-bold text-xs uppercase tracking-wider px-7 py-4 rounded-full hover:bg-white/10 transition-all inline-flex items-center gap-2"
                     >
-                    <div class="absolute inset-0 bg-gradient-to-t from-arena-night/80 via-transparent to-transparent flex items-end p-4">
-                        <span class="text-surface-white text-xs font-bold">Court Badminton BWF</span>
-                    </div>
-                </div>
-
-                <div class="relative rounded-2xl overflow-hidden aspect-square group shadow-sm">
-                    <img 
-                        src="https://images.unsplash.com/photo-1518604666860-9ed391f76460?auto=format&fit=crop&w=600&q=80" 
-                        alt="Mini Soccer Malam"
-                        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    >
-                    <div class="absolute inset-0 bg-gradient-to-t from-arena-night/80 via-transparent to-transparent flex items-end p-4">
-                        <span class="text-surface-white text-xs font-bold">Mini Soccer Malam</span>
-                    </div>
-                </div>
-
-                <div class="relative rounded-2xl overflow-hidden aspect-square group shadow-sm">
-                    <img 
-                        src="https://images.unsplash.com/photo-1505666287802-931dc83948e9?auto=format&fit=crop&w=600&q=80" 
-                        alt="Court Padel & Basket"
-                        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    >
-                    <div class="absolute inset-0 bg-gradient-to-t from-arena-night/80 via-transparent to-transparent flex items-end p-4">
-                        <span class="text-surface-white text-xs font-bold">Court Padel & Basket</span>
-                    </div>
+                        <span class="material-symbols-outlined text-[18px]">chat</span>
+                        Chat CS WhatsApp
+                    </a>
                 </div>
             </div>
         </section>
 
-        <!-- SECTION 8: TESTIMONIALS (ULASAN RESMI SESUAI PRD) -->
-        <section class="w-full bg-surface-white py-16 border-y border-slate-200">
+        <!-- SECTION 9: SUASANA ARENA (GALERI FOTO) -->
+        <section class="w-full bg-[#f8f9fa] py-20 border-b border-slate-200">
+            <div class="max-w-7xl mx-auto px-4 sm:px-8">
+                
+                <div class="text-center max-w-2xl mx-auto mb-14">
+                    <span class="text-xs font-bold text-[#f37920] uppercase tracking-widest block mb-1">DOKUMENTASI VENUE</span>
+                    <h2 class="font-teko text-4xl sm:text-5xl lg:text-6xl uppercase font-bold text-slate-900 tracking-tight leading-none">
+                        SUASANA GELANGGANG KAMI
+                    </h2>
+                    <div class="flex items-center justify-center gap-1.5 mt-3 mb-3">
+                        <span class="w-14 h-1 bg-[#f8b710] rounded-full inline-block"></span>
+                        <span class="w-1.5 h-1.5 bg-[#f8b710] rounded-xs inline-block"></span>
+                    </div>
+                    <p class="text-sm text-slate-600">
+                        Kualitas gelanggang terawat, pencahayaan optimal, dan standar fasilitas bersertifikasi resmi.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="relative rounded-2xl overflow-hidden aspect-square group shadow-sm">
+                        <img 
+                            src="https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&w=600&q=80" 
+                            alt="Hall Indoor Utama Lapangin" 
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        >
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-4">
+                            <span class="text-xs font-bold text-white uppercase tracking-wider">Hall Indoor Futsal</span>
+                        </div>
+                    </div>
+                    <div class="relative rounded-2xl overflow-hidden aspect-square group shadow-sm">
+                        <img 
+                            src="https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?auto=format&fit=crop&w=600&q=80" 
+                            alt="Badminton Court Area" 
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        >
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-4">
+                            <span class="text-xs font-bold text-white uppercase tracking-wider">Karpet Badminton BWF</span>
+                        </div>
+                    </div>
+                    <div class="relative rounded-2xl overflow-hidden aspect-square group shadow-sm">
+                        <img 
+                            src="https://images.unsplash.com/photo-1529900245534-47fbf46b403d?auto=format&fit=crop&w=600&q=80" 
+                            alt="Pencahayaan LED Lapangan" 
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        >
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-4">
+                            <span class="text-xs font-bold text-white uppercase tracking-wider">Pencahayaan LED 800 Lux</span>
+                        </div>
+                    </div>
+                    <div class="relative rounded-2xl overflow-hidden aspect-square group shadow-sm">
+                        <img 
+                            src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=600&q=80" 
+                            alt="Pertandingan Mini Soccer" 
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        >
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-4">
+                            <span class="text-xs font-bold text-white uppercase tracking-wider">Mini Soccer Sintetis</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- SECTION 10: TESTIMONIALS (ULASAN KOMUNITAS) -->
+        <section class="w-full bg-surface-white py-20 border-b border-slate-200">
             <div class="w-full max-w-7xl mx-auto px-4 sm:px-8">
                 
-                <div class="text-center max-w-xl mx-auto mb-12">
-                    <span class="text-xs text-pitch-emerald uppercase tracking-wider font-bold block mb-1">Ulasan Pemain</span>
-                    <h2 class="font-headline text-3xl text-on-surface tracking-tight uppercase font-bold">Kata Tim Langganan</h2>
-                    <p class="text-sm text-on-surface-variant mt-2">
-                        Ulasan terverifikasi langsung dari pelanggan yang telah menyelesaikan pertandingan di Lapangin Hub.
+                <div class="text-center max-w-2xl mx-auto mb-16">
+                    <span class="text-xs font-bold text-[#f37920] uppercase tracking-widest block mb-1">SUARA KOMUNITAS</span>
+                    <h2 class="font-teko text-4xl sm:text-5xl lg:text-6xl uppercase font-bold text-slate-900 tracking-tight leading-none">
+                        APA KATA MEREKA TENTANG LAPANGIN
+                    </h2>
+                    <div class="flex items-center justify-center gap-1.5 mt-3 mb-3">
+                        <span class="w-14 h-1 bg-[#f8b710] rounded-full inline-block"></span>
+                        <span class="w-1.5 h-1.5 bg-[#f8b710] rounded-xs inline-block"></span>
+                    </div>
+                    <p class="text-sm text-slate-600">
+                        Ulasan terverifikasi langsung dari pelanggan yang telah menyelesaikan pertandingan di LapangIn Hub.
                     </p>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     
                     <!-- Testi 1 -->
-                    <div class="bg-surface-container-low p-6 rounded-2xl flex flex-col justify-between border border-slate-100">
+                    <div class="bg-[#f8f9fa] p-7 rounded-3xl flex flex-col justify-between border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
                         <div>
-                            <div class="flex items-center text-action-amber mb-3">
-                                <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
-                                <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
-                                <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
-                                <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
-                                <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="flex items-center text-[#f8b710]">
+                                    <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                                    <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                                    <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                                    <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                                    <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                                </div>
+                                <span class="text-[10px] font-bold text-slate-950 bg-[#f8b710] px-2.5 py-0.5 rounded-full uppercase">FUTSAL LEAGUE</span>
                             </div>
-                            <p class="text-sm text-on-surface italic mb-4 leading-relaxed">
-                                “Booking gampang banget, tinggal pilih jam langsung kelihatan total harganya. Slot terkunci aman, gak khawatir diserobot tim lain waktu mau transfer.”
+                            <p class="text-sm text-slate-700 italic mb-6 leading-relaxed">
+                                &ldquo;Booking gampang banget, tinggal pilih jam langsung kelihatan total harganya. Slot terkunci aman, gak khawatir diserobot tim lain waktu mau transfer.&rdquo;
                             </p>
                         </div>
-                        <div class="flex items-center gap-3 pt-3 border-t border-slate-200/60">
-                            <div class="w-10 h-10 rounded-full bg-pitch-deep text-surface-white flex items-center justify-center font-bold">
+                        <div class="flex items-center gap-3.5 pt-4 border-t border-slate-200">
+                            <div class="w-11 h-11 rounded-full bg-[#0f2444] text-[#f8b710] flex items-center justify-center font-bold text-base shadow-sm">
                                 T
                             </div>
                             <div>
-                                <h4 class="text-sm font-bold text-on-surface">Tim FC Kantor Pajak</h4>
-                                <span class="text-xs text-on-surface-variant">Member Futsal Jumat Malam</span>
+                                <h4 class="text-sm font-bold text-slate-900 leading-tight">Tim FC Kantor Pajak</h4>
+                                <span class="text-xs text-slate-500">Member Futsal Jumat Malam</span>
                             </div>
                         </div>
                     </div>
 
                     <!-- Testi 2 -->
-                    <div class="bg-surface-container-low p-6 rounded-2xl flex flex-col justify-between border border-slate-100">
+                    <div class="bg-[#f8f9fa] p-7 rounded-3xl flex flex-col justify-between border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
                         <div>
-                            <div class="flex items-center text-action-amber mb-3">
-                                <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
-                                <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
-                                <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
-                                <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
-                                <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="flex items-center text-[#f8b710]">
+                                    <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                                    <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                                    <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                                    <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                                    <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                                </div>
+                                <span class="text-[10px] font-bold text-slate-950 bg-[#f8b710] px-2.5 py-0.5 rounded-full uppercase">BADMINTON CLUB</span>
                             </div>
-                            <p class="text-sm text-on-surface italic mb-4 leading-relaxed">
-                                “Tarif pagi jauh lebih hemat buat main santai. Lampu LED-nya beneran ramah di mata, gak silau waktu ambil smash tinggi. Invoice juga langsung masuk email.”
+                            <p class="text-sm text-slate-700 italic mb-6 leading-relaxed">
+                                &ldquo;Tarif pagi jauh lebih hemat buat main santai. Lampu LED-nya beneran ramah di mata, gak silau waktu ambil smash tinggi. Invoice juga langsung masuk email.&rdquo;
                             </p>
                         </div>
-                        <div class="flex items-center gap-3 pt-3 border-t border-slate-200/60">
-                            <div class="w-10 h-10 rounded-full bg-pitch-emerald text-surface-white flex items-center justify-center font-bold">
+                        <div class="flex items-center gap-3.5 pt-4 border-t border-slate-200">
+                            <div class="w-11 h-11 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold text-base shadow-sm">
                                 K
                             </div>
                             <div>
-                                <h4 class="text-sm font-bold text-on-surface">Komunitas Badminton Pagi</h4>
-                                <span class="text-xs text-on-surface-variant">Rutin 4 Court Tiap Minggu</span>
+                                <h4 class="text-sm font-bold text-slate-900 leading-tight">Komunitas Badminton Pagi</h4>
+                                <span class="text-xs text-slate-500">Rutin 4 Court Tiap Minggu</span>
                             </div>
                         </div>
                     </div>
 
                     <!-- Testi 3 -->
-                    <div class="bg-surface-container-low p-6 rounded-2xl flex flex-col justify-between border border-slate-100">
+                    <div class="bg-[#f8f9fa] p-7 rounded-3xl flex flex-col justify-between border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
                         <div>
-                            <div class="flex items-center text-action-amber mb-3">
-                                <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
-                                <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
-                                <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
-                                <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
-                                <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="flex items-center text-[#f8b710]">
+                                    <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                                    <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                                    <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                                    <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                                    <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                                </div>
+                                <span class="text-[10px] font-bold text-slate-950 bg-[#f8b710] px-2.5 py-0.5 rounded-full uppercase">PADEL SQUAD</span>
                             </div>
-                            <p class="text-sm text-on-surface italic mb-4 leading-relaxed">
-                                “Court padel panoramic glass terbaik di kota ini! Kaca pantulnya tebal dan presisi. Cek-in di meja resepsionis tinggal scan kode booking, cepat sekali!”
+                            <p class="text-sm text-slate-700 italic mb-6 leading-relaxed">
+                                &ldquo;Court padel panoramic glass terbaik di kota ini! Kaca pantulnya tebal dan presisi. Cek-in di meja resepsionis tinggal scan kode booking, cepat sekali!&rdquo;
                             </p>
                         </div>
-                        <div class="flex items-center gap-3 pt-3 border-t border-slate-200/60">
-                            <div class="w-10 h-10 rounded-full bg-action-orange text-surface-white flex items-center justify-center font-bold">
+                        <div class="flex items-center gap-3.5 pt-4 border-t border-slate-200">
+                            <div class="w-11 h-11 rounded-full bg-[#f37920] text-white flex items-center justify-center font-bold text-base shadow-sm">
                                 D
                             </div>
                             <div>
-                                <h4 class="text-sm font-bold text-on-surface">Dimas Setiawan</h4>
-                                <span class="text-xs text-on-surface-variant">Pemain Padel Antar-Klub</span>
+                                <h4 class="text-sm font-bold text-slate-900 leading-tight">Dimas Setiawan</h4>
+                                <span class="text-xs text-slate-500">Pemain Padel Antar-Klub</span>
                             </div>
                         </div>
                     </div>
@@ -834,183 +1159,126 @@
             </div>
         </section>
 
-         <!-- CTA KE BERANDA / BOOKING -->
-        <section class="w-full max-w-7xl mx-auto px-4 sm:px-8 py-20 text-center">
-            <div class="bg-arena-night text-surface-white rounded-3xl p-10 sm:p-14 border border-pitch-light/20 relative overflow-hidden shadow-2xl">
-                <div class="absolute -left-10 -bottom-10 w-64 h-64 rounded-full bg-action-orange/20 blur-3xl"></div>
-                <div class="relative z-10 max-w-2xl mx-auto">
-                    <h2 class="font-headline text-3xl sm:text-4xl font-bold uppercase tracking-tight mb-4">
-                        Siap Bertanding Bersama Tim Anda?
-                    </h2>
-                    <p class="text-sm sm:text-base text-surface-container-highest mb-8 leading-relaxed">
-                        Cek jadwal ketersediaan arena sekarang dan amankan slot terbaik Anda sebelum kehabisan.
-                    </p>
-                    <div class="flex flex-wrap items-center justify-center gap-4">
-                        <a 
-                            href="{{ route('beranda') }}#jadwal-interaktif" 
-                            class="bg-action-orange hover:bg-tertiary-container text-surface-white font-bold text-sm px-8 py-3.5 rounded-xl shadow-lg transition-all transform hover:-translate-y-0.5"
-                        >
-                            Pilih Jam Main Sekarang
-                        </a>
-                        <a 
-                            href="{{ route('lapangan') }}" 
-                            class="bg-surface-white/10 hover:bg-surface-white/20 text-surface-white font-bold text-sm px-6 py-3.5 rounded-xl transition-colors border border-surface-white/20"
-                        >
-                            Lihat Katalog Lapangan
-                        </a>
-                    </div>
+        <!-- SECTION 11: INTERACTIVE FAQ ACCORDION -->
+        <section id="faq" class="w-full max-w-7xl mx-auto px-4 sm:px-8 py-20 bg-canvas-bg">
+            <div class="text-center max-w-2xl mx-auto mb-14">
+                <span class="text-xs font-bold text-[#f37920] uppercase tracking-widest block mb-1">PUSAT BANTUAN</span>
+                <h2 class="font-teko text-4xl sm:text-5xl lg:text-6xl uppercase font-bold text-slate-900 tracking-tight leading-none">
+                    PERTANYAAN YANG SERING DIAJUKAN
+                </h2>
+                <div class="flex items-center justify-center gap-1.5 mt-3 mb-3">
+                    <span class="w-14 h-1 bg-[#f8b710] rounded-full inline-block"></span>
+                    <span class="w-1.5 h-1.5 bg-[#f8b710] rounded-xs inline-block"></span>
                 </div>
-            </div>
-        </section>
-
-        <!-- SECTION 9: INTERACTIVE FAQ ACCORDION (SESUAI PRD ATURAN BISNIS) -->
-        <section id="faq" class="w-full max-w-7xl mx-auto px-4 sm:px-8 py-16 bg-surface-white">
-            <div class="text-center max-w-xl mx-auto mb-12">
-                <span class="text-xs text-pitch-emerald uppercase tracking-wider font-bold block mb-1">Bantuan & Aturan Main</span>
-                <h2 class="font-headline text-3xl text-on-surface tracking-tight uppercase font-bold">Pertanyaan Sering Diajukan</h2>
-                <p class="text-sm text-on-surface-variant mt-2">
-                    Transparansi kebijakan pembatalan, refund, dan keamanan booking di Lapangin.
+                <p class="text-sm text-slate-600">
+                    Informasi lengkap mengenai tata cara pemesanan, kebijakan pembatalan, dan peraturan bermain di LapangIn.
                 </p>
             </div>
 
             <div class="max-w-3xl mx-auto flex flex-col gap-3">
                 
                 <!-- FAQ 1 -->
-                <div class="bg-surface-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+                <div class="bg-surface-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs">
                     <button 
-                        type="button"
-                        class="w-full p-5 text-left flex items-center justify-between font-bold text-sm text-on-surface"
-                        @click="activeFaq = (activeFaq === 1 ? null : 1)"
+                        type="button" 
+                        @click="activeFaq = (activeFaq === 1 ? null : 1)" 
+                        class="w-full p-5 text-left flex justify-between items-center transition-colors hover:bg-slate-50"
                     >
-                        <span>Apakah jam yang dipilih di website pasti kosong dan anti double-booking?</span>
+                        <span class="font-teko text-2xl font-bold uppercase tracking-wide text-slate-900">
+                            Bagaimana cara kerja kunci slot 10 menit?
+                        </span>
                         <span 
-                            class="material-symbols-outlined text-pitch-deep transition-transform duration-200"
-                            :class="activeFaq === 1 ? 'rotate-180' : 'rotate-0'"
+                            class="material-symbols-outlined text-[22px] text-[#f37920] transition-transform duration-200"
+                            :class="activeFaq === 1 ? 'rotate-180' : ''"
                         >
                             expand_more
                         </span>
                     </button>
-                    <div 
-                        x-show="activeFaq === 1" 
-                        class="px-5 pb-5 text-on-surface-variant text-xs leading-relaxed border-t border-slate-100 pt-3"
-                    >
-                        Pasti kosong! Sistem Lapangin menerapkan mekanisme <strong>Pessimistic Time-Lock 10 Menit</strong> dan database transaction. Saat Anda menekan tombol booking, slot tersebut langsung dikunci di tingkat basis data sehingga pengguna lain tidak bisa memesan jam yang sama.
+                    <div x-show="activeFaq === 1" x-collapse class="px-5 pb-5 text-xs text-slate-600 leading-relaxed border-t border-slate-100 pt-3">
+                        Ketika Anda menekan tombol "Kunci Slot & Booking" dan masuk ke halaman checkout, sistem backend kami mengaktifkan <em>pessimistic lock</em>. Slot jam tersebut tidak akan dapat dipilih atau dipesan oleh pengguna lain di seluruh dunia selama 10 menit. Jika dalam waktu tersebut pembayaran tidak diselesaikan, slot akan otomatis dibuka kembali.
                     </div>
                 </div>
 
                 <!-- FAQ 2 -->
-                <div class="bg-surface-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+                <div class="bg-surface-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs">
                     <button 
-                        type="button"
-                        class="w-full p-5 text-left flex items-center justify-between font-bold text-sm text-on-surface"
-                        @click="activeFaq = (activeFaq === 2 ? null : 2)"
+                        type="button" 
+                        @click="activeFaq = (activeFaq === 2 ? null : 2)" 
+                        class="w-full p-5 text-left flex justify-between items-center transition-colors hover:bg-slate-50"
                     >
-                        <span>Bagaimana metode pembayaran dan proses konfirmasinya?</span>
+                        <span class="font-teko text-2xl font-bold uppercase tracking-wide text-slate-900">
+                            Apakah saya bisa membatalkan atau reschedule jadwal?
+                        </span>
                         <span 
-                            class="material-symbols-outlined text-pitch-deep transition-transform duration-200"
-                            :class="activeFaq === 2 ? 'rotate-180' : 'rotate-0'"
+                            class="material-symbols-outlined text-[22px] text-[#f37920] transition-transform duration-200"
+                            :class="activeFaq === 2 ? 'rotate-180' : ''"
                         >
                             expand_more
                         </span>
                     </button>
-                    <div 
-                        x-show="activeFaq === 2" 
-                        class="px-5 pb-5 text-on-surface-variant text-xs leading-relaxed border-t border-slate-100 pt-3"
-                    >
-                        Kami mendukung pembayaran instan via Payment Gateway (QRIS, BCA & Mandiri Virtual Account, GoPay, ShopeePay) dengan verifikasi otomatis via webhook. Kami juga menyediakan alternatif transfer bank manual dengan upload bukti bayar yang diverifikasi cepat oleh staf kasir.
+                    <div x-show="activeFaq === 2" x-collapse class="px-5 pb-5 text-xs text-slate-600 leading-relaxed border-t border-slate-100 pt-3">
+                        Bisa. Pembatalan lebih dari 24 jam sebelum jadwal bermain berhak mendapatkan refund 90% atau bebas reschedule 1 kali. Pembatalan dalam rentang kurang dari 24 jam sebelum bermain dikenakan potongan 50%. Pembatalan saat hari H tidak dapat direfund.
                     </div>
                 </div>
 
                 <!-- FAQ 3 -->
-                <div class="bg-surface-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+                <div class="bg-surface-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs">
                     <button 
-                        type="button"
-                        class="w-full p-5 text-left flex items-center justify-between font-bold text-sm text-on-surface"
-                        @click="activeFaq = (activeFaq === 3 ? null : 3)"
+                        type="button" 
+                        @click="activeFaq = (activeFaq === 3 ? null : 3)" 
+                        class="w-full p-5 text-left flex justify-between items-center transition-colors hover:bg-slate-50"
                     >
-                        <span>Bagaimana kebijakan pembatalan (cancellation) dan pengembalian dana (refund)?</span>
+                        <span class="font-teko text-2xl font-bold uppercase tracking-wide text-slate-900">
+                            Apa saja metode pembayaran yang diterima?
+                        </span>
                         <span 
-                            class="material-symbols-outlined text-pitch-deep transition-transform duration-200"
-                            :class="activeFaq === 3 ? 'rotate-180' : 'rotate-0'"
+                            class="material-symbols-outlined text-[22px] text-[#f37920] transition-transform duration-200"
+                            :class="activeFaq === 3 ? 'rotate-180' : ''"
                         >
                             expand_more
                         </span>
                     </button>
-                    <div 
-                        x-show="activeFaq === 3" 
-                        class="px-5 pb-5 text-on-surface-variant text-xs leading-relaxed border-t border-slate-100 pt-3"
-                    >
-                        Sesuai aturan bisnis PRD Lapangin:
-                        <ul class="list-disc pl-5 mt-1.5 space-y-1">
-                            <li>Pembatalan <strong>&ge; 24 jam</strong> sebelum jadwal main berhak atas <strong>refund 100%</strong>.</li>
-                            <li>Pembatalan <strong>6 &ndash; 24 jam</strong> sebelum jadwal main berhak atas <strong>refund 50%</strong>.</li>
-                            <li>Pembatalan <strong>&lt; 6 jam</strong> sebelum jadwal main tidak mendapatkan pengembalian dana.</li>
-                        </ul>
+                    <div x-show="activeFaq === 3" x-collapse class="px-5 pb-5 text-xs text-slate-600 leading-relaxed border-t border-slate-100 pt-3">
+                        Kami menerima transfer antar bank ke rekening resmi BCA PT Lapangin Olahraga Indonesia. Anda cukup mengunggah foto struk transfer atau tangkapan layar m-banking pada halaman konfirmasi pembayaran.
                     </div>
                 </div>
 
                 <!-- FAQ 4 -->
-                <div class="bg-surface-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+                <div class="bg-surface-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs">
                     <button 
-                        type="button"
-                        class="w-full p-5 text-left flex items-center justify-between font-bold text-sm text-on-surface"
-                        @click="activeFaq = (activeFaq === 4 ? null : 4)"
+                        type="button" 
+                        @click="activeFaq = (activeFaq === 4 ? null : 4)" 
+                        class="w-full p-5 text-left flex justify-between items-center transition-colors hover:bg-slate-50"
                     >
-                        <span>Apakah saya bisa mengajukan reschedule jadwal main?</span>
+                        <span class="font-teko text-2xl font-bold uppercase tracking-wide text-slate-900">
+                            Apakah sepatu dan raket bisa disewa di lokasi?
+                        </span>
                         <span 
-                            class="material-symbols-outlined text-pitch-deep transition-transform duration-200"
-                            :class="activeFaq === 4 ? 'rotate-180' : 'rotate-0'"
+                            class="material-symbols-outlined text-[22px] text-[#f37920] transition-transform duration-200"
+                            :class="activeFaq === 4 ? 'rotate-180' : ''"
                         >
                             expand_more
                         </span>
                     </button>
-                    <div 
-                        x-show="activeFaq === 4" 
-                        class="px-5 pb-5 text-on-surface-variant text-xs leading-relaxed border-t border-slate-100 pt-3"
-                    >
-                        Bisa! Pelanggan dapat melakukan reschedule maksimal 1 kali dengan catatan slot jadwal pengganti masih tersedia dan diajukan selambat-lambatnya 12 jam sebelum waktu mulai awal.
-                    </div>
-                </div>
-
-                <!-- FAQ 5 -->
-                <div class="bg-surface-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
-                    <button 
-                        type="button"
-                        class="w-full p-5 text-left flex items-center justify-between font-bold text-sm text-on-surface"
-                        @click="activeFaq = (activeFaq === 5 ? null : 5)"
-                    >
-                        <span>Bagaimana jika terjadi cuaca ekstrem atau hujan lebat di lapangan outdoor?</span>
-                        <span 
-                            class="material-symbols-outlined text-pitch-deep transition-transform duration-200"
-                            :class="activeFaq === 5 ? 'rotate-180' : 'rotate-0'"
-                        >
-                            expand_more
-                        </span>
-                    </button>
-                    <div 
-                        x-show="activeFaq === 5" 
-                        class="px-5 pb-5 text-on-surface-variant text-xs leading-relaxed border-t border-slate-100 pt-3"
-                    >
-                        Khusus lapangan outdoor seperti Mini Soccer, jika terjadi cuaca ekstrem atau hujan deras yang menyebabkan lapangan tidak layak pakai sebelum atau saat bermain di bawah 30 menit, Anda berhak mendapatkan <strong>Reschedule Gratis</strong> ke jadwal lain tanpa penalti.
+                    <div x-show="activeFaq === 4" x-collapse class="px-5 pb-5 text-xs text-slate-600 leading-relaxed border-t border-slate-100 pt-3">
+                        Ya! Pro Shop kami menyediakan penyewaan raket badminton, raket padel, bola futsal FIFA, dan rompi tanding dengan biaya terjangkau di meja resepsionis gelanggang.
                     </div>
                 </div>
 
             </div>
         </section>
-        
 
-        <!-- FLOATING QUICK WHATSAPP BUTTON -->
+        <!-- FLOATING WHATSAPP SPEED DIAL -->
         <div class="fixed bottom-6 right-6 z-40">
             <a 
-                :href="whatsAppLink" 
-                target="_blank"
-                class="bg-pitch-emerald hover:bg-pitch-deep text-surface-white p-4 rounded-full shadow-2xl flex items-center justify-center transition-all transform hover:scale-110 border-2 border-surface-white"
-                title="Hubungi Admin Lapangan"
+                href="https://wa.me/6280012345678" 
+                target="_blank" 
+                class="w-14 h-14 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white shadow-2xl flex items-center justify-center transition-transform hover:scale-110 border-2 border-white"
+                title="Bantuan WhatsApp 24 Jam"
             >
-                <span class="material-symbols-outlined text-[26px]">chat</span>
+                <span class="material-symbols-outlined text-[28px]">chat</span>
             </a>
         </div>
-        
 
     </main>
 
@@ -1023,40 +1291,40 @@
     >
         <div 
             @click.away="showAuthModal = false"
-            class="bg-surface-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl border border-surface-container-high relative flex flex-col gap-5 text-left"
+            class="bg-surface-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl border border-slate-200 relative flex flex-col gap-5 text-left"
         >
             <button 
                 @click="showAuthModal = false"
-                class="absolute top-5 right-5 text-on-surface-variant hover:text-on-surface p-1 rounded-full hover:bg-surface-container-low transition-colors"
+                class="absolute top-5 right-5 text-slate-400 hover:text-slate-700 p-1 rounded-full hover:bg-slate-100 transition-colors"
                 aria-label="Tutup"
             >
                 <span class="material-symbols-outlined text-[22px]">close</span>
             </button>
 
-            <div class="flex items-center gap-3">
-                <div class="w-12 h-12 rounded-2xl bg-pitch-surface border border-pitch-light/30 flex items-center justify-center text-pitch-deep shrink-0">
+            <div class="flex items-center gap-3.5">
+                <div class="w-12 h-12 rounded-2xl bg-amber-50 border border-[#f8b710]/40 flex items-center justify-center text-[#f37920] shrink-0">
                     <span class="material-symbols-outlined text-[26px]">lock_person</span>
                 </div>
                 <div>
-                    <h3 class="font-headline text-lg font-bold text-on-surface">Masuk untuk Booking</h3>
-                    <p class="text-xs text-on-surface-variant">Slot aman & anti double-booking</p>
+                    <h3 class="font-teko text-2xl font-bold uppercase tracking-wide text-slate-900 leading-none">MASUK UNTUK BOOKING</h3>
+                    <p class="text-xs text-slate-500 mt-1">Slot aman & anti double-booking</p>
                 </div>
             </div>
 
-            <div class="bg-surface-container-low rounded-2xl p-4 border border-surface-container-high text-xs flex flex-col gap-2">
-                <div class="flex justify-between items-center text-on-surface font-semibold">
+            <div class="bg-slate-50 rounded-2xl p-4 border border-slate-100 text-xs flex flex-col gap-2">
+                <div class="flex justify-between items-center text-slate-800 font-semibold">
                     <span>Slot Dipilih (<span x-text="selectedSlots.length"></span> jam):</span>
-                    <span class="text-pitch-deep font-bold" x-text="formatCurrency(totalPrice)"></span>
+                    <span class="text-[#f37920] font-bold text-sm" x-text="formatCurrency(totalPrice)"></span>
                 </div>
-                <p class="text-on-surface-variant leading-relaxed">
-                    Untuk mengunci slot selama <strong>10 menit</strong> dan menerima e-tiket kode QR serta konfirmasi WhatsApp resmi, silakan masuk ke akun Anda atau daftar gratis.
+                <p class="text-slate-600 leading-relaxed">
+                    Untuk mengunci slot selama <strong>10 menit</strong> dan menerima e-tiket kode QR serta konfirmasi resmi, silakan masuk ke akun Anda atau daftar gratis.
                 </p>
             </div>
 
             <div class="flex flex-col gap-2.5">
                 <a 
                     href="{{ route('login') }}" 
-                    class="w-full bg-pitch-deep hover:bg-pitch-emerald text-surface-white font-bold text-sm py-3.5 rounded-xl flex items-center justify-center gap-2 shadow-sm transition-all"
+                    class="w-full bg-[#0f2444] hover:bg-[#0b1a30] text-white font-bold text-xs uppercase tracking-wider py-4 rounded-xl flex items-center justify-center gap-2 shadow-sm transition-all"
                 >
                     <span class="material-symbols-outlined text-[18px]">login</span>
                     Masuk ke Akun Saya
@@ -1064,17 +1332,17 @@
 
                 <a 
                     href="{{ route('register') }}" 
-                    class="w-full bg-action-orange hover:bg-tertiary-container text-surface-white font-bold text-sm py-3.5 rounded-xl flex items-center justify-center gap-2 shadow-sm transition-all"
+                    class="w-full bg-gradient-to-r from-[#f8b710] to-[#f37920] hover:from-[#f37920] hover:to-[#f8b710] text-slate-950 font-bold text-xs uppercase tracking-wider py-4 rounded-xl flex items-center justify-center gap-2 shadow-sm transition-all"
                 >
                     <span class="material-symbols-outlined text-[18px]">person_add</span>
                     Daftar Akun Baru (Gratis)
                 </a>
             </div>
 
-            <div class="pt-2 border-t border-surface-container-high text-center">
+            <div class="pt-2 border-t border-slate-100 text-center">
                 <a 
                     href="{{ route('booking.checkout', 'futsal-arena-a') }}" 
-                    class="text-xs text-on-surface-variant hover:text-pitch-deep font-medium inline-flex items-center gap-1 hover:underline"
+                    class="text-xs text-slate-400 hover:text-slate-700 font-medium inline-flex items-center gap-1 hover:underline"
                 >
                     <span>(Uji Coba: Lanjut ke Halaman Checkout &rarr;)</span>
                 </a>
@@ -1186,7 +1454,7 @@
                     const sport = this.sportCatalog[this.currentSport] || this.sportCatalog['futsal'];
                     const foundDate = this.dateOptions.find(d => d.date === this.selectedDate);
                     const dateText = foundDate ? `${foundDate.dayLabel} (${foundDate.dateLabel})` : this.selectedDate;
-                    return `${sport.name} • ${dateText}`;
+                    return `${sport.name} &bull; ${dateText}`;
                 },
 
                 get totalPrice() {

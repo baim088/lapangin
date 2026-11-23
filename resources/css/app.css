@@ -50,8 +50,14 @@
     --color-court-blocked-surface: #FEF2F2;
     --color-canvas-bg: #F8FAFC;
     --color-surface-white: #FFFFFF;
-    --color-arena-night: #022C22;
+    --color-arena-night: #0f2444;
+    --color-sky-navy: #0f2444;
+    --color-sky-navy-dark: #0b1a30;
+    --color-sky-amber: #f8b710;
+    --color-sky-orange: #f37920;
 
+    --font-teko: 'Teko', ui-sans-serif, system-ui, sans-serif;
+    --font-display: 'Teko', ui-sans-serif, system-ui, sans-serif;
     --font-headline: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
     --font-body: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
     --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
