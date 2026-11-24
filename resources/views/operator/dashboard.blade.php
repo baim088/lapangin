@@ -129,27 +129,62 @@
             <main class="flex-1 p-6 overflow-auto">
 
                 {{-- KPI Cards --}}
-                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                    @php
-                        $kpis = [
-                            ['today_booking', 'Booking Hari Ini', $todayBookingsCount, 'Jadwal hari ini', 'pitch-deep', 'pitch-surface'],
-                            ['payments', 'Pendapatan Hari Ini', 'Rp ' . number_format($todayRevenue, 0, ',', '.'), 'Booking terkonfirmasi', 'pitch-emerald', 'pitch-surface'],
-                            ['pending_actions', 'Menunggu Konfirmasi', $pendingVerificationCount, 'Perlu tindakan', 'action-orange', 'action-glow'],
-                            ['cancel', 'Pembatalan Hari Ini', $todayCancelledCount, 'Status dibatalkan/expired', 'court-booked', 'court-booked-surface'],
-                        ];
-                    @endphp
-                    @foreach($kpis as $kpi)
-                    <div class="bg-surface-white rounded-2xl border border-surface-container-high p-5 flex flex-col gap-3">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                    {{-- 1. Booking Hari Ini (Jadwal Operasional / Biru Info) --}}
+                    <div class="bg-surface-white rounded-2xl border border-surface-container-high p-5 flex flex-col justify-between shadow-xs hover:border-blue-200 transition-colors">
                         <div class="flex items-center justify-between">
-                            <span class="text-xs text-on-surface-variant font-medium">{{ $kpi[1] }}</span>
-                            <div class="w-9 h-9 rounded-xl bg-{{ $kpi[5] }} flex items-center justify-center">
-                                <span class="material-symbols-outlined text-{{ $kpi[4] }} text-[18px]">{{ $kpi[0] }}</span>
+                            <span class="text-xs font-semibold text-on-surface-variant">Booking Hari Ini</span>
+                            <div class="w-9 h-9 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600">
+                                <span class="material-symbols-outlined text-[20px]">calendar_today</span>
                             </div>
                         </div>
-                        <div class="font-headline text-2xl font-bold text-on-surface">{{ $kpi[2] }}</div>
-                        <div class="text-xs text-on-surface-variant">{{ $kpi[3] }}</div>
+                        <div class="mt-3">
+                            <div class="font-headline text-2xl font-bold text-on-surface">{{ $todayBookingsCount }}</div>
+                            <div class="text-xs text-on-surface-variant mt-1">Jadwal main hari ini</div>
+                        </div>
                     </div>
-                    @endforeach
+
+                    {{-- 2. Pendapatan Hari Ini (Finansial / Hijau Sukses) --}}
+                    <div class="bg-surface-white rounded-2xl border border-surface-container-high p-5 flex flex-col justify-between shadow-xs hover:border-emerald-200 transition-colors">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-semibold text-on-surface-variant">Pendapatan Hari Ini</span>
+                            <div class="w-9 h-9 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600">
+                                <span class="material-symbols-outlined text-[20px]">payments</span>
+                            </div>
+                        </div>
+                        <div class="mt-3">
+                            <div class="font-headline text-2xl font-bold text-emerald-600">Rp {{ number_format($todayRevenue, 0, ',', '.') }}</div>
+                            <div class="text-xs text-on-surface-variant mt-1">Booking terkonfirmasi</div>
+                        </div>
+                    </div>
+
+                    {{-- 3. Menunggu Konfirmasi (Perlu Tindakan / Amber-Oranye Warning) --}}
+                    <div class="bg-surface-white rounded-2xl border border-surface-container-high p-5 flex flex-col justify-between shadow-xs hover:border-amber-200 transition-colors">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-semibold text-on-surface-variant">Menunggu Konfirmasi</span>
+                            <div class="w-9 h-9 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center text-amber-600">
+                                <span class="material-symbols-outlined text-[20px]">pending_actions</span>
+                            </div>
+                        </div>
+                        <div class="mt-3">
+                            <div class="font-headline text-2xl font-bold text-amber-600">{{ $pendingVerificationCount }}</div>
+                            <div class="text-xs text-on-surface-variant mt-1">Perlu tindakan kasir</div>
+                        </div>
+                    </div>
+
+                    {{-- 4. Pembatalan Hari Ini (Batal & Expired / Merah Danger) --}}
+                    <div class="bg-surface-white rounded-2xl border border-surface-container-high p-5 flex flex-col justify-between shadow-xs hover:border-rose-200 transition-colors">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-semibold text-on-surface-variant">Pembatalan Hari Ini</span>
+                            <div class="w-9 h-9 rounded-xl bg-rose-50 border border-rose-100 flex items-center justify-center text-rose-600">
+                                <span class="material-symbols-outlined text-[20px]">cancel</span>
+                            </div>
+                        </div>
+                        <div class="mt-3">
+                            <div class="font-headline text-2xl font-bold text-rose-600">{{ $todayCancelledCount }}</div>
+                            <div class="text-xs text-on-surface-variant mt-1">Status dibatalkan / expired</div>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -179,14 +214,26 @@
                                 </div>
                                 <div class="text-right shrink-0">
                                     <p class="text-sm font-bold text-on-surface">Rp {{ number_format($b->total_amount, 0, ',', '.') }}</p>
-                                    @if($b->status->value === 'confirmed')
-                                    <span class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-pitch-surface text-pitch-deep">
-                                        <span class="w-1 h-1 rounded-full bg-pitch-emerald"></span> Terkonfirmasi
+                                    @if(in_array($b->status->value, ['confirmed', 'paid_in_full']))
+                                    <span class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Terkonfirmasi
                                     </span>
-                                    @elseif($b->status->value === 'pending')
-                                    <span class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-action-glow text-action-orange">
-                                        <span class="w-1 h-1 rounded-full bg-action-amber animate-pulse"></span>
+                                    @elseif($b->status->value === 'dp_paid')
+                                    <span class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span> DP Terbayar
+                                    </span>
+                                    @elseif(in_array($b->status->value, ['pending', 'pending_payment']))
+                                    <span class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
                                         {{ $b->payment?->status?->value === 'pending_verification' ? 'Verifikasi Bukti' : 'Menunggu Bayar' }}
+                                    </span>
+                                    @elseif(in_array($b->status->value, ['cancelled', 'expired']))
+                                    <span class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> {{ $b->status->label() }}
+                                    </span>
+                                    @elseif(in_array($b->status->value, ['done', 'completed']))
+                                    <span class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-700">
+                                        <span class="material-symbols-outlined text-[12px]">task_alt</span> Selesai
                                     </span>
                                     @else
                                     <span class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-surface-container-low text-on-surface-variant">
