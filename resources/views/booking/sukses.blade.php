@@ -30,10 +30,17 @@
 
             {{-- Title --}}
             <div class="flex flex-col gap-2">
-                <h1 class="font-headline text-3xl font-bold text-on-surface">Booking Berhasil!</h1>
-                <p class="text-on-surface-variant text-sm max-w-sm">
-                    Pembayaran Anda telah dikonfirmasi. Konfirmasi booking telah dikirim ke WhatsApp dan email Anda.
-                </p>
+                @if (in_array($booking->status->value, ['pending', 'pending_payment']))
+                    <h1 class="font-headline text-3xl font-bold text-on-surface">Bukti Diterima!</h1>
+                    <p class="text-on-surface-variant text-sm max-w-sm">
+                        Bukti pembayaran Anda sedang diverifikasi oleh operator. Anda akan mendapat konfirmasi segera.
+                    </p>
+                @else
+                    <h1 class="font-headline text-3xl font-bold text-on-surface">Booking Berhasil!</h1>
+                    <p class="text-on-surface-variant text-sm max-w-sm">
+                        Pembayaran Anda telah dikonfirmasi. Konfirmasi booking telah dikirim ke WhatsApp dan email Anda.
+                    </p>
+                @endif
             </div>
 
             {{-- Booking code --}}
@@ -81,11 +88,18 @@
             <div class="bg-surface-white rounded-2xl border border-surface-container-high p-5 w-full text-left flex flex-col gap-3">
                 <h3 class="text-sm font-bold text-on-surface">Apa yang perlu Anda lakukan?</h3>
                 <div class="flex flex-col gap-3">
-                    @foreach([
-                        ['notifications_active', 'Cek WhatsApp Anda', 'Konfirmasi booking + reminder otomatis H-1 & H-0 sudah terkirim', 'Sudah terkirim'],
-                        ['person_pin_circle', 'Datang tepat waktu', 'Hadir paling lambat 10 menit sebelum jadwal untuk check-in', 'Senin, 11 Nov 09:00'],
-                        ['qr_code_2', 'Tunjukkan kode booking', 'Scan QR atau tunjukkan kode LPN-2026-4729 ke petugas lapangan', 'LPN-2026-4729'],
-                    ] as $step)
+                    @php
+                        $firstItem = $booking->items->first();
+                        $courtName = $firstItem?->court?->name ?? '-';
+                        $bookingDate = $firstItem?->booking_date ? \Carbon\Carbon::parse($firstItem->booking_date)->translatedFormat('l, d M') : '-';
+                        $startTime = $firstItem?->start_time ? \Carbon\Carbon::parse($firstItem->start_time)->format('H:i') : '-';
+                        $nextSteps = [
+                            ['notifications_active', 'Cek WhatsApp Anda', 'Konfirmasi booking + reminder otomatis H-1 & H-0 sudah terkirim', 'Sudah terkirim'],
+                            ['person_pin_circle', 'Datang tepat waktu', 'Hadir paling lambat 10 menit sebelum jadwal untuk check-in', $bookingDate . ' ' . $startTime],
+                            ['qr_code_2', 'Tunjukkan kode booking', 'Scan QR atau tunjukkan kode ' . $booking->booking_code . ' ke petugas lapangan', $booking->booking_code],
+                        ];
+                    @endphp
+                    @foreach($nextSteps as $step)
                     <div class="flex items-start gap-3">
                         <div class="w-9 h-9 rounded-lg bg-pitch-surface flex items-center justify-center shrink-0">
                             <span class="material-symbols-outlined text-pitch-deep text-[18px]">{{ $step[0] }}</span>
@@ -115,7 +129,15 @@
             {{-- Share CTA --}}
             <div class="flex items-center gap-3 text-sm">
                 <span class="text-on-surface-variant">Ajak teman main bareng?</span>
-                <a href="https://wa.me/?text=Yuk main futsal bareng! Saya sudah booking Futsal Arena A, 11 Nov 09:00 - 11:00 di Lapangin." target="_blank"
+                @php
+                    $firstItem = $firstItem ?? $booking->items->first();
+                    $shareCourtName = $firstItem?->court?->name ?? 'lapangan';
+                    $shareDate = $firstItem?->booking_date ? \Carbon\Carbon::parse($firstItem->booking_date)->format('d M Y') : '';
+                    $shareStart = $firstItem?->start_time ? \Carbon\Carbon::parse($firstItem->start_time)->format('H:i') : '';
+                    $shareEnd = $firstItem?->end_time ? \Carbon\Carbon::parse($firstItem->end_time)->format('H:i') : '';
+                    $shareText = "Yuk main bareng! Saya sudah booking {$shareCourtName}, {$shareDate} {$shareStart} - {$shareEnd} di Lapangin.";
+                @endphp
+                <a href="https://wa.me/?text={{ urlencode($shareText) }}" target="_blank"
                     class="flex items-center gap-1.5 text-pitch-deep font-semibold hover:underline">
                     <span class="material-symbols-outlined text-[16px]">share</span>
                     Bagikan via WhatsApp

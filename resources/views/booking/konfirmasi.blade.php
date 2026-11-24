@@ -55,8 +55,14 @@
                         </div>
                     </div>
                     <div class="text-center">
-                        <p class="text-xs text-on-surface-variant">Total yang harus dibayar</p>
-                        <p class="font-headline text-2xl font-bold text-on-surface">Rp {{ number_format($booking->total_amount, 0, ',', '.') }}</p>
+                        @if ($booking->payment_type === 'dp')
+                            <p class="text-xs text-on-surface-variant">Bayar DP sekarang ({{ $booking->dp_percentage }}%)</p>
+                            <p class="font-headline text-2xl font-bold text-action-orange">Rp {{ number_format($booking->dp_amount, 0, ',', '.') }}</p>
+                            <p class="text-xs text-on-surface-variant mt-1">Sisa pelunasan: Rp {{ number_format($booking->total_amount - $booking->dp_amount, 0, ',', '.') }}</p>
+                        @else
+                            <p class="text-xs text-on-surface-variant">Total yang harus dibayar</p>
+                            <p class="font-headline text-2xl font-bold text-on-surface">Rp {{ number_format($booking->total_amount, 0, ',', '.') }}</p>
+                        @endif
                     </div>
                     <div class="flex items-center gap-1.5 text-xs text-on-surface-variant">
                         <span class="material-symbols-outlined text-[14px]">verified_user</span>
@@ -88,21 +94,31 @@
                                 <span class="font-semibold">{{ $booking->total_hours }} Jam</span>
                             </div>
                             <div class="border-t border-surface-container-high pt-2 flex justify-between font-bold">
-                                <span>Total</span>
-                                <span class="text-action-orange">Rp {{ number_format($booking->total_amount, 0, ',', '.') }}</span>
+                                <span>{{ $booking->payment_type === 'dp' ? 'DP (' . $booking->dp_percentage . '%)' : 'Total' }}</span>
+                                <span class="text-action-orange">Rp {{ number_format($booking->payment_type === 'dp' ? $booking->dp_amount : $booking->total_amount, 0, ',', '.') }}</span>
                             </div>
+                            @if ($booking->payment_type === 'dp')
+                            <div class="flex justify-between text-sm text-on-surface-variant">
+                                <span>Sisa Pelunasan</span>
+                                <span>Rp {{ number_format($booking->total_amount - $booking->dp_amount, 0, ',', '.') }}</span>
+                            </div>
+                            @endif
                         </div>
                     </div>
 
                     {{-- Instructions --}}
                     <div class="bg-pitch-surface rounded-xl border border-pitch-light/20 p-4 flex flex-col gap-2.5">
                         <h4 class="text-xs font-bold text-pitch-deep uppercase tracking-wider">Petunjuk Pembayaran</h4>
-                        @foreach([
-                            'Transfer tepat sesuai nominal: Rp ' . number_format($booking->total_amount, 0, ',', '.'),
-                            'Simpan bukti transfer/struk pembayaran',
-                            'Unggah bukti transfer pada form di bawah ini',
-                            'Operator akan memverifikasi dan mengonfirmasi booking Anda',
-                        ] as $i => $step)
+                        @php
+                            $transferAmount = $booking->payment_type === 'dp' ? $booking->dp_amount : $booking->total_amount;
+                            $steps = [
+                                'Transfer tepat sesuai nominal: Rp ' . number_format($transferAmount, 0, ',', '.'),
+                                'Simpan bukti transfer/struk pembayaran',
+                                'Unggah bukti transfer pada form di bawah ini',
+                                'Operator akan memverifikasi dan mengonfirmasi booking Anda',
+                            ];
+                        @endphp
+                        @foreach($steps as $i => $step)
                         <div class="flex items-start gap-2.5">
                             <div class="w-5 h-5 rounded-full bg-pitch-deep text-surface-white text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5">{{ $i + 1 }}</div>
                             <span class="text-xs text-pitch-deep">{{ $step }}</span>

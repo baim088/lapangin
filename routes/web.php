@@ -36,11 +36,12 @@ Route::post('/register', [AuthController::class, 'register'])->middleware('guest
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
 
 // === BOOKING ROUTES (User) ===
+// Static segments MUST come before wildcard routes to avoid slug collision
+Route::get('/booking/konfirmasi', [BookingController::class, 'showKonfirmasi'])->name('booking.konfirmasi')->middleware('auth');
+Route::get('/booking/sukses', [BookingController::class, 'showSukses'])->name('booking.sukses')->middleware('auth');
 Route::get('/booking/{slug}', [BookingController::class, 'showCheckout'])->name('booking.checkout');
 Route::post('/booking/{slug}', [BookingController::class, 'storeCheckout'])->name('booking.checkout.store')->middleware('auth');
-Route::get('/booking/konfirmasi', [BookingController::class, 'showKonfirmasi'])->name('booking.konfirmasi')->middleware('auth');
 Route::post('/booking/{booking}/upload-proof', [BookingController::class, 'uploadProof'])->name('booking.upload-proof')->middleware(['auth', 'throttle:10,1']);
-Route::get('/booking/sukses', [BookingController::class, 'showSukses'])->name('booking.sukses')->middleware('auth');
 Route::get('/bookings/{booking}/proof', [BookingController::class, 'showProof'])->name('booking.proof')->middleware(['auth', 'throttle:30,1']);
 
 // === DASHBOARD USER ===
