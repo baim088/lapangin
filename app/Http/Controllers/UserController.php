@@ -23,25 +23,43 @@ class UserController extends Controller
         // 1. Statistics calculated from database queries
         $totalBookings = Booking::where('user_id', $user->id)->count();
         $successfulBookings = Booking::where('user_id', $user->id)
-            ->whereIn('status', [BookingStatus::Confirmed, BookingStatus::Done])
+            ->whereIn('status', [
+                BookingStatus::Confirmed,
+                BookingStatus::PaidInFull,
+                BookingStatus::DpPaid,
+                BookingStatus::Done,
+                BookingStatus::Completed,
+            ])
             ->count();
         $cancelledBookings = Booking::where('user_id', $user->id)
             ->whereIn('status', [BookingStatus::Cancelled, BookingStatus::Expired])
             ->count();
         $totalSpent = (int) Booking::where('user_id', $user->id)
-            ->whereIn('status', [BookingStatus::Confirmed, BookingStatus::Done])
-            ->sum('total_amount');
+            ->whereIn('status', [
+                BookingStatus::Confirmed,
+                BookingStatus::PaidInFull,
+                BookingStatus::DpPaid,
+                BookingStatus::Done,
+                BookingStatus::Completed,
+            ])
+            ->sum('paid_amount');
 
         // 2. Bookings grouped for tabs
         $upcomingBookings = Booking::with(['items.court', 'venue', 'payment'])
             ->where('user_id', $user->id)
-            ->whereIn('status', [BookingStatus::Pending, BookingStatus::Confirmed])
+            ->whereIn('status', [
+                BookingStatus::Pending,
+                BookingStatus::PendingPayment,
+                BookingStatus::DpPaid,
+                BookingStatus::Confirmed,
+                BookingStatus::PaidInFull,
+            ])
             ->latest()
             ->get();
 
         $historyBookings = Booking::with(['items.court', 'venue', 'payment'])
             ->where('user_id', $user->id)
-            ->where('status', BookingStatus::Done)
+            ->whereIn('status', [BookingStatus::Done, BookingStatus::Completed])
             ->latest()
             ->get();
 

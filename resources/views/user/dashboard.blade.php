@@ -203,13 +203,17 @@
                                         </div>
                                     </div>
                                     <div class="flex flex-col items-end gap-1">
-                                        @if($booking->status->value === 'confirmed')
-                                        <span class="inline-flex items-center gap-1 bg-pitch-surface text-pitch-deep text-xs font-bold px-2.5 py-1 rounded-full">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-pitch-emerald"></span> Terkonfirmasi
+                                        @if(in_array($booking->status->value, ['confirmed', 'paid_in_full']))
+                                        <span class="inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-bold px-2.5 py-1 rounded-full">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Lunas &amp; Terkonfirmasi
                                         </span>
-                                        @elseif($booking->status->value === 'pending')
-                                        <span class="inline-flex items-center gap-1 bg-action-amber/20 text-action-amber text-xs font-bold px-2.5 py-1 rounded-full">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-action-amber"></span> Menunggu Pembayaran
+                                        @elseif($booking->status->value === 'dp_paid')
+                                        <span class="inline-flex items-center gap-1 bg-blue-50 text-blue-700 border border-blue-200 text-xs font-bold px-2.5 py-1 rounded-full">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> DP Terbayar (Sisa di Lokasi)
+                                        </span>
+                                        @elseif(in_array($booking->status->value, ['pending', 'pending_payment']))
+                                        <span class="inline-flex items-center gap-1 bg-amber-50 text-amber-700 border border-amber-200 text-xs font-bold px-2.5 py-1 rounded-full">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> Menunggu Pembayaran
                                         </span>
                                         @endif
                                         <span class="text-[11px] text-on-surface-variant">{{ $diffDays }}</span>
@@ -237,14 +241,14 @@
                                             Detail & E-Tiket
                                             <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
                                         </a>
-                                        @if($booking->status->value === 'pending' && $booking->payment?->status?->value === 'unpaid')
-                                        <a href="{{ route('booking.konfirmasi', ['code' => $booking->booking_code]) }}" class="text-xs font-bold text-action-orange hover:underline">
+                                        @if(in_array($booking->status->value, ['pending', 'pending_payment']) && $booking->payment?->status?->value === 'unpaid')
+                                        <a href="{{ route('booking.konfirmasi', ['code' => $booking->booking_code]) }}" class="text-xs font-bold text-[#f37920] hover:underline">
                                             Bayar Sekarang
                                         </a>
                                         @endif
                                     </div>
 
-                                    @if($booking->status->value === 'pending')
+                                    @if(in_array($booking->status->value, ['pending', 'pending_payment']))
                                     <form action="{{ route('user.booking.cancel', $booking->id) }}" method="POST" class="inline" onsubmit="return confirm('Apakah Anda yakin ingin membatalkan pesanan ini?')">
                                         @csrf
                                         <button type="submit" class="flex items-center gap-1.5 text-xs font-semibold text-error hover:underline">
