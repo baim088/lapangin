@@ -39,34 +39,60 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-                {{-- QR Code mockup --}}
-                <div class="bg-surface-white rounded-2xl border border-surface-container-high p-6 flex flex-col items-center gap-4">
-                    <div class="w-48 h-48 bg-on-surface rounded-2xl flex items-center justify-center">
-                        <div class="w-40 h-40 bg-surface-white rounded-xl grid grid-cols-7 gap-0.5 p-2">
-                            @for($r = 0; $r < 7; $r++)
-                                @for($c = 0; $c < 7; $c++)
-                                    @php
-                                        $isCorner = ($r < 2 && $c < 2) || ($r < 2 && $c >= 5) || ($r >= 5 && $c < 2);
-                                        $isDark = $isCorner || rand(0,1);
-                                    @endphp
-                                    <div class="rounded-sm {{ $isDark ? 'bg-on-surface' : 'bg-surface-white' }}"></div>
-                                @endfor
-                            @endfor
+                {{-- Payment Destination Card: QRIS Barcode OR Bank BCA Manual Transfer --}}
+                @php
+                    $methodValue = $booking->payment?->payment_method?->value ?? 'qris';
+                @endphp
+                <div class="bg-white rounded-2xl border border-slate-200 p-6 flex flex-col items-center justify-center gap-4 shadow-xs">
+                    @if ($methodValue === 'manual_transfer')
+                        <div class="w-full bg-[#0f2444] text-white rounded-2xl p-5 flex flex-col gap-3 shadow-md" x-data="{ copied: false }">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-bold uppercase tracking-widest text-[#f8b710]">Transfer Manual</span>
+                                <span class="bg-white/15 text-white text-xs font-extrabold px-2.5 py-1 rounded-md tracking-wider">BANK BCA</span>
+                            </div>
+                            <div class="border-t border-white/15 pt-3">
+                                <p class="text-[11px] text-slate-300">Nomor Rekening</p>
+                                <div class="flex items-center justify-between gap-2 mt-0.5">
+                                    <span class="font-teko text-3xl font-bold tracking-wider text-white">2060600344</span>
+                                    <button
+                                        type="button"
+                                        @click="navigator.clipboard.writeText('2060600344'); copied = true; setTimeout(() => copied = false, 2000)"
+                                        class="inline-flex items-center gap-1 bg-[#f8b710] hover:bg-[#f37920] text-slate-950 text-[11px] font-bold px-3 py-1.5 rounded-lg transition-colors cursor-pointer"
+                                    >
+                                        <span class="material-symbols-outlined text-[14px]" x-text="copied ? 'check' : 'content_copy'"></span>
+                                        <span x-text="copied ? 'Tersalin' : 'Salin'">Salin</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <div>
+                                <p class="text-[11px] text-slate-300">Atas Nama</p>
+                                <p class="text-sm font-bold text-white">Ibrahim</p>
+                            </div>
                         </div>
-                    </div>
+                    @else
+                        <div class="text-center">
+                            <span class="inline-block text-[11px] font-bold uppercase tracking-widest text-[#0f2444] bg-[#f8b710]/20 px-3 py-1 rounded-full mb-2">Scan QRIS Resmi</span>
+                            <p class="text-xs font-bold text-slate-800">IMS STORE - SOFTWARE</p>
+                            <p class="text-[11px] text-slate-500">NMID : ID1026641928837</p>
+                        </div>
+                        <div class="p-3 bg-white rounded-2xl border-2 border-slate-200 shadow-sm">
+                            <img src="{{ asset('images/qris-barcode.png') }}" alt="QRIS Barcode LapangIn" class="w-52 h-52 object-contain mx-auto">
+                        </div>
+                    @endif
+
                     <div class="text-center">
                         @if ($booking->payment_type === 'dp')
-                            <p class="text-xs text-on-surface-variant">Bayar DP sekarang ({{ $booking->dp_percentage }}%)</p>
-                            <p class="font-headline text-2xl font-bold text-action-orange">Rp {{ number_format($booking->dp_amount, 0, ',', '.') }}</p>
-                            <p class="text-xs text-on-surface-variant mt-1">Sisa pelunasan: Rp {{ number_format($booking->total_amount - $booking->dp_amount, 0, ',', '.') }}</p>
+                            <p class="text-xs text-slate-500">Bayar DP sekarang ({{ $booking->dp_percentage }}%)</p>
+                            <p class="font-teko text-3xl font-bold text-[#f37920] leading-none mt-1">Rp {{ number_format($booking->dp_amount, 0, ',', '.') }}</p>
+                            <p class="text-xs text-slate-500 mt-1">Sisa pelunasan di lokasi: Rp {{ number_format($booking->total_amount - $booking->dp_amount, 0, ',', '.') }}</p>
                         @else
-                            <p class="text-xs text-on-surface-variant">Total yang harus dibayar</p>
-                            <p class="font-headline text-2xl font-bold text-on-surface">Rp {{ number_format($booking->total_amount, 0, ',', '.') }}</p>
+                            <p class="text-xs text-slate-500">Total yang harus dibayar</p>
+                            <p class="font-teko text-3xl font-bold text-[#0f2444] leading-none mt-1">Rp {{ number_format($booking->total_amount, 0, ',', '.') }}</p>
                         @endif
                     </div>
-                    <div class="flex items-center gap-1.5 text-xs text-on-surface-variant">
-                        <span class="material-symbols-outlined text-[14px]">verified_user</span>
-                        Didukung semua e-wallet & transfer bank
+                    <div class="flex items-center gap-1.5 text-xs text-slate-500">
+                        <span class="material-symbols-outlined text-[14px] text-emerald-600">verified_user</span>
+                        {{ $methodValue === 'manual_transfer' ? 'Transfer Bank BCA terverifikasi' : 'Didukung semua e-wallet & m-banking berlogo QRIS' }}
                     </div>
                 </div>
 

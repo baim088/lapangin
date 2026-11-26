@@ -31,8 +31,6 @@ class CheckoutRequest extends FormRequest
         if ($this->has('payment_method')) {
             $method = match ($this->payment_method) {
                 'bank_transfer' => PaymentMethod::ManualTransfer->value,
-                'va' => PaymentMethod::VirtualAccount->value,
-                'ewallet' => PaymentMethod::EWallet->value,
                 default => $this->payment_method,
             };
             $this->merge(['payment_method' => $method]);
@@ -56,7 +54,7 @@ class CheckoutRequest extends FormRequest
             'notes' => ['nullable', 'string', 'max:1000'],
             'payment_type' => ['nullable', 'string', 'in:full,dp'],
             'dp_percentage' => ['nullable', 'integer', 'min:30', 'max:50'],
-            'payment_method' => ['required', 'string', Rule::enum(PaymentMethod::class)],
+            'payment_method' => ['required', 'string', Rule::in([PaymentMethod::Qris->value, PaymentMethod::ManualTransfer->value])],
         ];
     }
 

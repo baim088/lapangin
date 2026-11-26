@@ -234,10 +234,8 @@
                             <div class="flex flex-col gap-3">
                                 @php
                                     $methods = [
-                                        ['qris', 'QRIS', 'Bayar dengan scan QR dari semua e-wallet & m-banking', true],
-                                        ['ewallet', 'GoPay / OVO / Dana', 'Transfer e-wallet langsung', false],
-                                        ['va', 'Virtual Account Bank', 'BCA, Mandiri, BNI, BRI', false],
-                                        ['bank_transfer', 'Transfer Manual', 'Konfirmasi via upload bukti transfer', false],
+                                        ['qris', 'QRIS', 'Scan QR dari semua e-wallet & m-banking (GoPay, OVO, Dana, BCA, Mandiri, dll)', true],
+                                        ['bank_transfer', 'Transfer Manual (Bank BCA)', 'Transfer ke BCA 2060600344 a/n Ibrahim & upload bukti transfer', false],
                                     ];
                                 @endphp
                                 @foreach($methods as $m)
