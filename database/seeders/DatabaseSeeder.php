@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             VenueSeeder::class,
             CourtSeeder::class,
+            FiftyCourtsSeeder::class,
             DemoSeeder::class,
         ]);
     }

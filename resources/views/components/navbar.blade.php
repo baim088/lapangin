@@ -12,10 +12,6 @@
                     class="h-9 sm:h-10 w-auto object-contain hover:opacity-90 transition-opacity"
                 >
             </a>
-            <div class="hidden xl:flex items-center gap-2 pl-4 border-l border-white/15 text-xs text-white/70">
-                <span class="w-2 h-2 rounded-full bg-[#f8b710] animate-pulse"></span>
-                <span>Buka Setiap Hari: <strong>08.00 - 23.00 WIB</strong></span>
-            </div>
         </div>
 
         <!-- Center: Menu Navigasi Sebaris -->
@@ -106,10 +102,6 @@
         class="md:hidden border-t border-white/10 bg-[#0b1a30] px-6 py-5 flex flex-col gap-2.5 shadow-2xl"
         style="display: none;"
     >
-        <div class="flex items-center gap-2 pb-3 mb-1 border-b border-white/10 text-xs text-[#f8b710] font-semibold">
-            <span class="w-2 h-2 rounded-full bg-[#f8b710] animate-pulse"></span>
-            <span>Buka Setiap Hari: 08:00 - 23:00 WIB</span>
-        </div>
         <a 
             href="{{ route('beranda') }}" 
             class="py-2 px-3 rounded-lg text-sm font-semibold {{ $active === 'beranda' ? 'bg-white/15 text-[#f8b710] font-bold' : 'text-white/80 hover:bg-white/5 hover:text-[#f8b710]' }}"

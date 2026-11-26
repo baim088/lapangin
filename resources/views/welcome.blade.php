@@ -142,34 +142,34 @@
                     
                     <!-- Stat 1 -->
                     <div class="flex flex-col items-center sm:items-start p-2">
+                        <span class="font-teko text-5xl sm:text-6xl font-bold text-[#f8b710] leading-none">50+</span>
+                        <div class="w-10 h-1 bg-[#f8b710] rounded-full my-2.5"></div>
+                        <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider">LAPANGAN OLAHRAGA RESMI</h4>
+                        <p class="text-[11px] text-slate-500 mt-0.5">Tersebar di 5 Wilayah Kota DKI Jakarta</p>
+                    </div>
+
+                    <!-- Stat 2 -->
+                    <div class="flex flex-col items-center sm:items-start p-2">
+                        <span class="font-teko text-5xl sm:text-6xl font-bold text-[#f8b710] leading-none">4</span>
+                        <div class="w-10 h-1 bg-[#f8b710] rounded-full my-2.5"></div>
+                        <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider">KATEGORI OLAHRAGA POPULER</h4>
+                        <p class="text-[11px] text-slate-500 mt-0.5">Padel, Mini Soccer, Futsal, & Badminton</p>
+                    </div>
+
+                    <!-- Stat 3 -->
+                    <div class="flex flex-col items-center sm:items-start p-2">
                         <span class="font-teko text-5xl sm:text-6xl font-bold text-[#f8b710] leading-none">100%</span>
                         <div class="w-10 h-1 bg-[#f8b710] rounded-full my-2.5"></div>
                         <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider">JAMINAN BEBAS DOUBLE-BOOKING</h4>
                         <p class="text-[11px] text-slate-500 mt-0.5">Sistem kunci waktu otomatis saat checkout</p>
                     </div>
 
-                    <!-- Stat 2 -->
-                    <div class="flex flex-col items-center sm:items-start p-2">
-                        <span class="font-teko text-5xl sm:text-6xl font-bold text-[#f8b710] leading-none">4+</span>
-                        <div class="w-10 h-1 bg-[#f8b710] rounded-full my-2.5"></div>
-                        <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider">KATEGORI LAPANGAN STANDAR</h4>
-                        <p class="text-[11px] text-slate-500 mt-0.5">Futsal, Badminton, Mini Soccer, Padel</p>
-                    </div>
-
-                    <!-- Stat 3 -->
-                    <div class="flex flex-col items-center sm:items-start p-2">
-                        <span class="font-teko text-5xl sm:text-6xl font-bold text-[#f8b710] leading-none">1.200+</span>
-                        <div class="w-10 h-1 bg-[#f8b710] rounded-full my-2.5"></div>
-                        <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider">PERTANDINGAN SUKSES</h4>
-                        <p class="text-[11px] text-slate-500 mt-0.5">Komunitas & instansi terdaftar aktif</p>
-                    </div>
-
                     <!-- Stat 4 -->
                     <div class="flex flex-col items-center sm:items-start p-2">
-                        <span class="font-teko text-5xl sm:text-6xl font-bold text-[#f8b710] leading-none">10 MENIT</span>
+                        <span class="font-teko text-5xl sm:text-6xl font-bold text-[#f8b710] leading-none">5</span>
                         <div class="w-10 h-1 bg-[#f8b710] rounded-full my-2.5"></div>
-                        <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider">INSTANT SLOT LOCK</h4>
-                        <p class="text-[11px] text-slate-500 mt-0.5">Waktu aman untuk proses pembayaran</p>
+                        <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider">OWNER PARTNER TERVERIFIKASI</h4>
+                        <p class="text-[11px] text-slate-500 mt-0.5">Puluhan venue aktif siap booking instan</p>
                     </div>
 
                 </div>
@@ -695,187 +695,6 @@
             </div>
         </section>
 
-        <!-- SECTION 6: PILIHAN PAKET SEWA ARENA (Pricing Cards anatomy like Weblium) -->
-        <section class="w-full bg-surface-white py-20 border-b border-slate-200">
-            <div class="max-w-7xl mx-auto px-4 sm:px-8">
-                
-                <div class="text-center max-w-2xl mx-auto mb-16">
-                    <span class="text-xs font-bold text-[#f37920] uppercase tracking-widest block mb-1">PAKET & HARGA SEWA</span>
-                    <h2 class="font-teko text-4xl sm:text-5xl lg:text-6xl uppercase font-bold text-slate-900 tracking-tight leading-none">
-                        PILIHAN PAKET SEWA GELANGGANG
-                    </h2>
-                    <div class="flex items-center justify-center gap-1.5 mt-3 mb-3">
-                        <span class="w-14 h-1 bg-[#f8b710] rounded-full inline-block"></span>
-                        <span class="w-1.5 h-1.5 bg-[#f8b710] rounded-xs inline-block"></span>
-                    </div>
-                    <p class="text-sm sm:text-base text-slate-600 leading-relaxed">
-                        Fleksibilitas reservasi lengkap, mulai dari sparring santai per jam, paket komunitas mingguan, hingga turnamen akbar.
-                    </p>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
-                    
-                    <!-- Pricing Card 1: Reguler -->
-                    <div class="bg-surface-white rounded-3xl p-8 border border-slate-200 shadow-sm hover:shadow-xl transition-all flex flex-col justify-between">
-                        <div>
-                            <span class="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-1">LATIHAN & SPARRING</span>
-                            <h3 class="font-teko text-3xl font-bold uppercase text-slate-900 leading-none">PAKET REGULER</h3>
-                            <div class="w-8 h-1 bg-[#f8b710] rounded-full my-3"></div>
-                            
-                            <div class="my-5">
-                                <span class="text-xs text-slate-500 block">Mulai dari</span>
-                                <div class="flex items-baseline gap-1">
-                                    <span class="font-teko text-5xl font-bold text-[#f8b710] leading-none">Rp 45.000</span>
-                                    <span class="text-xs text-slate-500">/ jam</span>
-                                </div>
-                            </div>
-
-                            <p class="text-xs text-slate-600 leading-relaxed mb-6">
-                                Pilihan praktis untuk tim yang ingin bermain fleksibel per sesi tanpa komitmen jangka panjang.
-                            </p>
-
-                            <ul class="flex flex-col gap-3 text-xs text-slate-700">
-                                <li class="flex items-center gap-2.5">
-                                    <span class="material-symbols-outlined text-[18px] text-emerald-600">check_circle</span>
-                                    <span>Bebas pilih jam siang atau prime time malam</span>
-                                </li>
-                                <li class="flex items-center gap-2.5">
-                                    <span class="material-symbols-outlined text-[18px] text-emerald-600">check_circle</span>
-                                    <span>Slot terkunci aman 10 menit saat checkout</span>
-                                </li>
-                                <li class="flex items-center gap-2.5">
-                                    <span class="material-symbols-outlined text-[18px] text-emerald-600">check_circle</span>
-                                    <span>Akses shower & ruang ganti ber-AC</span>
-                                </li>
-                                <li class="flex items-center gap-2.5">
-                                    <span class="material-symbols-outlined text-[18px] text-emerald-600">check_circle</span>
-                                    <span>E-Tiket kode QR instan</span>
-                                </li>
-                            </ul>
-                        </div>
-
-                        <div class="pt-8">
-                            <a 
-                                href="#jadwal-interaktif" 
-                                class="w-full border-2 border-[#0f2444] text-[#0f2444] hover:bg-[#0f2444] hover:text-white font-bold text-xs uppercase tracking-wider py-3.5 rounded-full flex items-center justify-center gap-2 transition-all"
-                            >
-                                Booking Sekarang
-                            </a>
-                        </div>
-                    </div>
-
-                    <!-- Pricing Card 2: Member Komunitas (Featured / Highlight) -->
-                    <div class="bg-surface-white rounded-3xl p-8 border-2 border-[#f8b710] shadow-xl relative flex flex-col justify-between transform md:-translate-y-2">
-                        <!-- Popular Badge -->
-                        <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-[#f8b710] to-[#f37920] text-slate-950 font-bold text-xs uppercase tracking-wider px-4 py-1 rounded-full shadow-md">
-                            REKOMENDASI KOMUNITAS
-                        </div>
-
-                        <div>
-                            <span class="text-xs font-bold text-[#f37920] uppercase tracking-wider block mb-1">LANGGANAN RUTIN</span>
-                            <h3 class="font-teko text-3xl font-bold uppercase text-slate-900 leading-none">PAKET MEMBER KOMUNITAS</h3>
-                            <div class="w-8 h-1 bg-[#f8b710] rounded-full my-3"></div>
-                            
-                            <div class="my-5">
-                                <span class="text-xs text-slate-500 block">Mulai dari</span>
-                                <div class="flex items-baseline gap-1">
-                                    <span class="font-teko text-5xl font-bold text-[#f37920] leading-none">DISKON 15%</span>
-                                    <span class="text-xs text-slate-500">/ bulan</span>
-                                </div>
-                            </div>
-
-                            <p class="text-xs text-slate-600 leading-relaxed mb-6">
-                                Amankan jadwal favorit Anda secara rutin setiap minggu tanpa takut kehabisan slot oleh tim lain.
-                            </p>
-
-                            <ul class="flex flex-col gap-3 text-xs text-slate-700">
-                                <li class="flex items-center gap-2.5">
-                                    <span class="material-symbols-outlined text-[18px] text-emerald-600">check_circle</span>
-                                    <span><strong>Prioritas jadwal tetap</strong> mingguan terjaga</span>
-                                </li>
-                                <li class="flex items-center gap-2.5">
-                                    <span class="material-symbols-outlined text-[18px] text-emerald-600">check_circle</span>
-                                    <span>Diskon 15% setiap total transaksi bulanan</span>
-                                </li>
-                                <li class="flex items-center gap-2.5">
-                                    <span class="material-symbols-outlined text-[18px] text-emerald-600">check_circle</span>
-                                    <span>Gratis 1 galon air mineral setiap sesi main</span>
-                                </li>
-                                <li class="flex items-center gap-2.5">
-                                    <span class="material-symbols-outlined text-[18px] text-emerald-600">check_circle</span>
-                                    <span>Fleksibilitas reschedule 1x per bulan</span>
-                                </li>
-                                <li class="flex items-center gap-2.5">
-                                    <span class="material-symbols-outlined text-[18px] text-emerald-600">check_circle</span>
-                                    <span>Prioritas loker tim & ruang simpan perlengkapan</span>
-                                </li>
-                            </ul>
-                        </div>
-
-                        <div class="pt-8">
-                            <a 
-                                href="{{ route('kontak') }}" 
-                                class="w-full bg-gradient-to-r from-[#f8b710] to-[#f37920] hover:from-[#f37920] hover:to-[#f8b710] text-slate-950 font-bold text-xs uppercase tracking-wider py-4 rounded-full flex items-center justify-center gap-2 shadow-lg shadow-amber-500/25 transition-all transform hover:-translate-y-0.5"
-                            >
-                                Daftar Member Komunitas
-                            </a>
-                        </div>
-                    </div>
-
-                    <!-- Pricing Card 3: Turnamen / Event Organizer -->
-                    <div class="bg-surface-white rounded-3xl p-8 border border-slate-200 shadow-sm hover:shadow-xl transition-all flex flex-col justify-between">
-                        <div>
-                            <span class="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-1">EVENT & TURNAMEN</span>
-                            <h3 class="font-teko text-3xl font-bold uppercase text-slate-900 leading-none">PAKET TURNAMEN & EVENT</h3>
-                            <div class="w-8 h-1 bg-[#f8b710] rounded-full my-3"></div>
-                            
-                            <div class="my-5">
-                                <span class="text-xs text-slate-500 block">Sewa Venue Penuh</span>
-                                <div class="flex items-baseline gap-1">
-                                    <span class="font-teko text-5xl font-bold text-slate-900 leading-none">CUSTOM</span>
-                                    <span class="text-xs text-slate-500">/ seharian</span>
-                                </div>
-                            </div>
-
-                            <p class="text-xs text-slate-600 leading-relaxed mb-6">
-                                Solusi sewa gelanggang menyeluruh untuk event perusahaan, liga amatir, atau kejuaraan antarsekolah.
-                            </p>
-
-                            <ul class="flex flex-col gap-3 text-xs text-slate-700">
-                                <li class="flex items-center gap-2.5">
-                                    <span class="material-symbols-outlined text-[18px] text-emerald-600">check_circle</span>
-                                    <span>Sewa arena penuh seharian (08.00 - 23.00)</span>
-                                </li>
-                                <li class="flex items-center gap-2.5">
-                                    <span class="material-symbols-outlined text-[18px] text-emerald-600">check_circle</span>
-                                    <span>Akses sound system, mic wireless, & tribun</span>
-                                </li>
-                                <li class="flex items-center gap-2.5">
-                                    <span class="material-symbols-outlined text-[18px] text-emerald-600">check_circle</span>
-                                    <span>Ruang panitia ber-AC khusus</span>
-                                </li>
-                                <li class="flex items-center gap-2.5">
-                                    <span class="material-symbols-outlined text-[18px] text-emerald-600">check_circle</span>
-                                    <span>Papan skor digital & meja wasit resmi</span>
-                                </li>
-                            </ul>
-                        </div>
-
-                        <div class="pt-8">
-                            <a 
-                                href="{{ route('kontak') }}" 
-                                class="w-full border-2 border-[#0f2444] text-[#0f2444] hover:bg-[#0f2444] hover:text-white font-bold text-xs uppercase tracking-wider py-3.5 rounded-full flex items-center justify-center gap-2 transition-all"
-                            >
-                                Konsultasi Event CS
-                            </a>
-                        </div>
-                    </div>
-
-                </div>
-
-            </div>
-        </section>
-
         <!-- SECTION 7: ALUR BOOKING 4 LANGKAH (Step Cards) -->
         <section id="cara-booking" class="w-full bg-[#f8f9fa] py-20 border-b border-slate-200">
             <div class="w-full max-w-7xl mx-auto px-4 sm:px-8">
@@ -986,92 +805,339 @@
             </div>
         </section>
 
-        <!-- SECTION 9: SUASANA ARENA (GALERI FOTO) -->
-        <section class="w-full bg-[#f8f9fa] py-20 border-b border-slate-200">
+        <!-- SECTION 9: DOKUMENTASI VENUE & LAPANGAN (Horizontal Scroll Gallery) -->
+        <section class="w-full bg-[#f8f9fa] py-20 border-b border-slate-200 overflow-hidden">
             <div class="max-w-7xl mx-auto px-4 sm:px-8">
                 
-                <div class="text-center max-w-2xl mx-auto mb-14">
-                    <span class="text-xs font-bold text-[#f37920] uppercase tracking-widest block mb-1">DOKUMENTASI VENUE</span>
-                    <h2 class="font-teko text-4xl sm:text-5xl lg:text-6xl uppercase font-bold text-slate-900 tracking-tight leading-none">
-                        SUASANA GELANGGANG KAMI
-                    </h2>
-                    <div class="flex items-center justify-center gap-1.5 mt-3 mb-3">
-                        <span class="w-14 h-1 bg-[#f8b710] rounded-full inline-block"></span>
-                        <span class="w-1.5 h-1.5 bg-[#f8b710] rounded-xs inline-block"></span>
+                <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
+                    <div>
+                        <span class="text-xs font-bold text-[#f37920] uppercase tracking-widest block mb-1">DOKUMENTASI VENUE RESMI</span>
+                        <h2 class="font-teko text-4xl sm:text-5xl lg:text-6xl uppercase font-bold text-slate-900 tracking-tight leading-none">
+                            DOKUMENTASI GELANGGANG & VENUE
+                        </h2>
+                        <div class="flex items-center gap-1.5 mt-2">
+                            <span class="w-14 h-1 bg-[#f8b710] rounded-full inline-block"></span>
+                            <span class="w-1.5 h-1.5 bg-[#f8b710] rounded-xs inline-block"></span>
+                        </div>
+                        <p class="text-sm text-slate-600 mt-2 max-w-xl">
+                            Dokumentasi visual nyata dari seluruh gelanggang mitra di Jakarta yang diunggah dan diperbarui langsung oleh Owner & Operator venue terverifikasi.
+                        </p>
                     </div>
-                    <p class="text-sm text-slate-600">
-                        Kualitas gelanggang terawat, pencahayaan optimal, dan standar fasilitas bersertifikasi resmi.
-                    </p>
+                    <div class="hidden sm:flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-wider bg-white px-4 py-2 rounded-full border border-slate-200 shadow-xs">
+                        <span class="material-symbols-outlined text-[18px] text-[#f37920] animate-pulse">swipe_left</span>
+                        <span>Geser Horizontal untuk Melihat</span>
+                    </div>
                 </div>
 
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div class="relative rounded-2xl overflow-hidden aspect-square group shadow-sm">
-                        <img 
-                            src="https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&w=600&q=80" 
-                            alt="Hall Indoor Utama Lapangin" 
-                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                        >
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-4">
-                            <span class="text-xs font-bold text-white uppercase tracking-wider">Hall Indoor Futsal</span>
+                <!-- Horizontal Scroll Gallery -->
+                <div class="flex overflow-x-auto gap-5 pb-6 pt-2 snap-x snap-mandatory scrollbar-thin scrollbar-thumb-slate-300">
+                    
+                    <!-- Card 1: Kemang Padel Club -->
+                    <div class="min-w-[280px] sm:min-w-[320px] max-w-[340px] shrink-0 snap-start bg-surface-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm hover:shadow-lg transition-all group flex flex-col justify-between">
+                        <div class="relative aspect-[4/3] overflow-hidden bg-slate-900">
+                            <img 
+                                src="https://images.unsplash.com/photo-1554068865-24cecd4e34b8?auto=format&fit=crop&w=700&q=80" 
+                                alt="Kemang Padel Club - Panoramic 1" 
+                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                            >
+                            <span class="absolute top-3 left-3 bg-[#f8b710] text-slate-950 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shadow">
+                                Padel Court
+                            </span>
+                            <span class="absolute bottom-3 right-3 bg-slate-950/80 text-white text-[11px] font-semibold px-2.5 py-0.5 rounded backdrop-blur-sm">
+                                Jakarta Selatan
+                            </span>
+                        </div>
+                        <div class="p-4 flex flex-col gap-2">
+                            <div>
+                                <span class="text-[10px] font-extrabold text-[#f37920] uppercase tracking-wider block">Venue: Kemang Padel Club</span>
+                                <h3 class="font-teko text-2xl font-bold text-slate-900 uppercase leading-tight group-hover:text-[#f37920] transition-colors">
+                                    Panoramic 1 & 2
+                                </h3>
+                            </div>
+                            <div class="flex items-center justify-between text-xs text-slate-500 border-t border-slate-100 pt-2.5 mt-1">
+                                <span class="flex items-center gap-1 text-[11px]">
+                                    <span class="material-symbols-outlined text-[15px] text-emerald-600">verified_user</span>
+                                    Diunggah Owner (Hendra W.)
+                                </span>
+                                <a href="{{ route('lapangan') }}" class="text-[11px] font-bold text-slate-900 hover:text-[#f37920] flex items-center">
+                                    Detail <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+                                </a>
+                            </div>
                         </div>
                     </div>
-                    <div class="relative rounded-2xl overflow-hidden aspect-square group shadow-sm">
-                        <img 
-                            src="https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?auto=format&fit=crop&w=600&q=80" 
-                            alt="Badminton Court Area" 
-                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                        >
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-4">
-                            <span class="text-xs font-bold text-white uppercase tracking-wider">Karpet Badminton BWF</span>
+
+                    <!-- Card 2: Cilandak Town Minisoccer -->
+                    <div class="min-w-[280px] sm:min-w-[320px] max-w-[340px] shrink-0 snap-start bg-surface-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm hover:shadow-lg transition-all group flex flex-col justify-between">
+                        <div class="relative aspect-[4/3] overflow-hidden bg-slate-900">
+                            <img 
+                                src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=700&q=80" 
+                                alt="Cilandak Town Minisoccer" 
+                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                            >
+                            <span class="absolute top-3 left-3 bg-[#f8b710] text-slate-950 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shadow">
+                                Mini Soccer
+                            </span>
+                            <span class="absolute bottom-3 right-3 bg-slate-950/80 text-white text-[11px] font-semibold px-2.5 py-0.5 rounded backdrop-blur-sm">
+                                Jakarta Selatan
+                            </span>
+                        </div>
+                        <div class="p-4 flex flex-col gap-2">
+                            <div>
+                                <span class="text-[10px] font-extrabold text-[#f37920] uppercase tracking-wider block">Venue: Cilandak Town Hub</span>
+                                <h3 class="font-teko text-2xl font-bold text-slate-900 uppercase leading-tight group-hover:text-[#f37920] transition-colors">
+                                    Cilandak Town Minisoccer
+                                </h3>
+                            </div>
+                            <div class="flex items-center justify-between text-xs text-slate-500 border-t border-slate-100 pt-2.5 mt-1">
+                                <span class="flex items-center gap-1 text-[11px]">
+                                    <span class="material-symbols-outlined text-[15px] text-emerald-600">verified_user</span>
+                                    Diunggah Operator Venue
+                                </span>
+                                <a href="{{ route('lapangan') }}" class="text-[11px] font-bold text-slate-900 hover:text-[#f37920] flex items-center">
+                                    Detail <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+                                </a>
+                            </div>
                         </div>
                     </div>
-                    <div class="relative rounded-2xl overflow-hidden aspect-square group shadow-sm">
-                        <img 
-                            src="https://images.unsplash.com/photo-1529900245534-47fbf46b403d?auto=format&fit=crop&w=600&q=80" 
-                            alt="Pencahayaan LED Lapangan" 
-                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                        >
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-4">
-                            <span class="text-xs font-bold text-white uppercase tracking-wider">Pencahayaan LED 800 Lux</span>
+
+                    <!-- Card 3: Senayan Executive Badminton -->
+                    <div class="min-w-[280px] sm:min-w-[320px] max-w-[340px] shrink-0 snap-start bg-surface-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm hover:shadow-lg transition-all group flex flex-col justify-between">
+                        <div class="relative aspect-[4/3] overflow-hidden bg-slate-900">
+                            <img 
+                                src="https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?auto=format&fit=crop&w=700&q=80" 
+                                alt="Senayan Executive Badminton" 
+                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                            >
+                            <span class="absolute top-3 left-3 bg-[#f8b710] text-slate-950 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shadow">
+                                Badminton
+                            </span>
+                            <span class="absolute bottom-3 right-3 bg-slate-950/80 text-white text-[11px] font-semibold px-2.5 py-0.5 rounded backdrop-blur-sm">
+                                Jakarta Pusat
+                            </span>
+                        </div>
+                        <div class="p-4 flex flex-col gap-2">
+                            <div>
+                                <span class="text-[10px] font-extrabold text-[#f37920] uppercase tracking-wider block">Venue: Senayan Executive Arena</span>
+                                <h3 class="font-teko text-2xl font-bold text-slate-900 uppercase leading-tight group-hover:text-[#f37920] transition-colors">
+                                    Court 1 & 2 (BWF Resmi)
+                                </h3>
+                            </div>
+                            <div class="flex items-center justify-between text-xs text-slate-500 border-t border-slate-100 pt-2.5 mt-1">
+                                <span class="flex items-center gap-1 text-[11px]">
+                                    <span class="material-symbols-outlined text-[15px] text-emerald-600">verified_user</span>
+                                    Diunggah Owner (Reza P.)
+                                </span>
+                                <a href="{{ route('lapangan') }}" class="text-[11px] font-bold text-slate-900 hover:text-[#f37920] flex items-center">
+                                    Detail <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+                                </a>
+                            </div>
                         </div>
                     </div>
-                    <div class="relative rounded-2xl overflow-hidden aspect-square group shadow-sm">
-                        <img 
-                            src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=600&q=80" 
-                            alt="Pertandingan Mini Soccer" 
-                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                        >
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-4">
-                            <span class="text-xs font-bold text-white uppercase tracking-wider">Mini Soccer Sintetis</span>
+
+                    <!-- Card 4: PIK 1 Coastal Padel -->
+                    <div class="min-w-[280px] sm:min-w-[320px] max-w-[340px] shrink-0 snap-start bg-surface-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm hover:shadow-lg transition-all group flex flex-col justify-between">
+                        <div class="relative aspect-[4/3] overflow-hidden bg-slate-900">
+                            <img 
+                                src="https://images.unsplash.com/photo-1526676037777-05a232554f77?auto=format&fit=crop&w=700&q=80" 
+                                alt="PIK 1 Coastal Padel" 
+                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                            >
+                            <span class="absolute top-3 left-3 bg-[#f8b710] text-slate-950 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shadow">
+                                Padel Court
+                            </span>
+                            <span class="absolute bottom-3 right-3 bg-slate-950/80 text-white text-[11px] font-semibold px-2.5 py-0.5 rounded backdrop-blur-sm">
+                                Jakarta Utara
+                            </span>
+                        </div>
+                        <div class="p-4 flex flex-col gap-2">
+                            <div>
+                                <span class="text-[10px] font-extrabold text-[#f37920] uppercase tracking-wider block">Venue: PIK 1 Coastal Club</span>
+                                <h3 class="font-teko text-2xl font-bold text-slate-900 uppercase leading-tight group-hover:text-[#f37920] transition-colors">
+                                    Court 1 Semi-Indoor Sea Breeze
+                                </h3>
+                            </div>
+                            <div class="flex items-center justify-between text-xs text-slate-500 border-t border-slate-100 pt-2.5 mt-1">
+                                <span class="flex items-center gap-1 text-[11px]">
+                                    <span class="material-symbols-outlined text-[15px] text-emerald-600">verified_user</span>
+                                    Diunggah Owner (Rina K.)
+                                </span>
+                                <a href="{{ route('lapangan') }}" class="text-[11px] font-bold text-slate-900 hover:text-[#f37920] flex items-center">
+                                    Detail <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+                                </a>
+                            </div>
                         </div>
                     </div>
+
+                    <!-- Card 5: Tebet Green Futsal Arena -->
+                    <div class="min-w-[280px] sm:min-w-[320px] max-w-[340px] shrink-0 snap-start bg-surface-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm hover:shadow-lg transition-all group flex flex-col justify-between">
+                        <div class="relative aspect-[4/3] overflow-hidden bg-slate-900">
+                            <img 
+                                src="https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&w=700&q=80" 
+                                alt="Tebet Green Futsal" 
+                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                            >
+                            <span class="absolute top-3 left-3 bg-[#f8b710] text-slate-950 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shadow">
+                                Futsal
+                            </span>
+                            <span class="absolute bottom-3 right-3 bg-slate-950/80 text-white text-[11px] font-semibold px-2.5 py-0.5 rounded backdrop-blur-sm">
+                                Jakarta Selatan
+                            </span>
+                        </div>
+                        <div class="p-4 flex flex-col gap-2">
+                            <div>
+                                <span class="text-[10px] font-extrabold text-[#f37920] uppercase tracking-wider block">Venue: Tebet Green Arena</span>
+                                <h3 class="font-teko text-2xl font-bold text-slate-900 uppercase leading-tight group-hover:text-[#f37920] transition-colors">
+                                    Court A & B (Monofilament & Vinyl)
+                                </h3>
+                            </div>
+                            <div class="flex items-center justify-between text-xs text-slate-500 border-t border-slate-100 pt-2.5 mt-1">
+                                <span class="flex items-center gap-1 text-[11px]">
+                                    <span class="material-symbols-outlined text-[15px] text-emerald-600">verified_user</span>
+                                    Diunggah Operator Kasir
+                                </span>
+                                <a href="{{ route('lapangan') }}" class="text-[11px] font-bold text-slate-900 hover:text-[#f37920] flex items-center">
+                                    Detail <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 6: Cibubur Kickoff Minisoccer -->
+                    <div class="min-w-[280px] sm:min-w-[320px] max-w-[340px] shrink-0 snap-start bg-surface-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm hover:shadow-lg transition-all group flex flex-col justify-between">
+                        <div class="relative aspect-[4/3] overflow-hidden bg-slate-900">
+                            <img 
+                                src="https://images.unsplash.com/photo-1529900245534-47fbf46b403d?auto=format&fit=crop&w=700&q=80" 
+                                alt="Cibubur Kickoff Minisoccer" 
+                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                            >
+                            <span class="absolute top-3 left-3 bg-[#f8b710] text-slate-950 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shadow">
+                                Mini Soccer
+                            </span>
+                            <span class="absolute bottom-3 right-3 bg-slate-950/80 text-white text-[11px] font-semibold px-2.5 py-0.5 rounded backdrop-blur-sm">
+                                Jakarta Timur
+                            </span>
+                        </div>
+                        <div class="p-4 flex flex-col gap-2">
+                            <div>
+                                <span class="text-[10px] font-extrabold text-[#f37920] uppercase tracking-wider block">Venue: Cibubur Kickoff Stadium</span>
+                                <h3 class="font-teko text-2xl font-bold text-slate-900 uppercase leading-tight group-hover:text-[#f37920] transition-colors">
+                                    Field A & B (600 Lux Night)
+                                </h3>
+                            </div>
+                            <div class="flex items-center justify-between text-xs text-slate-500 border-t border-slate-100 pt-2.5 mt-1">
+                                <span class="flex items-center gap-1 text-[11px]">
+                                    <span class="material-symbols-outlined text-[15px] text-emerald-600">verified_user</span>
+                                    Diunggah Owner (Dimas P.)
+                                </span>
+                                <a href="{{ route('lapangan') }}" class="text-[11px] font-bold text-slate-900 hover:text-[#f37920] flex items-center">
+                                    Detail <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 7: Kedoya Padel & Racquet -->
+                    <div class="min-w-[280px] sm:min-w-[320px] max-w-[340px] shrink-0 snap-start bg-surface-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm hover:shadow-lg transition-all group flex flex-col justify-between">
+                        <div class="relative aspect-[4/3] overflow-hidden bg-slate-900">
+                            <img 
+                                src="https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?auto=format&fit=crop&w=700&q=80" 
+                                alt="Kedoya Padel & Racquet" 
+                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                            >
+                            <span class="absolute top-3 left-3 bg-[#f8b710] text-slate-950 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shadow">
+                                Padel Court
+                            </span>
+                            <span class="absolute bottom-3 right-3 bg-slate-950/80 text-white text-[11px] font-semibold px-2.5 py-0.5 rounded backdrop-blur-sm">
+                                Jakarta Barat
+                            </span>
+                        </div>
+                        <div class="p-4 flex flex-col gap-2">
+                            <div>
+                                <span class="text-[10px] font-extrabold text-[#f37920] uppercase tracking-wider block">Venue: Kedoya Racquet Club</span>
+                                <h3 class="font-teko text-2xl font-bold text-slate-900 uppercase leading-tight group-hover:text-[#f37920] transition-colors">
+                                    Court 1 (Indoor Full AC)
+                                </h3>
+                            </div>
+                            <div class="flex items-center justify-between text-xs text-slate-500 border-t border-slate-100 pt-2.5 mt-1">
+                                <span class="flex items-center gap-1 text-[11px]">
+                                    <span class="material-symbols-outlined text-[15px] text-emerald-600">verified_user</span>
+                                    Diunggah Owner (Kevin T.)
+                                </span>
+                                <a href="{{ route('lapangan') }}" class="text-[11px] font-bold text-slate-900 hover:text-[#f37920] flex items-center">
+                                    Detail <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 8: Rawamangun Badminton Hall -->
+                    <div class="min-w-[280px] sm:min-w-[320px] max-w-[340px] shrink-0 snap-start bg-surface-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm hover:shadow-lg transition-all group flex flex-col justify-between">
+                        <div class="relative aspect-[4/3] overflow-hidden bg-slate-900">
+                            <img 
+                                src="https://images.unsplash.com/photo-1613918108466-292b78a8ef95?auto=format&fit=crop&w=700&q=80" 
+                                alt="Rawamangun Badminton Hall" 
+                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                            >
+                            <span class="absolute top-3 left-3 bg-[#f8b710] text-slate-950 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shadow">
+                                Badminton
+                            </span>
+                            <span class="absolute bottom-3 right-3 bg-slate-950/80 text-white text-[11px] font-semibold px-2.5 py-0.5 rounded backdrop-blur-sm">
+                                Jakarta Timur
+                            </span>
+                        </div>
+                        <div class="p-4 flex flex-col gap-2">
+                            <div>
+                                <span class="text-[10px] font-extrabold text-[#f37920] uppercase tracking-wider block">Venue: Rawamangun Badminton</span>
+                                <h3 class="font-teko text-2xl font-bold text-slate-900 uppercase leading-tight group-hover:text-[#f37920] transition-colors">
+                                    Hall 1 & 2 (Plafon 12m)
+                                </h3>
+                            </div>
+                            <div class="flex items-center justify-between text-xs text-slate-500 border-t border-slate-100 pt-2.5 mt-1">
+                                <span class="flex items-center gap-1 text-[11px]">
+                                    <span class="material-symbols-outlined text-[15px] text-emerald-600">verified_user</span>
+                                    Diunggah Operator Venue
+                                </span>
+                                <a href="{{ route('lapangan') }}" class="text-[11px] font-bold text-slate-900 hover:text-[#f37920] flex items-center">
+                                    Detail <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
 
             </div>
         </section>
 
-        <!-- SECTION 10: TESTIMONIALS (ULASAN KOMUNITAS) -->
-        <section class="w-full bg-surface-white py-20 border-b border-slate-200">
+        <!-- SECTION 10: TESTIMONIALS (SUARA KOMUNITAS - Horizontal Scroll) -->
+        <section class="w-full bg-surface-white py-20 border-b border-slate-200 overflow-hidden">
             <div class="w-full max-w-7xl mx-auto px-4 sm:px-8">
                 
-                <div class="text-center max-w-2xl mx-auto mb-16">
-                    <span class="text-xs font-bold text-[#f37920] uppercase tracking-widest block mb-1">SUARA KOMUNITAS</span>
-                    <h2 class="font-teko text-4xl sm:text-5xl lg:text-6xl uppercase font-bold text-slate-900 tracking-tight leading-none">
-                        APA KATA MEREKA TENTANG LAPANGIN
-                    </h2>
-                    <div class="flex items-center justify-center gap-1.5 mt-3 mb-3">
-                        <span class="w-14 h-1 bg-[#f8b710] rounded-full inline-block"></span>
-                        <span class="w-1.5 h-1.5 bg-[#f8b710] rounded-xs inline-block"></span>
+                <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-12">
+                    <div>
+                        <span class="text-xs font-bold text-[#f37920] uppercase tracking-widest block mb-1">SUARA KOMUNITAS</span>
+                        <h2 class="font-teko text-4xl sm:text-5xl lg:text-6xl uppercase font-bold text-slate-900 tracking-tight leading-none">
+                            APA KATA MEREKA TENTANG LAPANGIN
+                        </h2>
+                        <div class="flex items-center gap-1.5 mt-2">
+                            <span class="w-14 h-1 bg-[#f8b710] rounded-full inline-block"></span>
+                            <span class="w-1.5 h-1.5 bg-[#f8b710] rounded-xs inline-block"></span>
+                        </div>
+                        <p class="text-sm text-slate-600 mt-2 max-w-xl">
+                            Ulasan terverifikasi langsung dari komunitas olahraga, klub amatir, dan pemain rutin di berbagai venue LapangIn se-DKI Jakarta.
+                        </p>
                     </div>
-                    <p class="text-sm text-slate-600">
-                        Ulasan terverifikasi langsung dari pelanggan yang telah menyelesaikan pertandingan di LapangIn Hub.
-                    </p>
+                    <div class="hidden sm:flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-wider bg-slate-50 px-4 py-2 rounded-full border border-slate-200 shadow-xs">
+                        <span class="material-symbols-outlined text-[18px] text-[#f37920] animate-pulse">swipe_left</span>
+                        <span>Geser Horizontal untuk Membaca</span>
+                    </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Testimonials Horizontal Scroll -->
+                <div class="flex overflow-x-auto gap-6 pb-6 pt-2 snap-x snap-mandatory scrollbar-thin scrollbar-thumb-slate-300">
                     
                     <!-- Testi 1 -->
-                    <div class="bg-[#f8f9fa] p-7 rounded-3xl flex flex-col justify-between border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+                    <div class="min-w-[300px] sm:min-w-[360px] max-w-[380px] shrink-0 snap-start bg-[#f8f9fa] p-7 rounded-3xl flex flex-col justify-between border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
                         <div>
                             <div class="flex items-center justify-between mb-4">
                                 <div class="flex items-center text-[#f8b710]">
@@ -1084,7 +1150,7 @@
                                 <span class="text-[10px] font-bold text-slate-950 bg-[#f8b710] px-2.5 py-0.5 rounded-full uppercase">FUTSAL LEAGUE</span>
                             </div>
                             <p class="text-sm text-slate-700 italic mb-6 leading-relaxed">
-                                &ldquo;Booking gampang banget, tinggal pilih jam langsung kelihatan total harganya. Slot terkunci aman, gak khawatir diserobot tim lain waktu mau transfer.&rdquo;
+                                &ldquo;Booking gampang banget, tinggal pilih jam langsung kelihatan total harganya. Slot terkunci aman, gak khawatir diserobot tim lain waktu mau transfer bukti bayar.&rdquo;
                             </p>
                         </div>
                         <div class="flex items-center gap-3.5 pt-4 border-t border-slate-200">
@@ -1093,13 +1159,13 @@
                             </div>
                             <div>
                                 <h4 class="text-sm font-bold text-slate-900 leading-tight">Tim FC Kantor Pajak</h4>
-                                <span class="text-xs text-slate-500">Member Futsal Jumat Malam</span>
+                                <span class="text-xs text-slate-500">Tebet Green Futsal (Jakarta Selatan)</span>
                             </div>
                         </div>
                     </div>
 
                     <!-- Testi 2 -->
-                    <div class="bg-[#f8f9fa] p-7 rounded-3xl flex flex-col justify-between border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+                    <div class="min-w-[300px] sm:min-w-[360px] max-w-[380px] shrink-0 snap-start bg-[#f8f9fa] p-7 rounded-3xl flex flex-col justify-between border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
                         <div>
                             <div class="flex items-center justify-between mb-4">
                                 <div class="flex items-center text-[#f8b710]">
@@ -1112,7 +1178,7 @@
                                 <span class="text-[10px] font-bold text-slate-950 bg-[#f8b710] px-2.5 py-0.5 rounded-full uppercase">BADMINTON CLUB</span>
                             </div>
                             <p class="text-sm text-slate-700 italic mb-6 leading-relaxed">
-                                &ldquo;Tarif pagi jauh lebih hemat buat main santai. Lampu LED-nya beneran ramah di mata, gak silau waktu ambil smash tinggi. Invoice juga langsung masuk email.&rdquo;
+                                &ldquo;Tarif pagi jauh lebih hemat buat main santai. Lampu LED-nya beneran ramah di mata, gak silau waktu ambil smash tinggi. Check-in di Senayan tinggal scan kode QR.&rdquo;
                             </p>
                         </div>
                         <div class="flex items-center gap-3.5 pt-4 border-t border-slate-200">
@@ -1121,13 +1187,13 @@
                             </div>
                             <div>
                                 <h4 class="text-sm font-bold text-slate-900 leading-tight">Komunitas Badminton Pagi</h4>
-                                <span class="text-xs text-slate-500">Rutin 4 Court Tiap Minggu</span>
+                                <span class="text-xs text-slate-500">Senayan Executive (Jakarta Pusat)</span>
                             </div>
                         </div>
                     </div>
 
                     <!-- Testi 3 -->
-                    <div class="bg-[#f8f9fa] p-7 rounded-3xl flex flex-col justify-between border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+                    <div class="min-w-[300px] sm:min-w-[360px] max-w-[380px] shrink-0 snap-start bg-[#f8f9fa] p-7 rounded-3xl flex flex-col justify-between border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
                         <div>
                             <div class="flex items-center justify-between mb-4">
                                 <div class="flex items-center text-[#f8b710]">
@@ -1140,7 +1206,7 @@
                                 <span class="text-[10px] font-bold text-slate-950 bg-[#f8b710] px-2.5 py-0.5 rounded-full uppercase">PADEL SQUAD</span>
                             </div>
                             <p class="text-sm text-slate-700 italic mb-6 leading-relaxed">
-                                &ldquo;Court padel panoramic glass terbaik di kota ini! Kaca pantulnya tebal dan presisi. Cek-in di meja resepsionis tinggal scan kode booking, cepat sekali!&rdquo;
+                                &ldquo;Court padel panoramic glass di Kemang dan PIK terbaik di Jakarta! Kaca pantulnya tebal dan presisi. Konfirmasi DP-nya instan dan kasirnya ramah.&rdquo;
                             </p>
                         </div>
                         <div class="flex items-center gap-3.5 pt-4 border-t border-slate-200">
@@ -1149,7 +1215,91 @@
                             </div>
                             <div>
                                 <h4 class="text-sm font-bold text-slate-900 leading-tight">Dimas Setiawan</h4>
-                                <span class="text-xs text-slate-500">Pemain Padel Antar-Klub</span>
+                                <span class="text-xs text-slate-500">Padel Club Kemang (Jakarta Selatan)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Testi 4: Mini Soccer -->
+                    <div class="min-w-[300px] sm:min-w-[360px] max-w-[380px] shrink-0 snap-start bg-[#f8f9fa] p-7 rounded-3xl flex flex-col justify-between border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+                        <div>
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="flex items-center text-[#f8b710]">
+                                    <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                                    <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                                    <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                                    <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                                    <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                                </div>
+                                <span class="text-[10px] font-bold text-slate-950 bg-[#f8b710] px-2.5 py-0.5 rounded-full uppercase">MINI SOCCER 7v7</span>
+                            </div>
+                            <p class="text-sm text-slate-700 italic mb-6 leading-relaxed">
+                                &ldquo;Rumput sintetis di Cilandak dan Halim kualitasnya juara, gak licin walau kena gerimis. Fitur share link ke WhatsApp bikin koordinasi patungan tim jadi gampang banget!&rdquo;
+                            </p>
+                        </div>
+                        <div class="flex items-center gap-3.5 pt-4 border-t border-slate-200">
+                            <div class="w-11 h-11 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-base shadow-sm">
+                                B
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-bold text-slate-900 leading-tight">Bagas Prakoso</h4>
+                                <span class="text-xs text-slate-500">Cilandak Town Minisoccer (Jakarta Selatan)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Testi 5: Corporate Community -->
+                    <div class="min-w-[300px] sm:min-w-[360px] max-w-[380px] shrink-0 snap-start bg-[#f8f9fa] p-7 rounded-3xl flex flex-col justify-between border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+                        <div>
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="flex items-center text-[#f8b710]">
+                                    <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                                    <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                                    <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                                    <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                                    <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                                </div>
+                                <span class="text-[10px] font-bold text-slate-950 bg-[#f8b710] px-2.5 py-0.5 rounded-full uppercase">KOMUNITAS KANTOR</span>
+                            </div>
+                            <p class="text-sm text-slate-700 italic mb-6 leading-relaxed">
+                                &ldquo;Sebagai koordinator olahraga kantor di Sudirman, sistem DP dan invoice resmi LapangIn sangat membantu buat klaim reimbursement ke finance perusahaan.&rdquo;
+                            </p>
+                        </div>
+                        <div class="flex items-center gap-3.5 pt-4 border-t border-slate-200">
+                            <div class="w-11 h-11 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold text-base shadow-sm">
+                                R
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-bold text-slate-900 leading-tight">Rian Hidayat</h4>
+                                <span class="text-xs text-slate-500">Sudirman Padel Social (Jakarta Pusat)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Testi 6: Komunitas Futsal Mahasiswa -->
+                    <div class="min-w-[300px] sm:min-w-[360px] max-w-[380px] shrink-0 snap-start bg-[#f8f9fa] p-7 rounded-3xl flex flex-col justify-between border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+                        <div>
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="flex items-center text-[#f8b710]">
+                                    <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                                    <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                                    <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                                    <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                                    <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                                </div>
+                                <span class="text-[10px] font-bold text-slate-950 bg-[#f8b710] px-2.5 py-0.5 rounded-full uppercase">ALUMNI SPARRING</span>
+                            </div>
+                            <p class="text-sm text-slate-700 italic mb-6 leading-relaxed">
+                                &ldquo;Pilihan venue di Jakarta Barat lengkap banget dari Puri sampai Tanjung Duren. Pelunasan di lokasi bisa langsung tunai atau QRIS di kasir, sangat fleksibel.&rdquo;
+                            </p>
+                        </div>
+                        <div class="flex items-center gap-3.5 pt-4 border-t border-slate-200">
+                            <div class="w-11 h-11 rounded-full bg-amber-600 text-white flex items-center justify-center font-bold text-base shadow-sm">
+                                F
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-bold text-slate-900 leading-tight">Fajar Ramadhan</h4>
+                                <span class="text-xs text-slate-500">Puri Indah Arena Futsal (Jakarta Barat)</span>
                             </div>
                         </div>
                     </div>
