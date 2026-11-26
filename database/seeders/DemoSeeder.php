@@ -31,8 +31,8 @@ class DemoSeeder extends Seeder
             return;
         }
 
-        $kasirA = User::where('email', 'kasir.a@lapangin.id')->first() ?? User::where('email', 'budi@lapangin.id')->first();
-        $kasirB = User::where('email', 'kasir.b@lapangin.id')->first();
+        $kasirA = User::where('email', 'operator.a@lapangin.id')->first() ?? User::where('email', 'budi@lapangin.id')->first();
+        $kasirB = User::where('email', 'operator.b@lapangin.id')->first();
 
         $c1 = User::where('email', 'customer1@email.com')->first();
         $c2 = User::where('email', 'customer2@email.com')->first();

@@ -662,6 +662,20 @@ class FiftyCourtsSeeder extends Seeder
                 ]
             );
 
+            // Create / ensure 1 Operator account per venue
+            User::updateOrCreate(
+                ['email' => 'operator.'.$venueSlug.'@lapangin.id'],
+                [
+                    'name' => 'Operator '.$item['venue_name'],
+                    'phone' => '0819'.str_pad((string) $venue->id, 8, '0', STR_PAD_LEFT),
+                    'password' => $hashedPassword,
+                    'role' => UserRole::Operator,
+                    'status' => UserStatus::Active,
+                    'venue_id' => $venue->id,
+                    'email_verified_at' => now(),
+                ]
+            );
+
             $courtSlug = Str::slug($item['court_name']);
 
             Court::updateOrCreate(
