@@ -6,11 +6,11 @@
     <title>Detail Booking #{{ $booking->booking_code }} - {{ config('app.name', 'Lapangin') }}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Teko:wght@500;600;700&family=Nunito+Sans:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="bg-canvas-bg font-body text-on-surface antialiased" x-data="{ sidebarOpen: false }">
+<body class="bg-[#f8f9fa] font-body text-slate-800 antialiased selection:bg-[#f8b710] selection:text-slate-950" x-data="{ sidebarOpen: false }">
 
     {{-- Layout with sidebar --}}
     <div class="flex min-h-screen">
@@ -27,14 +27,14 @@
         {{-- ============ SIDEBAR CUSTOMER ============ --}}
         <aside
             :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
-            class="fixed inset-y-0 left-0 z-50 w-64 bg-arena-night flex flex-col transition-transform duration-200 ease-in-out lg:translate-x-0 lg:static lg:z-auto"
+            class="fixed inset-y-0 left-0 z-50 w-64 bg-[#0f2444] flex flex-col transition-transform duration-200 ease-in-out lg:translate-x-0 lg:static lg:z-auto shrink-0"
         >
             {{-- Logo Header --}}
-            <div class="flex items-center justify-between px-6 py-5 border-b border-pitch-deep/50">
+            <div class="flex items-center justify-between px-6 py-5 border-b border-white/10">
                 <a href="{{ route('user.dashboard') }}" class="flex items-center gap-2">
                     <img src="{{ asset('images/logo-white.png') }}" alt="Lapangin" class="h-8 w-auto opacity-95">
                 </a>
-                <span class="text-xs font-bold text-pitch-light uppercase tracking-wider bg-pitch-emerald/20 px-2 py-0.5 rounded-md">Customer</span>
+                <span class="text-[11px] font-bold text-[#f8b710] uppercase tracking-wider bg-[#f8b710]/15 border border-[#f8b710]/30 px-2 py-0.5 rounded-md">Member</span>
             </div>
 
             {{-- Main Navigation Links --}}
@@ -42,48 +42,26 @@
                 <div class="flex flex-col gap-1">
                     <a
                         href="{{ route('user.dashboard') }}"
-                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-surface-container-highest hover:text-surface-white hover:bg-surface-white/5"
+                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold transition-all bg-[#f8b710] text-slate-950 shadow-sm"
                     >
                         <span class="material-symbols-outlined text-[20px]">dashboard</span>
-                        Dashboard
+                        Dashboard &amp; Booking
                     </a>
 
                     <a
-                        href="{{ route('user.dashboard') }}"
-                        class="flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium transition-all bg-pitch-emerald/20 text-pitch-light font-bold"
-                    >
-                        <div class="flex items-center gap-3">
-                            <span class="material-symbols-outlined text-[20px]">receipt_long</span>
-                            Booking Saya
-                        </div>
-                    </a>
-
-                    <a
-                        href="{{ route('lapangan') }}"
-                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-surface-container-highest hover:text-surface-white hover:bg-surface-white/5"
+                        href="{{ route('user.cari-lapangan') }}"
+                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-slate-300 hover:text-white hover:bg-white/5"
                     >
                         <span class="material-symbols-outlined text-[20px]">sports_soccer</span>
                         Cari Lapangan
                     </a>
-
-                    <a
-                        href="{{ route('kontak') }}"
-                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-surface-container-highest hover:text-surface-white hover:bg-surface-white/5"
-                    >
-                        <span class="material-symbols-outlined text-[20px]">support_agent</span>
-                        Bantuan & CS
-                    </a>
                 </div>
 
                 {{-- Divider --}}
-                <div class="mt-6 pt-4 border-t border-pitch-deep/50 flex flex-col gap-1">
-                    <a href="{{ route('beranda') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-surface-container-highest hover:text-surface-white hover:bg-surface-white/5 transition-all">
-                        <span class="material-symbols-outlined text-[20px]">open_in_new</span>
-                        Lihat Situs Publik
-                    </a>
+                <div class="mt-6 pt-4 border-t border-white/10 flex flex-col gap-1">
                     <form action="{{ route('logout') }}" method="POST">
                         @csrf
-                        <button type="submit" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-surface-container-highest hover:text-rose-400 hover:bg-rose-500/10 transition-all text-left">
+                        <button type="submit" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-rose-400 hover:bg-rose-500/10 transition-all text-left cursor-pointer">
                             <span class="material-symbols-outlined text-[20px]">logout</span>
                             Keluar
                         </button>
@@ -92,43 +70,36 @@
             </nav>
 
             {{-- Bottom User Info --}}
-            <div class="px-4 py-4 border-t border-pitch-deep/50">
-                <div class="flex items-center gap-3 p-3 rounded-xl bg-surface-white/5">
-                    <div class="w-9 h-9 rounded-full bg-pitch-emerald/30 border border-pitch-light/30 flex items-center justify-center shrink-0">
-                        <span class="font-bold text-pitch-light text-sm">{{ strtoupper(substr(auth()->user()->name, 0, 2)) }}</span>
+            <div class="px-4 py-4 border-t border-white/10">
+                <div class="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/10">
+                    <div class="w-9 h-9 rounded-full bg-[#f8b710]/20 border border-[#f8b710]/40 flex items-center justify-center shrink-0">
+                        <span class="font-bold text-[#f8b710] text-sm">{{ strtoupper(substr(auth()->user()->name, 0, 2)) }}</span>
                     </div>
                     <div class="flex-1 min-w-0">
-                        <p class="text-xs font-bold text-surface-white truncate">{{ auth()->user()->name }}</p>
-                        <p class="text-[10px] text-surface-container-highest truncate">{{ auth()->user()->email }}</p>
+                        <p class="text-xs font-bold text-white truncate">{{ auth()->user()->name }}</p>
+                        <p class="text-[10px] text-slate-300 truncate">{{ auth()->user()->email }}</p>
                     </div>
                 </div>
             </div>
         </aside>
 
         {{-- ============ MAIN CONTENT AREA ============ --}}
-        <div class="flex-1 min-w-0 flex flex-col bg-canvas-bg min-h-screen">
+        <div class="flex-1 min-w-0 flex flex-col bg-[#f8f9fa] min-h-screen">
 
             {{-- Topbar Header --}}
-            <header class="h-16 bg-surface-white border-b border-surface-container-high px-4 sm:px-8 flex items-center justify-between gap-4 sticky top-0 z-30 shadow-xs">
+            <header class="h-16 bg-white border-b border-slate-200 px-4 sm:px-8 flex items-center justify-between gap-4 sticky top-0 z-30 shadow-xs">
                 <div class="flex items-center gap-3">
-                    <button @click="sidebarOpen = !sidebarOpen" class="lg:hidden p-2 rounded-lg text-on-surface hover:bg-surface-container-low transition-colors" aria-label="Toggle Sidebar">
+                    <button @click="sidebarOpen = !sidebarOpen" class="lg:hidden p-2 rounded-lg text-slate-700 hover:bg-slate-100 transition-colors" aria-label="Toggle Sidebar">
                         <span class="material-symbols-outlined text-[24px]">menu</span>
                     </button>
-                    <a href="{{ route('user.dashboard') }}" class="inline-flex items-center gap-1.5 text-xs font-semibold text-on-surface-variant hover:text-pitch-deep transition-colors bg-surface-container-low px-3 py-1.5 rounded-lg">
+                    <a href="{{ route('user.dashboard') }}" class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-[#0f2444] transition-colors bg-slate-100 px-3 py-1.5 rounded-lg">
                         <span class="material-symbols-outlined text-[16px]">arrow_back</span>
                         <span>Kembali</span>
                     </a>
-                    <div class="h-4 w-px bg-surface-container-high hidden sm:block"></div>
+                    <div class="h-4 w-px bg-slate-200 hidden sm:block"></div>
                     <div>
-                        <h1 class="font-headline text-base sm:text-lg font-bold text-pitch-deep">Detail Booking #{{ $booking->booking_code }}</h1>
+                        <h1 class="font-teko text-2xl font-bold uppercase tracking-wide text-[#0f2444] leading-none">Detail Booking #{{ $booking->booking_code }}</h1>
                     </div>
-                </div>
-                <div class="flex items-center gap-3">
-                    <a href="{{ route('lapangan') }}" class="flex items-center gap-2 bg-pitch-deep hover:bg-pitch-emerald text-surface-white text-xs sm:text-sm font-bold px-4 py-2 rounded-xl transition-all shadow-sm">
-                        <span class="material-symbols-outlined text-[18px]">add_circle</span>
-                        <span class="hidden sm:inline">Booking Baru</span>
-                        <span class="sm:hidden">Booking</span>
-                    </a>
                 </div>
             </header>
 

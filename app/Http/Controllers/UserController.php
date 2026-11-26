@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Enums\BookingStatus;
 use App\Models\Booking;
+use App\Models\Court;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -77,5 +78,44 @@ class UserController extends Controller
         $this->authorize('view', $booking);
 
         return view('user.booking-detail', compact('booking', 'id'));
+    }
+
+    /**
+     * Display internal court catalog inside the authenticated user dashboard.
+     */
+    public function cariLapangan(Request $request): View
+    {
+        $user = $request->user();
+        $category = $request->query('category', 'all');
+        $region = $request->query('region', 'all');
+        $search = trim((string) $request->query('search', ''));
+
+        $query = Court::with('venue')->orderByDesc('id');
+
+        if ($category !== 'all') {
+            $mappedCategory = $category === 'minisoccer' ? 'mini_soccer' : $category;
+            $query->where('sport_category', $mappedCategory);
+        }
+
+        if ($region !== 'all') {
+            $query->whereHas('venue', function ($q) use ($region) {
+                $q->where('address', 'like', '%'.$region.'%');
+            });
+        }
+
+        if ($search !== '') {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', '%'.$search.'%')
+                    ->orWhere('surface_type', 'like', '%'.$search.'%')
+                    ->orWhereHas('venue', function ($vq) use ($search) {
+                        $vq->where('name', 'like', '%'.$search.'%')
+                            ->orWhere('address', 'like', '%'.$search.'%');
+                    });
+            });
+        }
+
+        $courts = $query->paginate(15)->withQueryString();
+
+        return view('user.cari-lapangan', compact('user', 'courts', 'category', 'region', 'search'));
     }
 }

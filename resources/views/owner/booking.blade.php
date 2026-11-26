@@ -6,20 +6,20 @@
     <title>Monitoring Booking - Owner Portal | {{ config('app.name', 'Lapangin') }}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Teko:wght@500;600;700&family=Nunito+Sans:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="bg-canvas-bg font-body text-on-surface antialiased" x-data="{ sidebarOpen: false }">
+<body class="bg-[#f8f9fa] font-body text-slate-800 antialiased" x-data="{ sidebarOpen: false }">
 
     <div class="flex min-h-screen">
         {{-- ============ SIDEBAR OWNER ============ --}}
         <aside
             :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
-            class="fixed inset-y-0 left-0 z-50 w-64 bg-arena-night flex flex-col transition-transform lg:translate-x-0 lg:static lg:z-auto"
+            class="fixed inset-y-0 left-0 z-50 w-64 bg-[#0f2444] flex flex-col transition-transform lg:translate-x-0 lg:static lg:z-auto"
             style="background-color: #0f2444;"
         >
-            <div class="flex items-center gap-3 px-6 py-5 border-b border-pitch-deep/50">
+            <div class="flex items-center gap-3 px-6 py-5 border-b border-white/10">
                 <img src="{{ asset('images/logo-white.png') }}" alt="Lapangin" class="h-8 w-auto opacity-95">
                 <div>
                     <span class="text-xs font-bold text-action-amber uppercase tracking-wider block">Owner</span>
@@ -41,7 +41,7 @@
                     @foreach($navItems as $item)
                     <a
                         href="{{ $item[2] }}"
-                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all {{ $item[3] ? 'bg-action-amber/20 text-action-amber font-bold' : 'text-surface-container-highest hover:text-surface-white hover:bg-surface-white/5' }}"
+                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all {{ $item[3] ? 'bg-[#f8b710] text-slate-950 font-bold shadow-sm' : 'text-slate-300 hover:text-white hover:bg-white/5' }}"
                     >
                         <span class="material-symbols-outlined text-[20px]">{{ $item[0] }}</span>
                         {{ $item[1] }}
@@ -49,11 +49,7 @@
                     @endforeach
                 </div>
 
-                <div class="mt-6 pt-4 border-t border-pitch-deep/50 flex flex-col gap-1">
-                    <a href="{{ route('beranda') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-surface-container-highest hover:text-surface-white hover:bg-surface-white/5 transition-all">
-                        <span class="material-symbols-outlined text-[20px]">open_in_new</span>
-                        Lihat Situs Publik
-                    </a>
+                <div class="mt-6 pt-4 border-t border-white/10 flex flex-col gap-1">
                     <form action="{{ route('logout') }}" method="POST">
                         @csrf
                         <button type="submit" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-surface-container-highest hover:text-rose-400 hover:bg-rose-500/10 transition-all text-left">
@@ -64,10 +60,10 @@
                 </div>
             </nav>
 
-            <div class="px-4 py-4 border-t border-pitch-deep/50">
+            <div class="px-4 py-4 border-t border-white/10">
                 <div class="flex items-center gap-3 p-3 rounded-xl bg-surface-white/5">
-                    <div class="w-9 h-9 rounded-full bg-action-amber/30 flex items-center justify-center">
-                        <span class="font-bold text-action-amber text-sm">{{ strtoupper(substr(auth()->user()->name, 0, 2)) }}</span>
+                    <div class="w-9 h-9 rounded-full bg-[#f8b710]/20 border border-[#f8b710]/40 flex items-center justify-center">
+                        <span class="font-bold text-[#f8b710] text-sm">{{ strtoupper(substr(auth()->user()->name, 0, 2)) }}</span>
                     </div>
                     <div class="flex-1 min-w-0">
                         <p class="text-xs font-bold text-surface-white truncate">{{ auth()->user()->name }}</p>

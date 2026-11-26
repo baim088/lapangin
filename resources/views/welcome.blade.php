@@ -39,11 +39,7 @@
                     <!-- Hero Left Column: Headline, Subhead & Action Buttons -->
                     <div class="lg:col-span-7 flex flex-col gap-6 z-10">
                         
-                        <!-- Badge -->
-                        <div class="inline-flex items-center gap-2 bg-white/10 border border-white/20 px-4 py-1.5 rounded-full text-xs font-bold text-[#f8b710] tracking-wider uppercase w-fit">
-                            <span class="w-2 h-2 rounded-full bg-[#f8b710] animate-pulse"></span>
-                            <span>Sistem Reservasi Olahraga Real-Time</span>
-                        </div>
+
 
                         <!-- Main Big Display Headline in Teko -->
                         <h1 class="font-teko text-6xl sm:text-7xl lg:text-8xl text-white font-bold tracking-tight uppercase leading-[0.92]">
@@ -55,8 +51,8 @@
                         <div class="w-16 h-1 bg-[#f8b710] rounded-full -mt-2"></div>
 
                         <!-- Value Proposition Subtitle -->
-                        <p class="font-body text-base sm:text-lg text-slate-200/90 max-w-xl leading-relaxed">
-                            Booking 4 kategori arena berstandar turnamen nasional & internasional dalam hitungan detik. Kunci slot 10 menit tanpa takut bentrok jadwal, didukung pencahayaan LED 800 Lux dan sistem pembayaran otomatis terverifikasi.
+                        <p class="font-body text-sm sm:text-base text-slate-200/90 max-w-xl leading-relaxed">
+                            Platform booking 50+ arena olahraga terverifikasi di seluruh DKI Jakarta. Pilih venue favoritmu, kunci jadwal 10 menit anti double-booking, dan bayar otomatis tanpa ribet.
                         </p>
 
                         <!-- Action Buttons -->
@@ -94,39 +90,122 @@
                         </div>
                     </div>
 
-                    <!-- Hero Right Column: Graphic Showcase with Active Match Badge -->
-                    <div class="lg:col-span-5 relative">
-                        <div class="relative rounded-3xl overflow-hidden shadow-2xl bg-[#0b1a30] border border-white/15 group">
-                            <img 
-                                src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=800&q=80" 
-                                alt="Pertandingan Futsal Lapangin Arena" 
-                                class="w-full h-[420px] object-cover group-hover:scale-105 transition-transform duration-700"
-                            >
-                            <div class="absolute inset-0 bg-gradient-to-t from-[#0f2444] via-[#0f2444]/40 to-transparent"></div>
+                    <!-- Hero Right Column: Auto-Slider Showcase 4 Cabang Olahraga + Venue Nyata -->
+                    @php
+                        $heroSlides = [
+                            [
+                                'sport' => 'Padel Court',
+                                'icon' => 'sports_tennis',
+                                'img' => asset('images/courts/padel.jpg'),
+                                'venue' => $padelCourt->venue->name ?? 'Kemang Padel Club',
+                                'court' => $padelCourt->name ?? 'Kemang Padel Club - Panoramic 1',
+                                'location' => $padelCourt->venue->address ?? 'Kemang, Jakarta Selatan',
+                                'url' => isset($padelCourt) ? route('lapangan.detail', $padelCourt->slug) : route('lapangan'),
+                            ],
+                            [
+                                'sport' => 'Mini Soccer',
+                                'icon' => 'sports_soccer',
+                                'img' => asset('images/courts/minisoccer.jpg'),
+                                'venue' => $miniSoccerCourt->venue->name ?? 'Cilandak Town Minisoccer Hub',
+                                'court' => $miniSoccerCourt->name ?? 'Cilandak Town Minisoccer',
+                                'location' => $miniSoccerCourt->venue->address ?? 'Cilandak, Jakarta Selatan',
+                                'url' => isset($miniSoccerCourt) ? route('lapangan.detail', $miniSoccerCourt->slug) : route('lapangan'),
+                            ],
+                            [
+                                'sport' => 'Futsal Arena',
+                                'icon' => 'sports_soccer',
+                                'img' => asset('images/courts/futsal.jpg'),
+                                'venue' => $futsalCourt->venue->name ?? 'Tebet Green Futsal Arena',
+                                'court' => $futsalCourt->name ?? 'Tebet Green Futsal - Court A',
+                                'location' => $futsalCourt->venue->address ?? 'Tebet, Jakarta Selatan',
+                                'url' => isset($futsalCourt) ? route('lapangan.detail', $futsalCourt->slug) : route('lapangan'),
+                            ],
+                            [
+                                'sport' => 'Badminton Hall',
+                                'icon' => 'sports_tennis',
+                                'img' => asset('images/courts/badminton.jpg'),
+                                'venue' => $badmintonCourt->venue->name ?? 'Champion Badminton Arena',
+                                'court' => $badmintonCourt->name ?? 'Champion Badminton Arena - Court 1',
+                                'location' => $badmintonCourt->venue->address ?? 'Rawamangun, Jakarta Timur',
+                                'url' => isset($badmintonCourt) ? route('lapangan.detail', $badmintonCourt->slug) : route('lapangan'),
+                            ],
+                        ];
+                    @endphp
+                    <div 
+                        class="lg:col-span-5 relative"
+                        x-data="{
+                            activeSlide: 0,
+                            slides: {{ \Illuminate\Support\Js::from($heroSlides) }},
+                            init() {
+                                setInterval(() => {
+                                    this.activeSlide = (this.activeSlide + 1) % this.slides.length;
+                                }, 4000);
+                            }
+                        }"
+                    >
+                        <div class="relative rounded-3xl overflow-hidden shadow-2xl bg-[#0b1a30] border border-white/15 group h-[420px]">
+                            <!-- Slides Images -->
+                            <template x-for="(slide, idx) in slides" :key="idx">
+                                <img 
+                                    x-show="activeSlide === idx"
+                                    x-transition:enter="transition ease-out duration-500"
+                                    x-transition:enter-start="opacity-0 scale-105"
+                                    x-transition:enter-end="opacity-100 scale-100"
+                                    :src="slide.img" 
+                                    :alt="slide.court" 
+                                    class="absolute inset-0 w-full h-full object-cover"
+                                >
+                            </template>
+                            <div class="absolute inset-0 bg-gradient-to-t from-[#0f2444] via-[#0f2444]/35 to-transparent pointer-events-none"></div>
 
-                            <!-- Live Active Match Badge Floating -->
-                            <div class="absolute bottom-5 left-5 right-5 bg-[#0f2444]/95 backdrop-blur-md p-4 rounded-2xl flex items-center justify-between border border-white/20 shadow-2xl">
-                                <div class="flex items-center gap-3.5">
-                                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-[#f8b710] to-[#f37920] flex items-center justify-center text-slate-950 font-bold shadow-md">
-                                        <span class="material-symbols-outlined text-[24px]">sports_soccer</span>
-                                    </div>
-                                    <div>
-                                        <h4 class="font-bold text-sm text-white leading-tight">Mini Soccer A &bull; Court 1</h4>
-                                        <p class="text-xs text-[#f8b710] flex items-center gap-1.5 font-semibold mt-0.5">
-                                            <span class="w-2 h-2 rounded-full bg-[#f8b710] animate-pulse"></span>
-                                            Sedang Bertanding (19.00 - 21.00)
-                                        </p>
-                                    </div>
+                            <!-- Top Badges -->
+                            <div class="absolute top-4 left-4 right-4 flex items-center justify-between gap-2">
+                                <div class="bg-[#0b1a30]/90 backdrop-blur-md border border-white/20 text-white text-[11px] px-3 py-1.5 rounded-full flex items-center gap-1.5 font-bold shadow-lg">
+                                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                                    <span>50+ Arena &bull; 5 Wilayah Jakarta</span>
                                 </div>
-                                <span class="text-[11px] font-bold text-slate-950 bg-[#f8b710] px-2.5 py-1 rounded-full uppercase tracking-wider">
-                                    LIVE
-                                </span>
+                                <div class="bg-[#0b1a30]/90 backdrop-blur-md border border-white/20 text-white text-[11px] px-3 py-1.5 rounded-full flex items-center gap-1.5 font-bold shadow-lg">
+                                    <span class="material-symbols-outlined text-[#f8b710] text-[15px]">lock_clock</span>
+                                    <span class="hidden sm:inline">Pessimistic Lock</span>
+                                </div>
                             </div>
 
-                            <!-- Floating Lock Guarantee Pill Badge (Top Right) -->
-                            <div class="absolute top-4 right-4 bg-[#0b1a30]/90 backdrop-blur-md border border-white/20 text-white text-xs px-3.5 py-1.5 rounded-full flex items-center gap-1.5 font-bold shadow-lg">
-                                <span class="material-symbols-outlined text-[#f8b710] text-[16px]">lock_clock</span>
-                                <span>Pessimistic Lock Active</span>
+                            <!-- Bottom Dynamic Venue Showcase Card -->
+                            <div class="absolute bottom-4 left-4 right-4 flex flex-col gap-3">
+                                <a 
+                                    :href="slides[activeSlide].url"
+                                    class="bg-[#0f2444]/95 hover:bg-[#0f2444] backdrop-blur-md p-4 rounded-2xl flex items-center justify-between gap-3 border border-white/20 shadow-2xl transition-colors"
+                                >
+                                    <div class="flex items-center gap-3 min-w-0">
+                                        <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-[#f8b710] to-[#f37920] flex items-center justify-center text-slate-950 font-bold shadow-md shrink-0">
+                                            <span class="material-symbols-outlined text-[22px]" x-text="slides[activeSlide].icon"></span>
+                                        </div>
+                                        <div class="min-w-0">
+                                            <div class="flex items-center gap-1.5">
+                                                <span class="text-[10px] font-bold uppercase tracking-wider text-[#f8b710]" x-text="slides[activeSlide].sport"></span>
+                                                <span class="text-white/40 text-[10px]">&bull;</span>
+                                                <span class="text-[11px] text-slate-300 truncate" x-text="slides[activeSlide].location"></span>
+                                            </div>
+                                            <h4 class="font-bold text-sm text-white leading-tight truncate mt-0.5" x-text="slides[activeSlide].court"></h4>
+                                        </div>
+                                    </div>
+                                    <span class="text-[11px] font-bold text-slate-950 bg-[#f8b710] px-3 py-1.5 rounded-full uppercase tracking-wider shrink-0">
+                                        Cek Slot
+                                    </span>
+                                </a>
+
+                                <!-- Slide Indicator Dots -->
+                                <div class="flex items-center justify-center gap-2">
+                                    <template x-for="(slide, idx) in slides" :key="idx">
+                                        <button 
+                                            type="button"
+                                            @click="activeSlide = idx"
+                                            :aria-label="'Slide ' + (idx + 1)"
+                                            :class="activeSlide === idx ? 'w-6 bg-[#f8b710]' : 'w-2 bg-white/40 hover:bg-white/70'"
+                                            class="h-2 rounded-full transition-all cursor-pointer"
+                                        ></button>
+                                    </template>
+                                </div>
                             </div>
                         </div>
                     </div>

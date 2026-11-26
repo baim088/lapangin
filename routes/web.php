@@ -47,6 +47,7 @@ Route::get('/bookings/{booking}/proof', [BookingController::class, 'showProof'])
 // === DASHBOARD USER ===
 Route::middleware(['role:customer,operator,owner,super_admin'])->group(function () {
     Route::get('/dashboard', [UserController::class, 'dashboard'])->name('user.dashboard');
+    Route::get('/dashboard/cari-lapangan', [UserController::class, 'cariLapangan'])->name('user.cari-lapangan');
     Route::get('/dashboard/booking/{id}', [UserController::class, 'bookingDetail'])->name('user.booking.detail');
     Route::post('/dashboard/booking/{booking}/cancel', [BookingController::class, 'cancelPending'])->name('user.booking.cancel');
 });

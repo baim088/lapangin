@@ -58,9 +58,9 @@
 
     --font-teko: 'Teko', ui-sans-serif, system-ui, sans-serif;
     --font-display: 'Teko', ui-sans-serif, system-ui, sans-serif;
-    --font-headline: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
-    --font-body: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
-    --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+    --font-headline: 'Teko', ui-sans-serif, system-ui, sans-serif;
+    --font-body: 'Nunito Sans', 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+    --font-sans: 'Nunito Sans', 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
 }
 
 [x-cloak] {
