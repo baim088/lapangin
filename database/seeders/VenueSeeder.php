@@ -53,8 +53,8 @@ class VenueSeeder extends Seeder
         );
 
         // Assign operators to venues
-        User::where('email', 'kasir.a@lapangin.id')->update(['venue_id' => $venueA?->id]);
+        User::where('email', 'operator.a@lapangin.id')->update(['venue_id' => $venueA?->id]);
         User::where('email', 'budi@lapangin.id')->update(['venue_id' => $venueA?->id]);
-        User::where('email', 'kasir.b@lapangin.id')->update(['venue_id' => $venueB?->id]);
+        User::where('email', 'operator.b@lapangin.id')->update(['venue_id' => $venueB?->id]);
     }
 }

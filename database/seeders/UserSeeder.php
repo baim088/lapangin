@@ -79,11 +79,12 @@ class UserSeeder extends Seeder
             $venueB->update(['owner_id' => $ownerB->id]);
         }
 
-        // 4. Admin / Kasir Venue A
+        // 4. Operator Venue A
+        User::where('email', 'kasir.a@lapangin.id')->delete();
         User::updateOrCreate(
-            ['email' => 'kasir.a@lapangin.id'],
+            ['email' => 'operator.a@lapangin.id'],
             [
-                'name' => 'Rian Kasir (Arena Sportama)',
+                'name' => 'Rian Operator (Arena Sportama)',
                 'phone' => '089877770001',
                 'password' => $hashedPassword,
                 'role' => UserRole::Operator,
@@ -107,11 +108,12 @@ class UserSeeder extends Seeder
             ]
         );
 
-        // 5. Admin / Kasir Venue B
+        // 5. Operator Venue B
+        User::where('email', 'kasir.b@lapangin.id')->delete();
         User::updateOrCreate(
-            ['email' => 'kasir.b@lapangin.id'],
+            ['email' => 'operator.b@lapangin.id'],
             [
-                'name' => 'Siti Kasir (Mega Stadium)',
+                'name' => 'Siti Operator (Mega Stadium)',
                 'phone' => '089877770002',
                 'password' => $hashedPassword,
                 'role' => UserRole::Operator,
