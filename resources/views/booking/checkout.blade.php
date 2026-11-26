@@ -6,39 +6,49 @@
     <title>Checkout Booking - {{ config('app.name', 'Lapangin') }}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Teko:wght@500;600;700&family=Nunito+Sans:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body
-    class="bg-canvas-bg font-body text-on-surface antialiased"
+    class="bg-[#f8f9fa] font-body text-slate-800 antialiased selection:bg-[#f8b710] selection:text-slate-950"
     x-data="checkoutApp()"
 >
-    <x-navbar active="lapangan" />
-
-    <main class="w-full pt-20 pb-24">
+    @auth
+        <x-user-shell active="cari-lapangan" title="Checkout Booking" :subtitle="$court->name . ' • ' . ($court->venue->name ?? 'LapangIn Venue')">
+        <main class="w-full pb-24">
+    @else
+        <x-navbar active="lapangan" />
+        <main class="w-full pt-20 pb-24">
+    @endauth
 
         {{-- Header: Countdown Lock Bar --}}
-        <div class="bg-action-orange text-surface-white">
+        <div class="bg-[#0f2444] text-white border-b border-white/10">
             <div class="max-w-7xl mx-auto px-4 sm:px-8 py-2.5 flex items-center justify-between gap-4">
                 <div class="flex items-center gap-2 text-sm">
-                    <span class="material-symbols-outlined text-[18px] animate-pulse">timer</span>
+                    <span class="material-symbols-outlined text-[#f8b710] text-[18px] animate-pulse">timer</span>
                     <span class="font-semibold">Slot Anda dikunci! Selesaikan pembayaran dalam:</span>
                 </div>
-                <div class="font-headline font-bold text-lg" x-text="formatTime(countdown)">09:59</div>
+                <div class="font-teko font-bold text-2xl text-[#f8b710] leading-none" x-text="formatTime(countdown)">09:59</div>
             </div>
         </div>
 
         {{-- Breadcrumb --}}
-        <div class="bg-surface-white border-b border-surface-container-high">
-            <div class="max-w-7xl mx-auto px-4 sm:px-8 py-3 flex items-center gap-2 text-xs text-on-surface-variant">
-                <a href="{{ route('beranda') }}" class="hover:text-pitch-deep">Beranda</a>
+        <div class="bg-white border-b border-slate-200">
+            <div class="max-w-7xl mx-auto px-4 sm:px-8 py-3 flex items-center gap-2 text-xs text-slate-500">
+                @auth
+                    <a href="{{ route('user.dashboard') }}" class="hover:text-[#0f2444] font-medium">Dashboard</a>
+                    <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+                    <a href="{{ route('user.cari-lapangan') }}" class="hover:text-[#0f2444] font-medium">Cari Lapangan</a>
+                @else
+                    <a href="{{ route('beranda') }}" class="hover:text-[#0f2444]">Beranda</a>
+                    <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+                    <a href="{{ route('lapangan') }}" class="hover:text-[#0f2444]">Lapangan</a>
+                @endauth
                 <span class="material-symbols-outlined text-[14px]">chevron_right</span>
-                <a href="{{ route('lapangan') }}" class="hover:text-pitch-deep">Lapangan</a>
+                <a href="{{ route('lapangan.detail', $court->slug) }}" class="hover:text-[#0f2444]">{{ $court->name }}</a>
                 <span class="material-symbols-outlined text-[14px]">chevron_right</span>
-                <a href="{{ route('lapangan.detail', $court->slug) }}" class="hover:text-pitch-deep">{{ $court->name }}</a>
-                <span class="material-symbols-outlined text-[14px]">chevron_right</span>
-                <span class="text-on-surface font-medium">Checkout</span>
+                <span class="text-slate-900 font-bold">Checkout</span>
             </div>
         </div>
 
@@ -386,6 +396,9 @@
             </form>
         </div>
     </main>
+    @auth
+        </x-user-shell>
+    @endauth
 
     <script>
         function checkoutApp() {

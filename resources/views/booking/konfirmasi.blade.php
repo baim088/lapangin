@@ -6,23 +6,23 @@
     <title>Konfirmasi Pembayaran - {{ config('app.name', 'Lapangin') }}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Teko:wght@500;600;700&family=Nunito+Sans:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="bg-canvas-bg font-body text-on-surface antialiased" x-data="{ mobileMenuOpen: false, countdown: {{ $countdown }}, init() { setInterval(() => { if(this.countdown > 0) this.countdown--; }, 1000); }, formatTime(s) { return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0'); } }">
-    <x-navbar active="lapangan" />
+<body class="bg-[#f8f9fa] font-body text-slate-800 antialiased selection:bg-[#f8b710] selection:text-slate-950" x-data="{ countdown: {{ $countdown }}, init() { setInterval(() => { if(this.countdown > 0) this.countdown--; }, 1000); }, formatTime(s) { return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0'); } }">
+    <x-user-shell active="dashboard" title="Konfirmasi Pembayaran" :subtitle="'Kode Booking #' . $booking->booking_code">
 
-    <main class="w-full pt-20 pb-24">
+    <main class="w-full pb-24">
 
         {{-- Lock countdown bar --}}
-        <div class="bg-action-orange text-surface-white">
+        <div class="bg-[#0f2444] text-white border-b border-white/10">
             <div class="max-w-7xl mx-auto px-4 sm:px-8 py-2.5 flex items-center justify-between gap-4">
                 <div class="flex items-center gap-2 text-sm">
-                    <span class="material-symbols-outlined text-[18px] animate-pulse">timer</span>
+                    <span class="material-symbols-outlined text-[#f8b710] text-[18px] animate-pulse">timer</span>
                     <span class="font-semibold">Selesaikan pembayaran sebelum waktu habis!</span>
                 </div>
-                <div class="font-headline font-bold text-lg" x-text="formatTime(countdown)">{{ sprintf('%02d:%02d', floor($countdown/60), $countdown%60) }}</div>
+                <div class="font-teko font-bold text-2xl text-[#f8b710] leading-none" x-text="formatTime(countdown)">{{ sprintf('%02d:%02d', floor($countdown/60), $countdown%60) }}</div>
             </div>
         </div>
 
@@ -171,18 +171,19 @@
 
             {{-- Check status button --}}
             <div class="flex flex-col sm:flex-row gap-3">
-                <a href="{{ route('booking.sukses', ['code' => $booking->booking_code]) }}" class="flex-1 flex items-center justify-center gap-2 bg-pitch-deep hover:bg-pitch-emerald text-surface-white font-bold text-sm py-3.5 rounded-xl transition-all">
+                <a href="{{ route('booking.sukses', ['code' => $booking->booking_code]) }}" class="flex-1 flex items-center justify-center gap-2 bg-[#0f2444] hover:bg-[#f37920] text-white font-bold text-sm py-3.5 rounded-xl transition-all">
                     <span class="material-symbols-outlined text-[20px]">task_alt</span>
                     Saya Sudah Bayar
                 </a>
-                <a href="{{ route('kontak') }}" class="flex items-center justify-center gap-2 border border-surface-container-high text-on-surface font-semibold text-sm px-6 py-3.5 rounded-xl hover:bg-surface-container-low transition-all">
-                    <span class="material-symbols-outlined text-[18px]">support_agent</span>
-                    Butuh Bantuan?
+                <a href="{{ route('user.dashboard') }}" class="flex items-center justify-center gap-2 border border-slate-200 bg-white text-slate-700 font-semibold text-sm px-6 py-3.5 rounded-xl hover:bg-slate-50 transition-all">
+                    <span class="material-symbols-outlined text-[18px]">dashboard</span>
+                    Nanti Saja (Dashboard)
                 </a>
             </div>
 
         </div>
     </main>
+    </x-user-shell>
 
 </body>
 </html>

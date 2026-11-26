@@ -6,28 +6,41 @@
     <title>Detail Lapangan - {{ config('app.name', 'Lapangin') }}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Teko:wght@500;600;700&family=Nunito+Sans:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body
-    class="bg-canvas-bg font-body text-on-surface antialiased"
+    class="bg-[#f8f9fa] font-body text-slate-800 antialiased selection:bg-[#f8b710] selection:text-slate-950"
     x-data="courtDetailApp()"
 >
-    <x-navbar active="lapangan" />
-
-    <main class="w-full pt-20">
-
-        {{-- Breadcrumb --}}
-        <div class="bg-surface-white border-b border-surface-container-high">
-            <div class="max-w-7xl mx-auto px-4 sm:px-8 py-3 flex items-center gap-2 text-xs text-on-surface-variant">
-                <a href="{{ route('beranda') }}" class="hover:text-pitch-deep transition-colors">Beranda</a>
-                <span class="material-symbols-outlined text-[14px]">chevron_right</span>
-                <a href="{{ route('lapangan') }}" class="hover:text-pitch-deep transition-colors">Lapangan</a>
-                <span class="material-symbols-outlined text-[14px]">chevron_right</span>
-                <span class="text-on-surface font-medium">{{ $court->name }}</span>
+    @auth
+        <x-user-shell active="cari-lapangan" :title="$court->name" :subtitle="($court->venue->name ?? 'LapangIn Venue') . ' • ' . ($court->venue->address ?? 'DKI Jakarta')">
+        <main class="w-full">
+            {{-- Breadcrumb inside User Dashboard --}}
+            <div class="bg-white border-b border-slate-200">
+                <div class="max-w-7xl mx-auto px-4 sm:px-8 py-3 flex items-center gap-2 text-xs text-slate-500">
+                    <a href="{{ route('user.dashboard') }}" class="hover:text-[#0f2444] font-medium transition-colors">Dashboard</a>
+                    <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+                    <a href="{{ route('user.cari-lapangan') }}" class="hover:text-[#0f2444] font-medium transition-colors">Cari Lapangan</a>
+                    <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+                    <span class="text-slate-900 font-bold">{{ $court->name }}</span>
+                </div>
             </div>
-        </div>
+    @else
+        <x-navbar active="lapangan" />
+        <main class="w-full pt-20">
+            {{-- Breadcrumb Public --}}
+            <div class="bg-surface-white border-b border-surface-container-high">
+                <div class="max-w-7xl mx-auto px-4 sm:px-8 py-3 flex items-center gap-2 text-xs text-on-surface-variant">
+                    <a href="{{ route('beranda') }}" class="hover:text-pitch-deep transition-colors">Beranda</a>
+                    <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+                    <a href="{{ route('lapangan') }}" class="hover:text-pitch-deep transition-colors">Lapangan</a>
+                    <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+                    <span class="text-on-surface font-medium">{{ $court->name }}</span>
+                </div>
+            </div>
+    @endauth
 
         <div class="max-w-7xl mx-auto px-4 sm:px-8 py-8">
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -459,6 +472,9 @@
             </div>
         </div>
     </main>
+    @auth
+        </x-user-shell>
+    @endauth
 
     {{-- AUTH INTERCEPT MODAL (Untuk Tamu/Guest yang ingin booking) --}}
     <div 

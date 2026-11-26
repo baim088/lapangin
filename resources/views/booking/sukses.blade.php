@@ -6,14 +6,14 @@
     <title>Booking Berhasil! - {{ config('app.name', 'Lapangin') }}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Teko:wght@500;600;700&family=Nunito+Sans:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="bg-canvas-bg font-body text-on-surface antialiased" x-data="{ mobileMenuOpen: false }">
-    <x-navbar active="beranda" />
+<body class="bg-[#f8f9fa] font-body text-slate-800 antialiased selection:bg-[#f8b710] selection:text-slate-950">
+    <x-user-shell active="dashboard" title="Status Booking" :subtitle="'Kode Booking #' . $booking->booking_code">
 
-    <main class="w-full pt-20 min-h-screen flex items-center justify-center px-4 py-12">
+    <main class="w-full min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 py-12">
         <div class="w-full max-w-lg flex flex-col items-center gap-6 text-center">
 
             {{-- Success animation --}}
@@ -116,13 +116,13 @@
 
             {{-- Action buttons --}}
             <div class="flex flex-col sm:flex-row gap-3 w-full">
-                <a href="{{ route('user.dashboard') }}" class="flex-1 flex items-center justify-center gap-2 bg-pitch-deep hover:bg-pitch-emerald text-surface-white font-bold text-sm py-3.5 rounded-xl transition-all">
+                <a href="{{ route('user.dashboard') }}" class="flex-1 flex items-center justify-center gap-2 bg-[#0f2444] hover:bg-[#f37920] text-white font-bold text-sm py-3.5 rounded-xl transition-all">
                     <span class="material-symbols-outlined text-[18px]">dashboard</span>
                     Lihat Riwayat Booking
                 </a>
-                <a href="{{ route('beranda') }}" class="flex-1 flex items-center justify-center gap-2 border border-surface-container-high text-on-surface font-semibold text-sm py-3.5 rounded-xl hover:bg-surface-container-low transition-all">
-                    <span class="material-symbols-outlined text-[18px]">home</span>
-                    Kembali ke Beranda
+                <a href="{{ route('user.cari-lapangan') }}" class="flex-1 flex items-center justify-center gap-2 border border-slate-200 bg-white text-slate-700 font-semibold text-sm py-3.5 rounded-xl hover:bg-slate-50 transition-all">
+                    <span class="material-symbols-outlined text-[18px]">sports_soccer</span>
+                    Cari Lapangan Lain
                 </a>
             </div>
 
@@ -146,6 +146,7 @@
 
         </div>
     </main>
+    </x-user-shell>
 
 </body>
 </html>
