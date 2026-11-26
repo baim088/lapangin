@@ -16,13 +16,41 @@ class CourtController extends Controller
     ) {}
 
     /**
-     * Display court catalog.
+     * Display court catalog with category, region, and search filtering + pagination.
      */
-    public function index(): View
+    public function index(Request $request): View
     {
-        $courts = Court::with('venue')->get();
+        $category = $request->query('category', 'all');
+        $region = $request->query('region', 'all');
+        $search = trim((string) $request->query('search', ''));
 
-        return view('lapangan', compact('courts'));
+        $query = Court::with('venue')->orderByDesc('id');
+
+        if ($category !== 'all') {
+            $mappedCategory = $category === 'minisoccer' ? 'mini_soccer' : $category;
+            $query->where('sport_category', $mappedCategory);
+        }
+
+        if ($region !== 'all') {
+            $query->whereHas('venue', function ($q) use ($region) {
+                $q->where('address', 'like', '%'.$region.'%');
+            });
+        }
+
+        if ($search !== '') {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', '%'.$search.'%')
+                    ->orWhere('surface_type', 'like', '%'.$search.'%')
+                    ->orWhereHas('venue', function ($vq) use ($search) {
+                        $vq->where('name', 'like', '%'.$search.'%')
+                            ->orWhere('address', 'like', '%'.$search.'%');
+                    });
+            });
+        }
+
+        $courts = $query->paginate(15)->withQueryString();
+
+        return view('lapangan', compact('courts', 'category', 'region', 'search'));
     }
 
     /**

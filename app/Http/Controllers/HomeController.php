@@ -23,10 +23,17 @@ class HomeController extends Controller
      */
     public function index(): View
     {
-        $venue = Venue::first();
-        $courts = Court::with('venue')->get();
+        $venue = Venue::orderByDesc('id')->first();
+        $courts = Court::with('venue')
+            ->where('status', CourtStatus::Active)
+            ->orderByDesc('id')
+            ->get();
 
-        // Representative courts for quick booking
+        if ($courts->isEmpty()) {
+            $courts = Court::with('venue')->orderByDesc('id')->get();
+        }
+
+        // Representative courts for quick booking (prioritizing real Jakarta PDF venues)
         $futsalCourt = $courts->firstWhere('sport_category', SportCategory::Futsal);
         $badmintonCourt = $courts->firstWhere('sport_category', SportCategory::Badminton);
         $miniSoccerCourt = $courts->firstWhere('sport_category', SportCategory::MiniSoccer);
@@ -52,10 +59,11 @@ class HomeController extends Controller
 
         $court = Court::where('sport_category', $category)
             ->where('status', CourtStatus::Active)
+            ->orderByDesc('id')
             ->first();
 
         if (! $court) {
-            $court = Court::where('sport_category', $category)->firstOrFail();
+            $court = Court::where('sport_category', $category)->orderByDesc('id')->firstOrFail();
         }
 
         $availability = $this->availabilityService->getAvailability($court, $date);

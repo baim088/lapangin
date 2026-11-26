@@ -36,53 +36,81 @@
                 <div class="lg:col-span-2 flex flex-col gap-6">
 
                     {{-- Image Gallery --}}
-                    <div class="relative rounded-2xl overflow-hidden bg-surface-container aspect-video">
-                        <div class="absolute inset-0 bg-gradient-to-br from-pitch-deep/80 to-pitch-emerald/40 flex items-center justify-center">
-                            <div class="text-center text-surface-white">
-                                <span class="material-symbols-outlined text-[80px] text-pitch-light/60">
-                                    {{ in_array($court->sport_category->value, ['badminton', 'padel']) ? 'sports_tennis' : 'sports_soccer' }}
-                                </span>
-                                <p class="text-sm text-surface-container-highest mt-2">{{ $court->name }}</p>
-                            </div>
-                        </div>
+                    @php
+                        $sportVal = $court->sport_category->value;
+                        $courtImage = match($sportVal) {
+                            'futsal' => 'images/courts/futsal.jpg',
+                            'badminton' => 'images/courts/badminton.jpg',
+                            'mini_soccer' => 'images/courts/minisoccer.jpg',
+                            'padel' => 'images/courts/padel.jpg',
+                            default => 'images/courts/futsal.jpg',
+                        };
+                        $sportDisplay = match($sportVal) {
+                            'futsal' => 'Futsal Arena',
+                            'badminton' => 'Badminton Hall',
+                            'mini_soccer' => 'Mini Soccer',
+                            'padel' => 'Padel Court',
+                            default => ucfirst($sportVal),
+                        };
+                    @endphp
+                    <div class="relative rounded-2xl overflow-hidden bg-slate-900 aspect-video shadow-md">
+                        <img 
+                            src="{{ asset($courtImage) }}" 
+                            alt="{{ $court->name }}" 
+                            class="w-full h-full object-cover"
+                        >
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/15 to-black/25 pointer-events-none"></div>
                         {{-- Sport pill --}}
                         <div class="absolute top-4 left-4 flex flex-wrap gap-2">
-                            <span class="inline-flex items-center gap-1.5 bg-pitch-deep text-pitch-light text-xs font-bold px-3 py-1.5 rounded-full">
+                            <span class="inline-flex items-center gap-1.5 bg-pitch-deep text-pitch-light text-xs font-bold px-3 py-1.5 rounded-full shadow">
                                 <span class="material-symbols-outlined text-[14px]">
-                                    {{ in_array($court->sport_category->value, ['badminton', 'padel']) ? 'sports_tennis' : 'sports_soccer' }}
+                                    {{ in_array($sportVal, ['badminton', 'padel']) ? 'sports_tennis' : 'sports_soccer' }}
                                 </span>
-                                {{ ucfirst($court->sport_category->value) }}
+                                {{ $sportDisplay }}
                             </span>
-                            <span class="inline-flex items-center gap-1.5 bg-surface-white/90 text-on-surface text-xs font-bold px-3 py-1.5 rounded-full">
+                            <span class="inline-flex items-center gap-1.5 bg-surface-white/95 text-on-surface text-xs font-bold px-3 py-1.5 rounded-full shadow">
                                 {{ $court->surface_type }}
                             </span>
                         </div>
                         {{-- Availability badge --}}
                         <div class="absolute top-4 right-4">
                             @if ($court->status === \App\Enums\CourtStatus::Active)
-                                <span class="inline-flex items-center gap-1.5 bg-pitch-surface text-pitch-deep text-xs font-bold px-3 py-1.5 rounded-full border border-pitch-light/30">
+                                <span class="inline-flex items-center gap-1.5 bg-pitch-surface text-pitch-deep text-xs font-bold px-3 py-1.5 rounded-full border border-pitch-light/30 shadow">
                                     <span class="w-2 h-2 rounded-full bg-pitch-emerald animate-pulse"></span>
                                     Tersedia Hari Ini
                                 </span>
                             @elseif ($court->status === \App\Enums\CourtStatus::Maintenance)
-                                <span class="inline-flex items-center gap-1.5 bg-action-amber text-surface-white text-xs font-bold px-3 py-1.5 rounded-full">
+                                <span class="inline-flex items-center gap-1.5 bg-action-amber text-surface-white text-xs font-bold px-3 py-1.5 rounded-full shadow">
                                     <span class="material-symbols-outlined text-[14px]">build</span>
                                     Sedang Perawatan
                                 </span>
                             @else
-                                <span class="inline-flex items-center gap-1.5 bg-surface-container-high text-on-surface-variant text-xs font-bold px-3 py-1.5 rounded-full">
+                                <span class="inline-flex items-center gap-1.5 bg-surface-container-high text-on-surface-variant text-xs font-bold px-3 py-1.5 rounded-full shadow">
                                     Tidak Aktif
                                 </span>
                             @endif
                         </div>
+                        <div class="absolute bottom-4 left-4 right-4 flex items-end justify-between text-white">
+                            <div>
+                                <p class="text-xs font-semibold text-white/80">{{ $court->venue->name ?? 'LapangIn Venue Hub' }}</p>
+                                <p class="text-sm font-bold">{{ $court->name }}</p>
+                            </div>
+                        </div>
                     </div>
 
-                    {{-- Court Name & Rating --}}
-                    <div class="flex flex-col gap-3">
+                    {{-- Court Name, Location, & Full Description --}}
+                    <div class="flex flex-col gap-3.5 bg-surface-white p-5 sm:p-6 rounded-2xl border border-surface-container-high shadow-xs">
                         <div class="flex items-start justify-between gap-4">
                             <div>
+                                <div class="inline-flex items-center gap-1.5 bg-blue-50 text-blue-700 font-bold text-xs px-3 py-1 rounded-full border border-blue-100 mb-2">
+                                    <span class="material-symbols-outlined text-[14px]">stadium</span>
+                                    Venue: {{ $court->venue->name ?? 'Lapangin Sports Center' }}
+                                </div>
                                 <h1 class="font-headline text-2xl sm:text-3xl font-bold text-on-surface">{{ $court->name }}</h1>
-                                <p class="text-on-surface-variant text-sm mt-1">{{ $court->venue->name ?? 'Lapangin Sports Center' }} • {{ $court->surface_type }}</p>
+                                <p class="text-on-surface-variant text-sm mt-1.5 flex items-center gap-1.5">
+                                    <span class="material-symbols-outlined text-action-orange text-[17px] shrink-0">location_on</span>
+                                    <span>{{ $court->venue->address ?? 'DKI Jakarta' }}</span>
+                                </p>
                             </div>
                             <div class="flex items-center gap-1.5 bg-action-glow px-3 py-2 rounded-xl shrink-0">
                                 <span class="material-symbols-outlined text-action-amber text-[18px]">star</span>
@@ -91,12 +119,19 @@
                             </div>
                         </div>
 
+                        <div class="bg-slate-50 rounded-xl p-4 border border-slate-100 text-sm text-slate-700 leading-relaxed">
+                            <p class="font-semibold text-slate-900 mb-1">Deskripsi & Spesifikasi Lapangan:</p>
+                            <p>
+                                <strong>{{ $court->name }}</strong> adalah lapangan <strong>{{ strtolower($sportDisplay) }}</strong> yang dikelola oleh <strong>{{ $court->venue->name ?? 'LapangIn Partner' }}</strong> di kawasan <strong>{{ $court->venue->address ?? 'DKI Jakarta' }}</strong>. Menggunakan permukaan standar turnamen <strong>{{ $court->surface_type }}</strong> dengan tarif reguler <strong>Rp {{ number_format($court->price_regular, 0, ',', '.') }}/jam</strong> dan prime time <strong>Rp {{ number_format($court->price_prime, 0, ',', '.') }}/jam</strong>.
+                            </p>
+                        </div>
+
                         {{-- Quick specs row --}}
                         <div class="flex flex-wrap gap-2">
                             @if (!empty($court->specs) && is_array($court->specs))
                                 @foreach ($court->specs as $spec)
-                                    <span class="inline-flex items-center gap-1.5 bg-surface-container-low text-on-surface-variant text-xs font-medium px-3 py-1.5 rounded-full border border-surface-container-high">
-                                        <span class="material-symbols-outlined text-[14px]">verified</span>
+                                    <span class="inline-flex items-center gap-1.5 bg-pitch-surface text-pitch-deep text-xs font-semibold px-3 py-1.5 rounded-full border border-pitch-light/30">
+                                        <span class="material-symbols-outlined text-[14px] text-pitch-emerald">verified</span>
                                         {{ $spec }}
                                     </span>
                                 @endforeach
@@ -231,29 +266,39 @@
 
                         {{-- Tab: Fasilitas --}}
                         <div x-show="tab === 'fasilitas'" class="grid grid-cols-1 sm:grid-cols-2 gap-4" style="display:none;">
-                            @php
-                                $facilities = [
-                                    ['bolt', 'Pencahayaan LED', '800 Lux, standar turnamen nasional'],
-                                    ['ac_unit', 'Air Conditioning', 'Ruangan full AC berkapasitas besar'],
-                                    ['straighten', 'Dimensi Lapangan', '25m x 15m — Full Court FIFA Standard'],
-                                    ['shower', 'Shower Room', '4 kamar mandi bersih + loker digital'],
-                                    ['local_parking', 'Area Parkir', 'Parkir gratis 50 kendaraan'],
-                                    ['wifi', 'WiFi Gratis', 'High-speed WiFi seluruh area venue'],
-                                    ['restaurant', 'Kantin & Café', 'Minuman, camilan, dan paket makan tim'],
-                                    ['videocam', 'CCTV & Keamanan', 'Rekaman 24 jam, keamanan terjamin'],
-                                ];
-                            @endphp
-                            @foreach ($facilities as $f)
-                            <div class="flex items-start gap-3 p-4 bg-surface-white rounded-xl border border-surface-container-high">
-                                <div class="w-10 h-10 rounded-lg bg-pitch-surface flex items-center justify-center shrink-0">
-                                    <span class="material-symbols-outlined text-pitch-deep text-[20px]">{{ $f[0] }}</span>
+                            @if (!empty($court->specs) && is_array($court->specs))
+                                @foreach ($court->specs as $spec)
+                                <div class="flex items-start gap-3 p-4 bg-surface-white rounded-xl border border-surface-container-high">
+                                    <div class="w-10 h-10 rounded-lg bg-pitch-surface flex items-center justify-center shrink-0">
+                                        <span class="material-symbols-outlined text-pitch-deep text-[20px]">check_circle</span>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-semibold text-on-surface">{{ $spec }}</p>
+                                        <p class="text-xs text-on-surface-variant mt-0.5">Fasilitas resmi tersedia di {{ $court->venue->name ?? 'venue ini' }}</p>
+                                    </div>
                                 </div>
-                                <div>
-                                    <p class="text-sm font-semibold text-on-surface">{{ $f[1] }}</p>
-                                    <p class="text-xs text-on-surface-variant mt-0.5">{{ $f[2] }}</p>
+                                @endforeach
+                            @else
+                                @php
+                                    $facilities = [
+                                        ['bolt', 'Pencahayaan LED', '800 Lux, standar turnamen nasional'],
+                                        ['ac_unit', 'Air Conditioning', 'Ruangan sejuk berkapasitas besar'],
+                                        ['shower', 'Shower Room', 'Kamar mandi bersih + loker'],
+                                        ['local_parking', 'Area Parkir', 'Parkir luas dan aman'],
+                                    ];
+                                @endphp
+                                @foreach ($facilities as $f)
+                                <div class="flex items-start gap-3 p-4 bg-surface-white rounded-xl border border-surface-container-high">
+                                    <div class="w-10 h-10 rounded-lg bg-pitch-surface flex items-center justify-center shrink-0">
+                                        <span class="material-symbols-outlined text-pitch-deep text-[20px]">{{ $f[0] }}</span>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-semibold text-on-surface">{{ $f[1] }}</p>
+                                        <p class="text-xs text-on-surface-variant mt-0.5">{{ $f[2] }}</p>
+                                    </div>
                                 </div>
-                            </div>
-                            @endforeach
+                                @endforeach
+                            @endif
                         </div>
 
                         {{-- Tab: Ulasan --}}

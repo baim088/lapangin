@@ -195,201 +195,103 @@
                     </p>
                 </div>
 
-                <!-- 4-Column Courts Grid -->
+                <!-- 4-Column Dynamic Featured Courts Grid -->
+                @php
+                    $featuredCards = [
+                        ['key' => 'futsal', 'label' => 'Futsal', 'img' => 'images/courts/futsal.jpg', 'court' => $futsalCourt ?? null, 'fallbackName' => 'Tebet Green Futsal - Court A', 'fallbackVenue' => 'Tebet Green Futsal Arena', 'fallbackLoc' => 'Tebet, Jakarta Selatan', 'fallbackSurf' => 'Rumput Sintetis Monofilament 5cm', 'fallbackReg' => 240000, 'fallbackPrime' => 280000],
+                        ['key' => 'badminton', 'label' => 'Badminton', 'img' => 'images/courts/badminton.jpg', 'court' => $badmintonCourt ?? null, 'fallbackName' => 'Champion Badminton Arena - Court 1', 'fallbackVenue' => 'Champion Badminton Arena', 'fallbackLoc' => 'Rawamangun, Jakarta Timur', 'fallbackSurf' => 'Karpet Vinyl BWF Standard', 'fallbackReg' => 60000, 'fallbackPrime' => 80000],
+                        ['key' => 'minisoccer', 'label' => 'Mini Soccer', 'img' => 'images/courts/minisoccer.jpg', 'court' => $miniSoccerCourt ?? null, 'fallbackName' => 'Cilandak Town Minisoccer', 'fallbackVenue' => 'Cilandak Town Minisoccer Hub', 'fallbackLoc' => 'Cilandak, Jakarta Selatan', 'fallbackSurf' => 'Rumput Sintetis FIFA Quality Pro 50mm', 'fallbackReg' => 750000, 'fallbackPrime' => 850000],
+                        ['key' => 'padel', 'label' => 'Padel', 'img' => 'images/courts/padel.jpg', 'court' => $padelCourt ?? null, 'fallbackName' => 'Kemang Padel Club - Panoramic 1', 'fallbackVenue' => 'Kemang Padel Club', 'fallbackLoc' => 'Kemang, Jakarta Selatan', 'fallbackSurf' => 'Panoramic Glass & Rumput WPT Biru', 'fallbackReg' => 450000, 'fallbackPrime' => 520000],
+                    ];
+                @endphp
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                    
-                    <!-- Card 1: Futsal Arena A -->
-                    <div class="group bg-surface-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-slate-200 flex flex-col justify-between">
-                        <div>
-                            <div class="relative aspect-video overflow-hidden">
-                                <img 
-                                    src="{{ asset('images/courts/futsal.jpg') }}" 
-                                    alt="Lapangan Futsal A"
-                                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                                >
-                                <span class="absolute top-3 left-3 bg-[#f8b710] text-slate-950 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow">
-                                    Futsal
-                                </span>
-                                <span class="absolute bottom-3 right-3 bg-slate-950/80 text-white text-[11px] font-semibold px-2 py-0.5 rounded backdrop-blur-sm">
-                                    Vinyl 8mm &bull; 26 &times; 16 m
-                                </span>
-                            </div>
-                            <div class="p-5 flex flex-col gap-2">
-                                <h3 class="font-teko text-2xl sm:text-3xl font-bold text-slate-900 uppercase tracking-wide group-hover:text-[#f37920] transition-colors leading-none">
-                                    Lapangan Futsal A
-                                </h3>
-                                <div class="w-8 h-0.5 bg-[#f8b710] rounded-full my-0.5"></div>
-                                <p class="text-xs text-slate-600 flex items-center gap-1.5 font-medium">
-                                    <span class="material-symbols-outlined text-[16px] text-emerald-600">check_circle</span> 
-                                    Lantai Vinyl Interlock & LED 800 Lux
-                                </p>
-                                <div class="grid grid-cols-2 gap-2 mt-3 pt-3 bg-slate-50 p-2.5 rounded-xl border border-slate-100 text-xs">
-                                    <div>
-                                        <span class="text-slate-500 block">Siang (08-16)</span>
-                                        <span class="text-sm font-bold text-slate-900">Rp 150.000</span>
+                    @foreach ($featuredCards as $fc)
+                        @php
+                            $c = $fc['court'];
+                            $cName = $c->name ?? $fc['fallbackName'];
+                            $cVenue = $c->venue->name ?? $fc['fallbackVenue'];
+                            $cLoc = $c->venue->address ?? $fc['fallbackLoc'];
+                            $cSurf = $c->surface_type ?? $fc['fallbackSurf'];
+                            $cReg = $c->price_regular ?? $fc['fallbackReg'];
+                            $cPrime = $c->price_prime ?? $fc['fallbackPrime'];
+                            $cSlug = $c->slug ?? null;
+                            $cSpec = (!empty($c->specs) && is_array($c->specs)) ? $c->specs[0] : $cSurf;
+                        @endphp
+                        <div class="group bg-surface-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-slate-200 flex flex-col justify-between">
+                            <div>
+                                <div class="relative aspect-video overflow-hidden">
+                                    <img 
+                                        src="{{ asset($fc['img']) }}" 
+                                        alt="{{ $cName }}"
+                                        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                    >
+                                    <span class="absolute top-3 left-3 bg-[#f8b710] text-slate-950 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow">
+                                        {{ $fc['label'] }}
+                                    </span>
+                                    <span class="absolute bottom-3 right-3 bg-slate-950/80 text-white text-[10px] font-semibold px-2 py-0.5 rounded backdrop-blur-sm max-w-[85%] truncate">
+                                        {{ $cSurf }}
+                                    </span>
+                                </div>
+                                <div class="p-5 flex flex-col gap-2">
+                                    <div class="flex items-center gap-1 text-[11px] font-bold text-blue-700 truncate">
+                                        <span class="material-symbols-outlined text-[14px] shrink-0">stadium</span>
+                                        <span class="truncate">{{ $cVenue }}</span>
                                     </div>
-                                    <div>
-                                        <span class="text-slate-500 block">Malam (17-23)</span>
-                                        <span class="text-sm font-bold text-[#f37920]">Rp 220.000</span>
+                                    <h3 class="font-teko text-2xl font-bold text-slate-900 uppercase tracking-wide group-hover:text-[#f37920] transition-colors leading-tight line-clamp-2 min-h-[3rem]">
+                                        {{ $cName }}
+                                    </h3>
+                                    <div class="flex items-center gap-1 text-xs text-slate-500 truncate">
+                                        <span class="material-symbols-outlined text-[14px] text-[#f37920] shrink-0">location_on</span>
+                                        <span class="truncate">{{ $cLoc }}</span>
+                                    </div>
+                                    <div class="w-8 h-0.5 bg-[#f8b710] rounded-full my-0.5"></div>
+                                    <p class="text-xs text-slate-600 flex items-center gap-1.5 font-medium truncate">
+                                        <span class="material-symbols-outlined text-[15px] text-emerald-600 shrink-0">check_circle</span> 
+                                        <span class="truncate">{{ $cSpec }}</span>
+                                    </p>
+                                    <div class="grid grid-cols-2 gap-2 mt-2 pt-3 bg-slate-50 p-2.5 rounded-xl border border-slate-100 text-xs">
+                                        <div>
+                                            <span class="text-slate-500 block">Reguler (Siang)</span>
+                                            <span class="text-sm font-bold text-slate-900">Rp {{ number_format($cReg, 0, ',', '.') }}</span>
+                                        </div>
+                                        <div>
+                                            <span class="text-slate-500 block">Prime (Malam)</span>
+                                            <span class="text-sm font-bold text-[#f37920]">Rp {{ number_format($cPrime, 0, ',', '.') }}</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="p-5 pt-0">
-                            <a 
-                                href="#jadwal-interaktif" 
-                                @click="selectSport('futsal')"
-                                class="w-full bg-[#0f2444] hover:bg-[#0b1a30] text-white font-bold text-xs uppercase tracking-wider py-3 rounded-xl flex items-center justify-center gap-2 transition-all shadow-sm"
-                            >
-                                Pilih Jam / Slot <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
-                            </a>
-                        </div>
-                    </div>
-
-                    <!-- Card 2: Badminton Court -->
-                    <div class="group bg-surface-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-slate-200 flex flex-col justify-between">
-                        <div>
-                            <div class="relative aspect-video overflow-hidden">
-                                <img 
-                                    src="{{ asset('images/courts/badminton.jpg') }}" 
-                                    alt="Badminton Court 1-4"
-                                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                            <div class="p-5 pt-0 flex flex-col gap-2">
+                                <a 
+                                    href="#jadwal-interaktif" 
+                                    @click="selectSport('{{ $fc['key'] }}')"
+                                    class="w-full bg-[#0f2444] hover:bg-[#0b1a30] text-white font-bold text-xs uppercase tracking-wider py-3 rounded-xl flex items-center justify-center gap-2 transition-all shadow-sm"
                                 >
-                                <span class="absolute top-3 left-3 bg-[#f8b710] text-slate-950 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow">
-                                    Badminton
-                                </span>
-                                <span class="absolute bottom-3 right-3 bg-slate-950/80 text-white text-[11px] font-semibold px-2 py-0.5 rounded backdrop-blur-sm">
-                                    BWF Mat &bull; 13.4 &times; 6.1 m
-                                </span>
-                            </div>
-                            <div class="p-5 flex flex-col gap-2">
-                                <h3 class="font-teko text-2xl sm:text-3xl font-bold text-slate-900 uppercase tracking-wide group-hover:text-[#f37920] transition-colors leading-none">
-                                    Badminton Court 1-4
-                                </h3>
-                                <div class="w-8 h-0.5 bg-[#f8b710] rounded-full my-0.5"></div>
-                                <p class="text-xs text-slate-600 flex items-center gap-1.5 font-medium">
-                                    <span class="material-symbols-outlined text-[16px] text-emerald-600">check_circle</span> 
-                                    Karpet Li-Ning BWF Standard
-                                </p>
-                                <div class="grid grid-cols-2 gap-2 mt-3 pt-3 bg-slate-50 p-2.5 rounded-xl border border-slate-100 text-xs">
-                                    <div>
-                                        <span class="text-slate-500 block">Siang (08-16)</span>
-                                        <span class="text-sm font-bold text-slate-900">Rp 45.000</span>
-                                    </div>
-                                    <div>
-                                        <span class="text-slate-500 block">Malam (17-23)</span>
-                                        <span class="text-sm font-bold text-[#f37920]">Rp 65.000</span>
-                                    </div>
-                                </div>
+                                    Pilih Jam / Slot <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+                                </a>
+                                @if ($cSlug)
+                                    <a 
+                                        href="{{ route('lapangan.detail', $cSlug) }}" 
+                                        class="w-full text-center text-[11px] font-bold text-slate-600 hover:text-[#f37920] transition-colors py-1"
+                                    >
+                                        Lihat Detail &amp; Booking Langsung
+                                    </a>
+                                @endif
                             </div>
                         </div>
-                        <div class="p-5 pt-0">
-                            <a 
-                                href="#jadwal-interaktif" 
-                                @click="selectSport('badminton')"
-                                class="w-full bg-[#0f2444] hover:bg-[#0b1a30] text-white font-bold text-xs uppercase tracking-wider py-3 rounded-xl flex items-center justify-center gap-2 transition-all shadow-sm"
-                            >
-                                Pilih Jam / Slot <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
-                            </a>
-                        </div>
-                    </div>
+                    @endforeach
+                </div>
 
-                    <!-- Card 3: Mini Soccer 7v7 -->
-                    <div class="group bg-surface-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-slate-200 flex flex-col justify-between">
-                        <div>
-                            <div class="relative aspect-video overflow-hidden">
-                                <img 
-                                    src="{{ asset('images/courts/minisoccer.jpg') }}" 
-                                    alt="Mini Soccer 7v7"
-                                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                                >
-                                <span class="absolute top-3 left-3 bg-[#f8b710] text-slate-950 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow">
-                                    Mini Soccer
-                                </span>
-                                <span class="absolute bottom-3 right-3 bg-slate-950/80 text-white text-[11px] font-semibold px-2 py-0.5 rounded backdrop-blur-sm">
-                                    Rumput FIFA &bull; 45 &times; 25 m
-                                </span>
-                            </div>
-                            <div class="p-5 flex flex-col gap-2">
-                                <h3 class="font-teko text-2xl sm:text-3xl font-bold text-slate-900 uppercase tracking-wide group-hover:text-[#f37920] transition-colors leading-none">
-                                    Mini Soccer 7v7
-                                </h3>
-                                <div class="w-8 h-0.5 bg-[#f8b710] rounded-full my-0.5"></div>
-                                <p class="text-xs text-slate-600 flex items-center gap-1.5 font-medium">
-                                    <span class="material-symbols-outlined text-[16px] text-emerald-600">check_circle</span> 
-                                    Sintetis Monofilament 50mm
-                                </p>
-                                <div class="grid grid-cols-2 gap-2 mt-3 pt-3 bg-slate-50 p-2.5 rounded-xl border border-slate-100 text-xs">
-                                    <div>
-                                        <span class="text-slate-500 block">Siang (08-16)</span>
-                                        <span class="text-sm font-bold text-slate-900">Rp 450.000</span>
-                                    </div>
-                                    <div>
-                                        <span class="text-slate-500 block">Malam (17-23)</span>
-                                        <span class="text-sm font-bold text-[#f37920]">Rp 650.000</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="p-5 pt-0">
-                            <a 
-                                href="#jadwal-interaktif" 
-                                @click="selectSport('minisoccer')"
-                                class="w-full bg-[#0f2444] hover:bg-[#0b1a30] text-white font-bold text-xs uppercase tracking-wider py-3 rounded-xl flex items-center justify-center gap-2 transition-all shadow-sm"
-                            >
-                                Pilih Jam / Slot <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
-                            </a>
-                        </div>
-                    </div>
-
-                    <!-- Card 4: Padel Court -->
-                    <div class="group bg-surface-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-slate-200 flex flex-col justify-between">
-                        <div>
-                            <div class="relative aspect-video overflow-hidden">
-                                <img 
-                                    src="{{ asset('images/courts/padel.jpg') }}" 
-                                    alt="Padel Court Glass"
-                                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                                >
-                                <span class="absolute top-3 left-3 bg-[#f8b710] text-slate-950 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow">
-                                    Padel
-                                </span>
-                                <span class="absolute bottom-3 right-3 bg-slate-950/80 text-white text-[11px] font-semibold px-2 py-0.5 rounded backdrop-blur-sm">
-                                    Panoramic &bull; 20 &times; 10 m
-                                </span>
-                            </div>
-                            <div class="p-5 flex flex-col gap-2">
-                                <h3 class="font-teko text-2xl sm:text-3xl font-bold text-slate-900 uppercase tracking-wide group-hover:text-[#f37920] transition-colors leading-none">
-                                    Padel Court Glass
-                                </h3>
-                                <div class="w-8 h-0.5 bg-[#f8b710] rounded-full my-0.5"></div>
-                                <p class="text-xs text-slate-600 flex items-center gap-1.5 font-medium">
-                                    <span class="material-symbols-outlined text-[16px] text-emerald-600">check_circle</span> 
-                                    Kaca Tempered 12mm & Blue Turf
-                                </p>
-                                <div class="grid grid-cols-2 gap-2 mt-3 pt-3 bg-slate-50 p-2.5 rounded-xl border border-slate-100 text-xs">
-                                    <div>
-                                        <span class="text-slate-500 block">Siang (08-16)</span>
-                                        <span class="text-sm font-bold text-slate-900">Rp 250.000</span>
-                                    </div>
-                                    <div>
-                                        <span class="text-slate-500 block">Malam (17-23)</span>
-                                        <span class="text-sm font-bold text-[#f37920]">Rp 330.000</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="p-5 pt-0">
-                            <a 
-                                href="#jadwal-interaktif" 
-                                @click="selectSport('padel')"
-                                class="w-full bg-[#0f2444] hover:bg-[#0b1a30] text-white font-bold text-xs uppercase tracking-wider py-3 rounded-xl flex items-center justify-center gap-2 transition-all shadow-sm"
-                            >
-                                Pilih Jam / Slot <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
-                            </a>
-                        </div>
-                    </div>
-
+                <!-- View All 50+ Courts Button -->
+                <div class="mt-12 text-center">
+                    <a 
+                        href="{{ route('lapangan') }}" 
+                        class="inline-flex items-center gap-2 bg-gradient-to-r from-[#f8b710] to-[#f37920] hover:from-[#f37920] hover:to-[#f8b710] text-slate-950 font-bold text-xs sm:text-sm uppercase tracking-wider px-8 py-4 rounded-full shadow-lg transition-all transform hover:-translate-y-0.5"
+                    >
+                        <span class="material-symbols-outlined text-[20px]">grid_view</span>
+                        Lihat Semua 50+ Lapangan di Jakarta
+                        <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+                    </a>
                 </div>
 
             </div>
@@ -489,40 +391,54 @@
                     <!-- Left Schedule Timetable Matrix (Col 8) -->
                     <div class="lg:col-span-8 bg-surface-white text-slate-800 rounded-2xl p-5 md:p-6 shadow-xl border border-slate-200">
                         
-                        <!-- Arena Selector Pills -->
-                        <div class="flex flex-wrap gap-2 mb-5">
+                        <!-- Arena Selector Pills (Synced with Real Courts) -->
+                        <div class="flex flex-wrap gap-2 mb-3">
                             <button 
                                 type="button"
                                 @click="selectSport('futsal')"
                                 :class="currentSport === 'futsal' ? 'bg-[#0f2444] text-white shadow-md' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'"
-                                class="text-xs uppercase font-bold tracking-wider px-4 py-2.5 rounded-xl transition-all whitespace-nowrap"
+                                class="text-xs uppercase font-bold tracking-wider px-4 py-2.5 rounded-xl transition-all whitespace-nowrap cursor-pointer"
                             >
-                                Lapangan Futsal A
+                                {{ $futsalCourt->name ?? 'Tebet Green Futsal - Court A' }}
                             </button>
                             <button 
                                 type="button"
                                 @click="selectSport('badminton')"
                                 :class="currentSport === 'badminton' ? 'bg-[#0f2444] text-white shadow-md' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'"
-                                class="text-xs uppercase font-bold tracking-wider px-4 py-2.5 rounded-xl transition-all whitespace-nowrap"
+                                class="text-xs uppercase font-bold tracking-wider px-4 py-2.5 rounded-xl transition-all whitespace-nowrap cursor-pointer"
                             >
-                                Badminton Court 1-4
+                                {{ $badmintonCourt->name ?? 'Champion Badminton Arena - Court 1' }}
                             </button>
                             <button 
                                 type="button"
                                 @click="selectSport('minisoccer')"
                                 :class="currentSport === 'minisoccer' ? 'bg-[#0f2444] text-white shadow-md' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'"
-                                class="text-xs uppercase font-bold tracking-wider px-4 py-2.5 rounded-xl transition-all whitespace-nowrap"
+                                class="text-xs uppercase font-bold tracking-wider px-4 py-2.5 rounded-xl transition-all whitespace-nowrap cursor-pointer"
                             >
-                                Mini Soccer 7v7
+                                {{ $miniSoccerCourt->name ?? 'Cilandak Town Minisoccer' }}
                             </button>
                             <button 
                                 type="button"
                                 @click="selectSport('padel')"
                                 :class="currentSport === 'padel' ? 'bg-[#0f2444] text-white shadow-md' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'"
-                                class="text-xs uppercase font-bold tracking-wider px-4 py-2.5 rounded-xl transition-all whitespace-nowrap"
+                                class="text-xs uppercase font-bold tracking-wider px-4 py-2.5 rounded-xl transition-all whitespace-nowrap cursor-pointer"
                             >
-                                Padel Court
+                                {{ $padelCourt->name ?? 'Kemang Padel Club - Panoramic 1' }}
                             </button>
+                        </div>
+
+                        <!-- Active Venue Location Bar -->
+                        <div class="flex flex-wrap items-center justify-between gap-2 text-xs text-slate-600 bg-blue-50/70 border border-blue-100 px-3.5 py-2 rounded-xl mb-5">
+                            <div class="flex items-center gap-1.5">
+                                <span class="material-symbols-outlined text-blue-700 text-[16px]">stadium</span>
+                                <span class="font-bold text-blue-900" x-text="activeVenueInfo.venueName"></span>
+                                <span class="text-slate-400">&bull;</span>
+                                <span class="material-symbols-outlined text-[#f37920] text-[15px]">location_on</span>
+                                <span x-text="activeVenueInfo.location"></span>
+                            </div>
+                            <a :href="'{{ url('/lapangan') }}/' + activeVenueInfo.slug" class="text-[11px] font-bold text-[#f37920] hover:underline">
+                                Detail Lapangan &rarr;
+                            </a>
                         </div>
 
                         <!-- Date Selector Horizontal Scroll -->
@@ -1525,31 +1441,39 @@
             'dateOptions' => $dateOptionsData,
             'sportCatalog' => [
                 'futsal' => [
-                    'name' => $futsalCourt->name ?? 'Lapangan Futsal A',
-                    'slug' => $futsalCourt->slug ?? 'futsal-arena-a',
-                    'regularPrice' => (int) ($futsalCourt->price_regular ?? 150000),
-                    'primePrice' => (int) ($futsalCourt->price_prime ?? 220000),
+                    'name' => $futsalCourt->name ?? 'Tebet Green Futsal - Court A',
+                    'slug' => $futsalCourt->slug ?? 'tebet-green-futsal-court-a',
+                    'venueName' => $futsalCourt->venue->name ?? 'Tebet Green Futsal Arena',
+                    'location' => $futsalCourt->venue->address ?? 'Tebet, Jakarta Selatan',
+                    'regularPrice' => (int) ($futsalCourt->price_regular ?? 240000),
+                    'primePrice' => (int) ($futsalCourt->price_prime ?? 280000),
                     'bookedSlots' => [],
                 ],
                 'badminton' => [
-                    'name' => $badmintonCourt->name ?? 'Badminton Court 1',
-                    'slug' => $badmintonCourt->slug ?? 'badminton-court-1',
-                    'regularPrice' => (int) ($badmintonCourt->price_regular ?? 45000),
-                    'primePrice' => (int) ($badmintonCourt->price_prime ?? 65000),
+                    'name' => $badmintonCourt->name ?? 'Champion Badminton Arena - Court 1',
+                    'slug' => $badmintonCourt->slug ?? 'champion-badminton-arena-court-1',
+                    'venueName' => $badmintonCourt->venue->name ?? 'Champion Badminton Arena',
+                    'location' => $badmintonCourt->venue->address ?? 'Rawamangun, Jakarta Timur',
+                    'regularPrice' => (int) ($badmintonCourt->price_regular ?? 60000),
+                    'primePrice' => (int) ($badmintonCourt->price_prime ?? 80000),
                     'bookedSlots' => [],
                 ],
                 'minisoccer' => [
-                    'name' => $miniSoccerCourt->name ?? 'Mini Soccer 7v7',
-                    'slug' => $miniSoccerCourt->slug ?? 'mini-soccer-7v7',
-                    'regularPrice' => (int) ($miniSoccerCourt->price_regular ?? 450000),
-                    'primePrice' => (int) ($miniSoccerCourt->price_prime ?? 650000),
+                    'name' => $miniSoccerCourt->name ?? 'Cilandak Town Minisoccer',
+                    'slug' => $miniSoccerCourt->slug ?? 'cilandak-town-minisoccer',
+                    'venueName' => $miniSoccerCourt->venue->name ?? 'Cilandak Town Minisoccer Hub',
+                    'location' => $miniSoccerCourt->venue->address ?? 'Cilandak, Jakarta Selatan',
+                    'regularPrice' => (int) ($miniSoccerCourt->price_regular ?? 750000),
+                    'primePrice' => (int) ($miniSoccerCourt->price_prime ?? 850000),
                     'bookedSlots' => [],
                 ],
                 'padel' => [
-                    'name' => $padelCourt->name ?? 'Padel Court Glass',
-                    'slug' => $padelCourt->slug ?? 'padel-court-glass',
-                    'regularPrice' => (int) ($padelCourt->price_regular ?? 250000),
-                    'primePrice' => (int) ($padelCourt->price_prime ?? 330000),
+                    'name' => $padelCourt->name ?? 'Kemang Padel Club - Panoramic 1',
+                    'slug' => $padelCourt->slug ?? 'kemang-padel-club-panoramic-1',
+                    'venueName' => $padelCourt->venue->name ?? 'Kemang Padel Club',
+                    'location' => $padelCourt->venue->address ?? 'Kemang, Jakarta Selatan',
+                    'regularPrice' => (int) ($padelCourt->price_regular ?? 450000),
+                    'primePrice' => (int) ($padelCourt->price_prime ?? 520000),
                     'bookedSlots' => [],
                 ],
             ],
@@ -1598,6 +1522,11 @@
                     { id: 14, time: '21.00 - 22.00', isPrime: true },
                     { id: 15, time: '22.00 - 23.00', isPrime: true }
                 ],
+
+                get activeVenueInfo() {
+                    const sport = this.sportCatalog[this.currentSport] || this.sportCatalog['futsal'] || { venueName: 'LapangIn Venue', location: 'DKI Jakarta', slug: '' };
+                    return sport;
+                },
 
                 get activeCourtSlots() {
                     const sport = this.sportCatalog[this.currentSport] || this.sportCatalog['futsal'] || { bookedSlots: [], primePrice: 0, regularPrice: 0 };
