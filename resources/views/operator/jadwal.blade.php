@@ -117,12 +117,12 @@
 
                 {{-- Schedule Grid --}}
                 <div class="bg-surface-white rounded-2xl border border-surface-container-high overflow-auto">
-                    <table class="w-full text-xs border-collapse min-w-[700px]">
+                    <table class="w-full min-w-[860px] text-left text-xs border-collapse">
                         <thead>
                             <tr class="bg-surface-container-low">
-                                <th class="text-left px-4 py-3 text-on-surface-variant font-semibold w-28 border-b border-surface-container-high sticky left-0 bg-surface-container-low z-10">Lapangan</th>
+                                <th class="text-left px-4 py-3 text-on-surface-variant font-semibold w-28 border-b border-surface-container-high sticky left-0 bg-surface-container-low z-10 whitespace-nowrap">Lapangan</th>
                                 @foreach($hours as $h)
-                                <th class="text-center px-1 py-3 text-on-surface-variant font-medium border-b border-surface-container-high min-w-[52px]">{{ sprintf('%02d:00', $h) }}</th>
+                                <th class="text-center px-1 py-3 text-on-surface-variant font-medium border-b border-surface-container-high min-w-[52px] whitespace-nowrap">{{ sprintf('%02d:00', $h) }}</th>
                                 @endforeach
                             </tr>
                         </thead>

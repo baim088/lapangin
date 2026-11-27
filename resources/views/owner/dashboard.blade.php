@@ -256,35 +256,35 @@
                     </div>
 
                     <div class="overflow-x-auto">
-                        <table class="w-full text-left text-xs">
-                            <thead class="bg-surface-container-low text-on-surface-variant font-semibold border-b border-surface-container-high uppercase tracking-wider">
+                        <table class="w-full min-w-[980px] text-left text-xs sm:text-sm border-collapse">
+                            <thead class="bg-slate-50 text-slate-500 font-bold border-b border-slate-200 text-[11px] uppercase tracking-wider">
                                 <tr>
-                                    <th class="px-5 py-3.5">Kode Booking</th>
-                                    <th class="px-5 py-3.5">Venue & Lapangan</th>
-                                    <th class="px-5 py-3.5">Pemesan</th>
-                                    <th class="px-5 py-3.5">Tanggal Main</th>
-                                    <th class="px-5 py-3.5">Total & Skema</th>
-                                    <th class="px-5 py-3.5">Status</th>
-                                    <th class="px-5 py-3.5">Pelunasan di Lokasi</th>
+                                    <th class="px-5 py-3.5 whitespace-nowrap">Kode Booking</th>
+                                    <th class="px-5 py-3.5 whitespace-nowrap">Venue & Lapangan</th>
+                                    <th class="px-5 py-3.5 whitespace-nowrap">Pemesan</th>
+                                    <th class="px-5 py-3.5 whitespace-nowrap">Tanggal Main</th>
+                                    <th class="px-5 py-3.5 whitespace-nowrap">Total & Skema</th>
+                                    <th class="px-5 py-3.5 whitespace-nowrap">Status</th>
+                                    <th class="px-5 py-3.5 whitespace-nowrap">Pelunasan di Lokasi</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-surface-container-high">
+                            <tbody class="divide-y divide-slate-100">
                                 @forelse($recentBookings as $b)
                                 <tr class="hover:bg-surface-container-lowest transition-colors">
-                                    <td class="px-5 py-4 font-mono font-bold text-on-surface">
+                                    <td class="px-5 py-3.5 whitespace-nowrap font-mono font-bold text-on-surface">
                                         {{ $b->booking_code }}
                                     </td>
-                                    <td class="px-5 py-4">
+                                    <td class="px-5 py-3.5 whitespace-nowrap">
                                         <div class="font-bold text-on-surface">{{ $b->venue->name ?? '-' }}</div>
                                         <div class="text-[11px] text-on-surface-variant">
                                             {{ $b->items->first()?->court?->name ?? 'Lapangan' }}
                                         </div>
                                     </td>
-                                    <td class="px-5 py-4">
+                                    <td class="px-5 py-3.5 whitespace-nowrap">
                                         <div class="font-semibold text-on-surface">{{ $b->customer_name }}</div>
                                         <div class="text-[11px] text-on-surface-variant">{{ $b->customer_phone }}</div>
                                     </td>
-                                    <td class="px-5 py-4">
+                                    <td class="px-5 py-3.5 whitespace-nowrap">
                                         @php
                                             $firstItem = $b->items->first();
                                         @endphp
@@ -295,7 +295,7 @@
                                             {{ $firstItem ? substr($firstItem->start_time, 0, 5) . ' - ' . substr($firstItem->end_time, 0, 5) : '-' }} WIB
                                         </div>
                                     </td>
-                                    <td class="px-5 py-4">
+                                    <td class="px-5 py-3.5 whitespace-nowrap">
                                         <div class="font-bold text-on-surface">Rp {{ number_format($b->total_amount, 0, ',', '.') }}</div>
                                         <div class="text-[10px] uppercase font-bold text-action-orange">
                                             {{ $b->payment_scheme === 'dp' ? 'Skema DP' : 'Full Payment' }}
@@ -306,7 +306,7 @@
                                         </div>
                                         @endif
                                     </td>
-                                    <td class="px-5 py-4">
+                                    <td class="px-5 py-3.5 whitespace-nowrap">
                                         @php
                                             $statusMap = [
                                                 'pending' => ['bg-action-glow text-action-orange', 'Menunggu Bayar'],
@@ -325,7 +325,7 @@
                                             {{ $curr[1] }}
                                         </span>
                                     </td>
-                                    <td class="px-5 py-4 text-on-surface-variant">
+                                    <td class="px-5 py-3.5 whitespace-nowrap text-on-surface-variant">
                                         @if($b->settled_by && $b->settledBy)
                                         <div class="flex items-center gap-1.5 text-pitch-emerald font-semibold">
                                             <span class="material-symbols-outlined text-[16px]">verified_user</span>

@@ -24,6 +24,8 @@
         settlePaid: 0,
         settleRemaining: 0,
         settleMethod: 'cash',
+        detailModalOpen: false,
+        detailData: {},
         openSettleModal(booking) {
             this.settleBookingId = booking.id;
             this.settleBookingCode = booking.booking_code;
@@ -34,6 +36,10 @@
             this.settleRemaining = booking.remaining_amount;
             this.settleMethod = 'cash';
             this.settleModalOpen = true;
+        },
+        openDetailModal(booking) {
+            this.detailData = booking;
+            this.detailModalOpen = true;
         },
         formatRupiah(num) {
             return new Intl.NumberFormat('id-ID').format(num);
@@ -62,7 +68,7 @@
                         ];
                     @endphp
                     @foreach($navItems as $item)
-                    <a href="{{ $item[2] }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all {{ $item[3] ? 'bg-pitch-emerald/20 text-pitch-light font-bold' : 'text-slate-300 hover:text-white hover:bg-white/5' }}">
+                    <a href="{{ $item[2] }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all {{ $item[3] ? 'bg-[#f8b710] text-slate-950 font-bold shadow-sm' : 'text-slate-300 hover:text-white hover:bg-white/5' }}">
                         <span class="material-symbols-outlined text-[20px]">{{ $item[0] }}</span>
                         {{ $item[1] }}
                     </a>
@@ -179,154 +185,174 @@
                 </div>
 
                 {{-- Booking table --}}
-                <div class="bg-surface-white rounded-2xl border border-surface-container-high overflow-auto shadow-sm">
-                    <table class="w-full text-sm min-w-[760px]">
-                        <thead>
-                            <tr class="bg-surface-container-low border-b border-surface-container-high">
-                                <th class="text-left px-5 py-3 text-on-surface-variant font-semibold text-xs uppercase tracking-wider">Kode</th>
-                                <th class="text-left px-5 py-3 text-on-surface-variant font-semibold text-xs uppercase tracking-wider">Penyewa</th>
-                                <th class="text-left px-5 py-3 text-on-surface-variant font-semibold text-xs uppercase tracking-wider">Lapangan</th>
-                                <th class="text-left px-5 py-3 text-on-surface-variant font-semibold text-xs uppercase tracking-wider">Jadwal Main</th>
-                                <th class="text-left px-5 py-3 text-on-surface-variant font-semibold text-xs uppercase tracking-wider">Tagihan & DP</th>
-                                <th class="text-left px-5 py-3 text-on-surface-variant font-semibold text-xs uppercase tracking-wider">Status</th>
-                                <th class="text-left px-5 py-3 text-on-surface-variant font-semibold text-xs uppercase tracking-wider">Aksi Operasional</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-surface-container-high">
-                            @forelse($allBookings as $b)
-                            @php
-                                $courtName = $b->items->first()?->court?->name ?? 'Lapangan';
-                                $bookingDate = $b->items->first()?->booking_date ? \Carbon\Carbon::parse($b->items->first()->booking_date)->translatedFormat('d M Y') : '-';
-                                $times = $b->items->pluck('start_time')->map(fn($t) => substr($t, 0, 5))->join(', ');
-                                $isDpPaid = ($b->status->value === 'dp_paid');
-                            @endphp
-                            <tr class="hover:bg-surface-container-low/50 transition-colors">
-                                <td class="px-5 py-4">
-                                    <span class="font-mono text-xs font-bold text-pitch-deep">{{ $b->booking_code }}</span>
-                                    <span class="block text-[10px] text-on-surface-variant mt-0.5">{{ $b->created_at->format('d/m/y H:i') }}</span>
-                                </td>
-                                <td class="px-5 py-4">
-                                    <div>
-                                        <p class="font-semibold text-on-surface">{{ $b->customer_name }}</p>
-                                        <p class="text-xs text-on-surface-variant">{{ $b->customer_phone }}</p>
-                                    </div>
-                                </td>
-                                <td class="px-5 py-4 text-on-surface">
-                                    <span class="font-semibold">{{ $courtName }}</span>
-                                    <span class="block text-[10px] text-on-surface-variant">{{ $b->venue->name }}</span>
-                                </td>
-                                <td class="px-5 py-4">
-                                    <p class="font-medium text-on-surface">{{ $bookingDate }}</p>
-                                    <p class="text-xs text-on-surface-variant">{{ $times }} WIB ({{ $b->total_hours }} jam)</p>
-                                </td>
-                                <td class="px-5 py-4">
-                                    <p class="font-bold text-on-surface">Rp {{ number_format($b->total_amount, 0, ',', '.') }}</p>
-                                    @if($b->isDp())
-                                        <span class="inline-block text-[10px] bg-indigo-50 text-indigo-700 font-semibold px-1.5 py-0.5 rounded mt-0.5">
-                                            DP Masuk: Rp {{ number_format($b->paid_amount, 0, ',', '.') }}
-                                        </span>
-                                        @if($b->remaining_amount > 0)
-                                            <p class="text-[11px] font-bold text-amber-700 mt-0.5">Sisa: Rp {{ number_format($b->remaining_amount, 0, ',', '.') }}</p>
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm min-w-[1040px] text-left border-collapse">
+                            <thead>
+                                <tr class="bg-slate-50 border-b border-slate-200 text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                                    <th class="px-5 py-3.5 whitespace-nowrap">Kode</th>
+                                    <th class="px-5 py-3.5 whitespace-nowrap">Penyewa</th>
+                                    <th class="px-5 py-3.5 whitespace-nowrap">Lapangan</th>
+                                    <th class="px-5 py-3.5 whitespace-nowrap">Jadwal Main</th>
+                                    <th class="px-5 py-3.5 whitespace-nowrap">Tagihan &amp; DP</th>
+                                    <th class="px-5 py-3.5 whitespace-nowrap">Status</th>
+                                    <th class="px-5 py-3.5 whitespace-nowrap text-right">Aksi Operasional</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100">
+                                @forelse($allBookings as $b)
+                                @php
+                                    $courtName = $b->items->first()?->court?->name ?? 'Lapangan';
+                                    $bookingDate = $b->items->first()?->booking_date ? \Carbon\Carbon::parse($b->items->first()->booking_date)->translatedFormat('d M Y') : '-';
+                                    $times = $b->items->pluck('start_time')->map(fn($t) => substr($t, 0, 5))->join(', ');
+                                    $isDpPaid = ($b->status->value === 'dp_paid');
+                                    $detailPayload = [
+                                        'booking_code' => $b->booking_code,
+                                        'created_at' => $b->created_at->format('d M Y H:i'),
+                                        'customer_name' => $b->customer_name,
+                                        'customer_phone' => $b->customer_phone,
+                                        'customer_email' => $b->customer_email,
+                                        'court_name' => $courtName,
+                                        'venue_name' => $b->venue->name ?? '-',
+                                        'booking_date' => $bookingDate,
+                                        'times' => $times . ' WIB (' . $b->total_hours . ' jam)',
+                                        'total_amount' => (int) $b->total_amount,
+                                        'paid_amount' => (int) $b->paid_amount,
+                                        'remaining_amount' => (int) $b->remaining_amount,
+                                        'payment_method' => strtoupper(str_replace('_', ' ', $b->payment?->payment_method?->value ?? '-')),
+                                        'status_label' => $b->status->label(),
+                                        'notes' => $b->notes ?? '-',
+                                        'proof_url' => $b->payment?->proof_path ? route('booking.proof', $b->id) : null,
+                                    ];
+                                @endphp
+                                <tr class="hover:bg-slate-50/80 transition-colors">
+                                    <td class="px-5 py-3.5 whitespace-nowrap">
+                                        <span class="font-mono text-xs font-bold text-[#0f2444]">{{ $b->booking_code }}</span>
+                                        <span class="block text-[11px] text-slate-400 mt-0.5">{{ $b->created_at->format('d/m/y H:i') }}</span>
+                                    </td>
+                                    <td class="px-5 py-3.5 whitespace-nowrap">
+                                        <p class="font-semibold text-slate-900">{{ $b->customer_name }}</p>
+                                        <p class="text-xs text-slate-500">{{ $b->customer_phone }}</p>
+                                    </td>
+                                    <td class="px-5 py-3.5 whitespace-nowrap">
+                                        <span class="font-semibold text-slate-900">{{ $courtName }}</span>
+                                        <span class="block text-[11px] text-slate-500">{{ $b->venue->name }}</span>
+                                    </td>
+                                    <td class="px-5 py-3.5 whitespace-nowrap">
+                                        <p class="font-medium text-slate-900">{{ $bookingDate }}</p>
+                                        <p class="text-xs text-slate-500">{{ $times }} WIB ({{ $b->total_hours }} jam)</p>
+                                    </td>
+                                    <td class="px-5 py-3.5 whitespace-nowrap">
+                                        <p class="font-bold text-slate-900">Rp {{ number_format($b->total_amount, 0, ',', '.') }}</p>
+                                        @if($b->isDp())
+                                            <span class="inline-block text-[10px] bg-indigo-50 text-indigo-700 font-semibold px-1.5 py-0.5 rounded mt-0.5">
+                                                DP Masuk: Rp {{ number_format($b->paid_amount, 0, ',', '.') }}
+                                            </span>
+                                            @if($b->remaining_amount > 0)
+                                                <p class="text-[11px] font-bold text-amber-700 mt-0.5">Sisa: Rp {{ number_format($b->remaining_amount, 0, ',', '.') }}</p>
+                                            @endif
                                         @endif
-                                    @endif
-                                </td>
-                                <td class="px-5 py-4">
-                                    @if($isDpPaid)
-                                        <span class="inline-flex items-center gap-1 bg-amber-50 text-amber-800 border border-amber-300 text-xs font-bold px-2.5 py-1 rounded-full">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
-                                            DP Terbayar
-                                        </span>
-                                        <p class="text-[10px] text-amber-900 font-semibold mt-1">Harap Lunasi di Lokasi</p>
-                                    @elseif(in_array($b->status->value, ['confirmed', 'paid_in_full']))
-                                        <span class="inline-flex items-center gap-1 bg-pitch-surface text-pitch-deep text-xs font-bold px-2.5 py-1 rounded-full border border-pitch-light/40">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-pitch-emerald"></span> Lunas
-                                        </span>
-                                        @if($b->settledBy)
-                                            <p class="text-[10px] text-on-surface-variant mt-0.5">Kasir: {{ $b->settledBy->name }} ({{ strtoupper($b->settlement_method ?? 'CASH') }})</p>
+                                    </td>
+                                    <td class="px-5 py-3.5 whitespace-nowrap">
+                                        @if($isDpPaid)
+                                            <span class="inline-flex items-center gap-1 bg-amber-50 text-amber-800 border border-amber-300 text-xs font-bold px-2.5 py-1 rounded-full">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+                                                DP Terbayar
+                                            </span>
+                                            <p class="text-[10px] text-amber-900 font-semibold mt-1">Harap Lunasi di Lokasi</p>
+                                        @elseif(in_array($b->status->value, ['confirmed', 'paid_in_full']))
+                                            <span class="inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 text-xs font-bold px-2.5 py-1 rounded-full border border-emerald-200">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Lunas
+                                            </span>
+                                            @if($b->settledBy)
+                                                <p class="text-[10px] text-slate-500 mt-0.5">Kasir: {{ $b->settledBy->name }} ({{ strtoupper($b->settlement_method ?? 'CASH') }})</p>
+                                            @endif
+                                        @elseif(in_array($b->status->value, ['pending', 'pending_payment']))
+                                            <span class="inline-flex items-center gap-1 bg-amber-50 text-[#f37920] text-xs font-bold px-2.5 py-1 rounded-full border border-amber-200">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-[#f8b710] animate-pulse"></span>
+                                                {{ $b->payment?->status?->value === 'pending_verification' ? 'Cek Bukti Bayar' : 'Menunggu Bayar' }}
+                                            </span>
+                                        @elseif(in_array($b->status->value, ['done', 'completed']))
+                                            <span class="inline-flex items-center gap-1 bg-slate-100 text-slate-700 text-xs font-bold px-2.5 py-1 rounded-full">
+                                                <span class="material-symbols-outlined text-[12px]">task_alt</span> Selesai
+                                            </span>
+                                        @else
+                                            <span class="inline-flex items-center gap-1 bg-rose-50 text-rose-700 text-xs font-bold px-2.5 py-1 rounded-full">
+                                                {{ $b->status->label() }}
+                                            </span>
                                         @endif
-                                    @elseif(in_array($b->status->value, ['pending', 'pending_payment']))
-                                        <span class="inline-flex items-center gap-1 bg-action-glow text-action-orange text-xs font-bold px-2.5 py-1 rounded-full border border-action-orange/20">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-action-amber animate-pulse"></span>
-                                            {{ $b->payment?->status?->value === 'pending_verification' ? 'Cek Bukti Bayar' : 'Menunggu Bayar' }}
-                                        </span>
-                                    @elseif(in_array($b->status->value, ['done', 'completed']))
-                                        <span class="inline-flex items-center gap-1 bg-surface-container-low text-on-surface-variant text-xs font-bold px-2.5 py-1 rounded-full">
-                                            <span class="material-symbols-outlined text-[12px]">task_alt</span> Selesai
-                                        </span>
-                                    @else
-                                        <span class="inline-flex items-center gap-1 bg-error-container/20 text-error text-xs font-bold px-2.5 py-1 rounded-full">
-                                            {{ $b->status->label() }}
-                                        </span>
-                                    @endif
-                                </td>
-                                <td class="px-5 py-4">
-                                    <div class="flex items-center gap-1.5 flex-wrap">
-                                        {{-- Tombol Pelunasan On-site untuk Kasir --}}
-                                        @if($b->canBeSettled() || $isDpPaid)
-                                        <button
-                                            type="button"
-                                            @click="openSettleModal({
-                                                id: {{ $b->id }},
-                                                booking_code: '{{ $b->booking_code }}',
-                                                customer_name: '{{ addslashes($b->customer_name) }}',
-                                                court_name: '{{ addslashes($courtName) }}',
-                                                total_amount: {{ (int)$b->total_amount }},
-                                                paid_amount: {{ (int)$b->paid_amount }},
-                                                remaining_amount: {{ (int)$b->remaining_amount }}
-                                            })"
-                                            class="inline-flex items-center gap-1 text-xs font-bold bg-amber-600 text-white px-2.5 py-1.5 rounded-lg hover:bg-amber-700 shadow-sm transition-colors cursor-pointer"
-                                        >
-                                            <span class="material-symbols-outlined text-[14px]">point_of_sale</span>
-                                            Pelunasan Kasir
-                                        </button>
-                                        @endif
-
-                                        {{-- Konfirmasi / Tolak Verifikasi Bukti --}}
-                                        @if(in_array($b->status->value, ['pending', 'pending_payment']))
-                                        <form action="{{ route('operator.booking.confirm', $b->id) }}" method="POST" onsubmit="return confirm('Konfirmasi dan kunci booking ini?')">
-                                            @csrf
-                                            <button type="submit" class="text-xs font-bold bg-pitch-deep text-surface-white px-2.5 py-1.5 rounded-lg hover:bg-pitch-emerald transition-colors">
-                                                Konfirmasi
+                                    </td>
+                                    <td class="px-5 py-3.5 whitespace-nowrap text-right">
+                                        <div class="inline-flex items-center justify-end gap-1.5">
+                                            {{-- Tombol Pelunasan On-site untuk Kasir --}}
+                                            @if($b->canBeSettled() || $isDpPaid)
+                                            <button
+                                                type="button"
+                                                @click="openSettleModal({
+                                                    id: {{ $b->id }},
+                                                    booking_code: '{{ $b->booking_code }}',
+                                                    customer_name: '{{ addslashes($b->customer_name) }}',
+                                                    court_name: '{{ addslashes($courtName) }}',
+                                                    total_amount: {{ (int)$b->total_amount }},
+                                                    paid_amount: {{ (int)$b->paid_amount }},
+                                                    remaining_amount: {{ (int)$b->remaining_amount }}
+                                                })"
+                                                class="inline-flex items-center gap-1 text-xs font-bold bg-amber-600 text-white px-2.5 py-1.5 rounded-lg hover:bg-amber-700 shadow-xs transition-colors cursor-pointer"
+                                            >
+                                                <span class="material-symbols-outlined text-[14px]">point_of_sale</span>
+                                                Pelunasan Kasir
                                             </button>
-                                        </form>
-                                        <form action="{{ route('operator.booking.reject', $b->id) }}" method="POST" onsubmit="var reason = prompt('Masukkan alasan penolakan booking:'); if (!reason) return false; this.querySelector('input[name=reason]').value = reason; return true;">
-                                            @csrf
-                                            <input type="hidden" name="reason" value="">
-                                            <button type="submit" class="text-xs font-semibold text-error border border-error/30 px-2 py-1.5 rounded-lg hover:bg-error-container/10 transition-colors">
-                                                Tolak
+                                            @endif
+
+                                            {{-- Konfirmasi / Tolak Verifikasi Bukti --}}
+                                            @if(in_array($b->status->value, ['pending', 'pending_payment']))
+                                            <form action="{{ route('operator.booking.confirm', $b->id) }}" method="POST" onsubmit="return confirm('Konfirmasi dan kunci booking ini?')">
+                                                @csrf
+                                                <button type="submit" class="text-xs font-bold bg-[#0f2444] text-white px-2.5 py-1.5 rounded-lg hover:bg-[#f37920] transition-colors cursor-pointer">
+                                                    Konfirmasi
+                                                </button>
+                                            </form>
+                                            <form action="{{ route('operator.booking.reject', $b->id) }}" method="POST" onsubmit="var reason = prompt('Masukkan alasan penolakan booking:'); if (!reason) return false; this.querySelector('input[name=reason]').value = reason; return true;">
+                                                @csrf
+                                                <input type="hidden" name="reason" value="">
+                                                <button type="submit" class="text-xs font-semibold text-rose-600 border border-rose-200 px-2.5 py-1.5 rounded-lg hover:bg-rose-50 transition-colors cursor-pointer">
+                                                    Tolak
+                                                </button>
+                                            </form>
+                                            @endif
+
+                                            @if($b->payment?->proof_path)
+                                            <a href="{{ route('booking.proof', $b->id) }}" target="_blank" class="text-xs font-semibold text-[#0f2444] border border-slate-200 px-2.5 py-1.5 rounded-lg hover:bg-slate-100 transition-colors">
+                                                Bukti
+                                            </a>
+                                            @endif
+
+                                            <button
+                                                type="button"
+                                                @click="openDetailModal({{ \Illuminate\Support\Js::from($detailPayload) }})"
+                                                class="text-xs font-semibold text-slate-700 border border-slate-200 px-2.5 py-1.5 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer"
+                                            >
+                                                Detail
                                             </button>
-                                        </form>
-                                        @endif
+                                        </div>
+                                    </td>
+                                </tr>
+                                @empty
+                                <tr>
+                                    <td colspan="7" class="px-5 py-10 text-center text-xs text-slate-500">
+                                        Tidak ada data booking yang sesuai filter.
+                                    </td>
+                                </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
 
-                                        @if($b->payment?->proof_path)
-                                        <a href="{{ route('booking.proof', $b->id) }}" target="_blank" class="text-xs font-semibold text-pitch-deep border border-pitch-light/40 px-2 py-1.5 rounded-lg hover:bg-pitch-surface transition-colors">
-                                            Bukti
-                                        </a>
-                                        @endif
-
-                                        <a href="{{ route('user.booking.detail', $b->id) }}" class="text-xs font-semibold text-on-surface-variant border border-surface-container-high px-2 py-1.5 rounded-lg hover:bg-surface-container-low transition-colors">
-                                            Detail
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
-                            @empty
-                            <tr>
-                                <td colspan="7" class="px-5 py-8 text-center text-xs text-on-surface-variant">
-                                    Tidak ada data booking yang sesuai filter.
-                                </td>
-                            </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
-
-                {{-- Pagination --}}
-                <div class="flex items-center justify-between flex-wrap gap-4">
-                    <span class="text-xs text-on-surface-variant">Menampilkan {{ $allBookings->firstItem() ?? 0 }} - {{ $allBookings->lastItem() ?? 0 }} dari {{ $allBookings->total() }} booking</span>
-                    <div>
+                    @if($allBookings->hasPages())
+                    <div class="px-5 py-3.5 border-t border-slate-200 bg-slate-50/70">
                         {{ $allBookings->links() }}
                     </div>
+                    @endif
                 </div>
 
             </main>
@@ -436,6 +462,87 @@
                     </button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    {{-- ============ MODAL DETAIL BOOKING OPERATOR ============ --}}
+    <div
+        x-show="detailModalOpen"
+        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs"
+        style="display:none;"
+    >
+        <div @click.away="detailModalOpen = false" class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 flex flex-col gap-4">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-10 h-10 rounded-xl bg-[#0f2444] text-[#f8b710] flex items-center justify-center">
+                        <span class="material-symbols-outlined text-[20px]">receipt_long</span>
+                    </div>
+                    <div>
+                        <h3 class="font-teko text-2xl font-bold uppercase tracking-wide text-[#0f2444] leading-none">Detail Booking</h3>
+                        <p class="text-xs font-mono font-bold text-[#f37920]" x-text="detailData.booking_code"></p>
+                    </div>
+                </div>
+                <button type="button" @click="detailModalOpen = false" class="text-slate-400 hover:text-slate-700 p-1 cursor-pointer">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 text-xs bg-slate-50 p-4 rounded-xl border border-slate-100">
+                <div>
+                    <span class="text-slate-500 block">Penyewa</span>
+                    <span class="font-bold text-slate-900" x-text="detailData.customer_name"></span>
+                    <span class="block text-slate-500" x-text="detailData.customer_phone"></span>
+                </div>
+                <div>
+                    <span class="text-slate-500 block">Status</span>
+                    <span class="font-bold text-[#0f2444]" x-text="detailData.status_label"></span>
+                    <span class="block text-slate-400" x-text="detailData.created_at"></span>
+                </div>
+                <div>
+                    <span class="text-slate-500 block">Lapangan &amp; Venue</span>
+                    <span class="font-bold text-slate-900" x-text="detailData.court_name"></span>
+                    <span class="block text-slate-500" x-text="detailData.venue_name"></span>
+                </div>
+                <div>
+                    <span class="text-slate-500 block">Jadwal Main</span>
+                    <span class="font-bold text-slate-900" x-text="detailData.booking_date"></span>
+                    <span class="block text-slate-500" x-text="detailData.times"></span>
+                </div>
+            </div>
+
+            <div class="bg-white border border-slate-200 rounded-xl p-4 text-xs flex flex-col gap-2">
+                <div class="flex justify-between">
+                    <span class="text-slate-500">Metode Pembayaran</span>
+                    <span class="font-bold text-slate-900" x-text="detailData.payment_method"></span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-slate-500">Total Tagihan</span>
+                    <span class="font-bold text-slate-900" x-text="'Rp ' + formatRupiah(detailData.total_amount || 0)"></span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-slate-500">Sudah Dibayar</span>
+                    <span class="font-bold text-emerald-700" x-text="'Rp ' + formatRupiah(detailData.paid_amount || 0)"></span>
+                </div>
+                <div class="flex justify-between border-t border-slate-100 pt-2">
+                    <span class="text-slate-500">Sisa Tagihan</span>
+                    <span class="font-bold text-[#f37920]" x-text="'Rp ' + formatRupiah(detailData.remaining_amount || 0)"></span>
+                </div>
+                <div class="border-t border-slate-100 pt-2">
+                    <span class="text-slate-500 block">Catatan Penyewa</span>
+                    <span class="text-slate-700" x-text="detailData.notes || '-'"></span>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-end gap-2 pt-1">
+                <template x-if="detailData.proof_url">
+                    <a :href="detailData.proof_url" target="_blank" class="px-4 py-2 text-xs font-bold bg-[#0f2444] text-white rounded-xl hover:bg-[#f37920] transition-colors">
+                        Lihat Bukti Transfer
+                    </a>
+                </template>
+                <button type="button" @click="detailModalOpen = false" class="px-4 py-2 text-xs font-bold bg-slate-100 text-slate-700 rounded-xl hover:bg-slate-200 transition-colors cursor-pointer">
+                    Tutup
+                </button>
+            </div>
         </div>
     </div>
 

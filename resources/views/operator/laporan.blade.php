@@ -33,7 +33,7 @@
                         ];
                     @endphp
                     @foreach($navItems as $item)
-                    <a href="{{ $item[2] }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all {{ $item[3] ? 'bg-pitch-emerald/20 text-pitch-light font-bold' : 'text-slate-300 hover:text-white hover:bg-white/5' }}">
+                    <a href="{{ $item[2] }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all {{ $item[3] ? 'bg-[#f8b710] text-slate-950 font-bold shadow-sm' : 'text-slate-300 hover:text-white hover:bg-white/5' }}">
                         <span class="material-symbols-outlined text-[20px]">{{ $item[0] }}</span>
                         {{ $item[1] }}
                     </a>
@@ -241,51 +241,51 @@
                     </div>
 
                     <div class="overflow-x-auto">
-                        <table class="w-full text-sm min-w-[840px]">
+                        <table class="w-full min-w-[980px] text-left text-xs sm:text-sm border-collapse">
                             <thead>
-                                <tr class="bg-surface-container-low border-b border-surface-container-high">
-                                    <th class="text-left px-5 py-3 text-on-surface-variant font-semibold text-xs uppercase tracking-wider">Kode & Waktu</th>
-                                    <th class="text-left px-5 py-3 text-on-surface-variant font-semibold text-xs uppercase tracking-wider">Penyewa</th>
-                                    <th class="text-left px-5 py-3 text-on-surface-variant font-semibold text-xs uppercase tracking-wider">Lapangan</th>
-                                    <th class="text-right px-5 py-3 text-on-surface-variant font-semibold text-xs uppercase tracking-wider">Total Gross</th>
-                                    <th class="text-right px-5 py-3 text-on-surface-variant font-semibold text-xs uppercase tracking-wider">DP Masuk</th>
-                                    <th class="text-right px-5 py-3 text-on-surface-variant font-semibold text-xs uppercase tracking-wider">Pelunasan</th>
-                                    <th class="text-right px-5 py-3 text-on-surface-variant font-semibold text-xs uppercase tracking-wider">Sisa Piutang</th>
-                                    <th class="text-center px-5 py-3 text-on-surface-variant font-semibold text-xs uppercase tracking-wider">Status & Kasir</th>
+                                <tr class="bg-slate-50 text-slate-500 font-bold border-b border-slate-200 text-[11px] uppercase tracking-wider">
+                                    <th class="text-left px-5 py-3 text-on-surface-variant font-semibold text-xs uppercase tracking-wider whitespace-nowrap">Kode & Waktu</th>
+                                    <th class="text-left px-5 py-3 text-on-surface-variant font-semibold text-xs uppercase tracking-wider whitespace-nowrap">Penyewa</th>
+                                    <th class="text-left px-5 py-3 text-on-surface-variant font-semibold text-xs uppercase tracking-wider whitespace-nowrap">Lapangan</th>
+                                    <th class="text-right px-5 py-3 text-on-surface-variant font-semibold text-xs uppercase tracking-wider whitespace-nowrap">Total Gross</th>
+                                    <th class="text-right px-5 py-3 text-on-surface-variant font-semibold text-xs uppercase tracking-wider whitespace-nowrap">DP Masuk</th>
+                                    <th class="text-right px-5 py-3 text-on-surface-variant font-semibold text-xs uppercase tracking-wider whitespace-nowrap">Pelunasan</th>
+                                    <th class="text-right px-5 py-3 text-on-surface-variant font-semibold text-xs uppercase tracking-wider whitespace-nowrap">Sisa Piutang</th>
+                                    <th class="text-center px-5 py-3 text-on-surface-variant font-semibold text-xs uppercase tracking-wider whitespace-nowrap">Status & Kasir</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-surface-container-high">
+                            <tbody class="divide-y divide-slate-100">
                                 @forelse($reportBookings as $b)
                                 @php
                                     $courtName = $b->items->first()?->court?->name ?? 'Lapangan';
                                     $settlementPay = $b->payments->firstWhere('payment_type', 'settlement');
                                 @endphp
                                 <tr class="hover:bg-surface-container-low/50 transition-colors">
-                                    <td class="px-5 py-4">
+                                    <td class="px-5 py-3.5 whitespace-nowrap">
                                         <span class="font-mono text-xs font-bold text-pitch-deep">{{ $b->booking_code }}</span>
                                         <span class="block text-[10px] text-on-surface-variant">{{ $b->created_at->format('d/m/Y H:i') }}</span>
                                     </td>
-                                    <td class="px-5 py-4">
+                                    <td class="px-5 py-3.5 whitespace-nowrap">
                                         <p class="font-semibold text-on-surface">{{ $b->customer_name }}</p>
                                         <p class="text-xs text-on-surface-variant">{{ $b->customer_phone }}</p>
                                     </td>
-                                    <td class="px-5 py-4">
+                                    <td class="px-5 py-3.5 whitespace-nowrap">
                                         <p class="font-medium text-on-surface">{{ $courtName }}</p>
                                         <p class="text-[10px] text-on-surface-variant">{{ $b->booking_date }}</p>
                                     </td>
-                                    <td class="px-5 py-4 text-right font-bold text-on-surface">
+                                    <td class="px-5 py-3.5 whitespace-nowrap text-right font-bold text-on-surface">
                                         Rp {{ number_format($b->total_amount, 0, ',', '.') }}
                                     </td>
-                                    <td class="px-5 py-4 text-right font-semibold text-indigo-700">
+                                    <td class="px-5 py-3.5 whitespace-nowrap text-right font-semibold text-indigo-700">
                                         {{ $b->isDp() ? 'Rp ' . number_format($b->dp_amount, 0, ',', '.') : '-' }}
                                     </td>
-                                    <td class="px-5 py-4 text-right font-semibold text-emerald-700">
+                                    <td class="px-5 py-3.5 whitespace-nowrap text-right font-semibold text-emerald-700">
                                         {{ $settlementPay ? 'Rp ' . number_format($settlementPay->amount, 0, ',', '.') : '-' }}
                                     </td>
-                                    <td class="px-5 py-4 text-right font-bold {{ $b->remaining_amount > 0 ? 'text-amber-700' : 'text-on-surface-variant' }}">
+                                    <td class="px-5 py-3.5 whitespace-nowrap text-right font-bold {{ $b->remaining_amount > 0 ? 'text-amber-700' : 'text-on-surface-variant' }}">
                                         {{ $b->remaining_amount > 0 ? 'Rp ' . number_format($b->remaining_amount, 0, ',', '.') : 'Lunas' }}
                                     </td>
-                                    <td class="px-5 py-4 text-center">
+                                    <td class="px-5 py-3.5 whitespace-nowrap text-center">
                                         @if($b->status->value === 'dp_paid')
                                             <span class="inline-block bg-amber-50 text-amber-800 text-[11px] font-bold px-2 py-0.5 rounded-full border border-amber-200">
                                                 DP Terbayar

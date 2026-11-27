@@ -283,51 +283,51 @@
                     </div>
 
                     <div class="overflow-x-auto">
-                        <table class="w-full text-left text-xs">
-                            <thead class="bg-surface-container-low text-on-surface-variant font-semibold border-b border-surface-container-high uppercase tracking-wider">
+                        <table class="w-full min-w-[980px] text-left text-xs sm:text-sm border-collapse">
+                            <thead class="bg-slate-50 text-slate-500 font-bold border-b border-slate-200 text-[11px] uppercase tracking-wider">
                                 <tr>
-                                    <th class="px-5 py-3.5">Kode & Waktu</th>
-                                    <th class="px-5 py-3.5">Venue & Lapangan</th>
-                                    <th class="px-5 py-3.5">Penyewa</th>
-                                    <th class="px-5 py-3.5">Total Sewa</th>
-                                    <th class="px-5 py-3.5">Terbayar (DP / Full)</th>
-                                    <th class="px-5 py-3.5">Sisa Tagihan</th>
-                                    <th class="px-5 py-3.5">Status Booking</th>
-                                    <th class="px-5 py-3.5">Verifikasi Kasir</th>
+                                    <th class="px-5 py-3.5 whitespace-nowrap">Kode & Waktu</th>
+                                    <th class="px-5 py-3.5 whitespace-nowrap">Venue & Lapangan</th>
+                                    <th class="px-5 py-3.5 whitespace-nowrap">Penyewa</th>
+                                    <th class="px-5 py-3.5 whitespace-nowrap">Total Sewa</th>
+                                    <th class="px-5 py-3.5 whitespace-nowrap">Terbayar (DP / Full)</th>
+                                    <th class="px-5 py-3.5 whitespace-nowrap">Sisa Tagihan</th>
+                                    <th class="px-5 py-3.5 whitespace-nowrap">Status Booking</th>
+                                    <th class="px-5 py-3.5 whitespace-nowrap">Verifikasi Kasir</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-surface-container-high">
+                            <tbody class="divide-y divide-slate-100">
                                 @forelse($reportBookings as $b)
                                 <tr class="hover:bg-surface-container-lowest transition-colors">
-                                    <td class="px-5 py-4">
+                                    <td class="px-5 py-3.5 whitespace-nowrap">
                                         <div class="font-mono font-bold text-on-surface">{{ $b->booking_code }}</div>
                                         <div class="text-[11px] text-on-surface-variant">{{ $b->created_at->translatedFormat('d M Y H:i') }}</div>
                                     </td>
-                                    <td class="px-5 py-4">
+                                    <td class="px-5 py-3.5 whitespace-nowrap">
                                         <div class="font-bold text-on-surface">{{ $b->venue->name ?? '-' }}</div>
                                         <div class="text-[11px] text-on-surface-variant">{{ $b->items->first()?->court?->name ?? 'Lapangan' }}</div>
                                     </td>
-                                    <td class="px-5 py-4">
+                                    <td class="px-5 py-3.5 whitespace-nowrap">
                                         <div class="font-semibold text-on-surface">{{ $b->customer_name }}</div>
                                         <div class="text-[11px] text-on-surface-variant">{{ $b->customer_phone }}</div>
                                     </td>
-                                    <td class="px-5 py-4 font-bold text-on-surface">
+                                    <td class="px-5 py-3.5 whitespace-nowrap font-bold text-on-surface">
                                         Rp {{ number_format($b->total_amount, 0, ',', '.') }}
                                     </td>
-                                    <td class="px-5 py-4">
+                                    <td class="px-5 py-3.5 whitespace-nowrap">
                                         <div class="font-bold text-pitch-emerald">Rp {{ number_format($b->paid_amount, 0, ',', '.') }}</div>
                                         <div class="text-[10px] text-on-surface-variant uppercase font-medium">
                                             {{ $b->payment_scheme === 'dp' ? 'Skema DP' : 'Full Payment' }}
                                         </div>
                                     </td>
-                                    <td class="px-5 py-4">
+                                    <td class="px-5 py-3.5 whitespace-nowrap">
                                         @if($b->remaining_amount > 0 && $b->status->value === 'dp_paid')
                                         <span class="font-bold text-action-orange">Rp {{ number_format($b->remaining_amount, 0, ',', '.') }}</span>
                                         @else
                                         <span class="text-on-surface-variant text-[11px]">Rp 0 (Lunas)</span>
                                         @endif
                                     </td>
-                                    <td class="px-5 py-4">
+                                    <td class="px-5 py-3.5 whitespace-nowrap">
                                         @php
                                             $statusMap = [
                                                 'pending' => ['bg-action-glow text-action-orange', 'Menunggu Bayar'],
@@ -346,7 +346,7 @@
                                             {{ $curr[1] }}
                                         </span>
                                     </td>
-                                    <td class="px-5 py-4 text-on-surface-variant">
+                                    <td class="px-5 py-3.5 whitespace-nowrap text-on-surface-variant">
                                         @if($b->settled_by && $b->settledBy)
                                         <div class="flex items-center gap-1 text-pitch-emerald font-semibold">
                                             <span class="material-symbols-outlined text-[15px]">badge</span>
@@ -373,7 +373,7 @@
                     </div>
 
                     @if($reportBookings->hasPages())
-                    <div class="p-4 border-t border-surface-container-high">
+                    <div class="px-5 py-3.5 border-t border-slate-200 bg-slate-50/70">
                         {{ $reportBookings->links() }}
                     </div>
                     @endif

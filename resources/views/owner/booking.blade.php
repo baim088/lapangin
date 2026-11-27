@@ -152,35 +152,35 @@
                 {{-- Bookings Table --}}
                 <div class="bg-surface-white rounded-2xl border border-surface-container-high shadow-xs overflow-hidden flex flex-col">
                     <div class="overflow-x-auto">
-                        <table class="w-full text-left text-xs">
-                            <thead class="bg-surface-container-low text-on-surface-variant font-semibold border-b border-surface-container-high uppercase tracking-wider">
+                        <table class="w-full min-w-[980px] text-left text-xs sm:text-sm border-collapse">
+                            <thead class="bg-slate-50 text-slate-500 font-bold border-b border-slate-200 text-[11px] uppercase tracking-wider">
                                 <tr>
-                                    <th class="px-5 py-3.5">Kode Booking</th>
-                                    <th class="px-5 py-3.5">Venue & Lapangan</th>
-                                    <th class="px-5 py-3.5">Penyewa</th>
-                                    <th class="px-5 py-3.5">Jadwal Main</th>
-                                    <th class="px-5 py-3.5">Total & Skema</th>
-                                    <th class="px-5 py-3.5">Status Booking</th>
-                                    <th class="px-5 py-3.5">Pelunasan Kasir</th>
+                                    <th class="px-5 py-3.5 whitespace-nowrap">Kode Booking</th>
+                                    <th class="px-5 py-3.5 whitespace-nowrap">Venue & Lapangan</th>
+                                    <th class="px-5 py-3.5 whitespace-nowrap">Penyewa</th>
+                                    <th class="px-5 py-3.5 whitespace-nowrap">Jadwal Main</th>
+                                    <th class="px-5 py-3.5 whitespace-nowrap">Total & Skema</th>
+                                    <th class="px-5 py-3.5 whitespace-nowrap">Status Booking</th>
+                                    <th class="px-5 py-3.5 whitespace-nowrap">Pelunasan Kasir</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-surface-container-high">
+                            <tbody class="divide-y divide-slate-100">
                                 @forelse($allBookings as $b)
                                 <tr class="hover:bg-surface-container-lowest transition-colors">
-                                    <td class="px-5 py-4">
+                                    <td class="px-5 py-3.5 whitespace-nowrap">
                                         <div class="font-mono font-bold text-on-surface text-sm">{{ $b->booking_code }}</div>
                                         <div class="text-[10px] text-on-surface-variant">{{ $b->created_at->diffForHumans() }}</div>
                                     </td>
-                                    <td class="px-5 py-4">
+                                    <td class="px-5 py-3.5 whitespace-nowrap">
                                         <div class="font-bold text-on-surface">{{ $b->venue->name ?? '-' }}</div>
                                         <div class="text-[11px] text-on-surface-variant">{{ $b->items->first()?->court?->name ?? 'Lapangan' }}</div>
                                     </td>
-                                    <td class="px-5 py-4">
+                                    <td class="px-5 py-3.5 whitespace-nowrap">
                                         <div class="font-semibold text-on-surface">{{ $b->customer_name }}</div>
                                         <div class="text-[11px] text-on-surface-variant">{{ $b->customer_phone }}</div>
                                         <div class="text-[10px] text-on-surface-variant/70">{{ $b->customer_email }}</div>
                                     </td>
-                                    <td class="px-5 py-4">
+                                    <td class="px-5 py-3.5 whitespace-nowrap">
                                         @php $first = $b->items->first(); @endphp
                                         <div class="font-bold text-on-surface">
                                             {{ $first ? \Carbon\Carbon::parse($first->booking_date)->translatedFormat('d M Y') : '-' }}
@@ -189,7 +189,7 @@
                                             {{ $first ? substr($first->start_time, 0, 5) . ' - ' . substr($first->end_time, 0, 5) : '-' }} WIB
                                         </div>
                                     </td>
-                                    <td class="px-5 py-4">
+                                    <td class="px-5 py-3.5 whitespace-nowrap">
                                         <div class="font-extrabold text-on-surface">Rp {{ number_format($b->total_amount, 0, ',', '.') }}</div>
                                         <div class="text-[10px] font-bold text-action-orange uppercase">
                                             {{ $b->payment_scheme === 'dp' ? 'Skema DP' : 'Full Payment' }}
@@ -200,7 +200,7 @@
                                         </div>
                                         @endif
                                     </td>
-                                    <td class="px-5 py-4">
+                                    <td class="px-5 py-3.5 whitespace-nowrap">
                                         @php
                                             $statusMap = [
                                                 'pending' => ['bg-action-glow text-action-orange', 'Menunggu Bayar'],
@@ -219,7 +219,7 @@
                                             {{ $curr[1] }}
                                         </span>
                                     </td>
-                                    <td class="px-5 py-4 text-on-surface-variant">
+                                    <td class="px-5 py-3.5 whitespace-nowrap text-on-surface-variant">
                                         @if($b->settled_by && $b->settledBy)
                                         <div class="flex items-center gap-1 text-pitch-emerald font-semibold">
                                             <span class="material-symbols-outlined text-[15px]">badge</span>
@@ -248,7 +248,7 @@
                     </div>
 
                     @if($allBookings->hasPages())
-                    <div class="p-4 border-t border-surface-container-high">
+                    <div class="px-5 py-3.5 border-t border-slate-200 bg-slate-50/70">
                         {{ $allBookings->links() }}
                     </div>
                     @endif

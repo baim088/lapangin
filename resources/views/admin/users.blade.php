@@ -100,21 +100,21 @@
                 </form>
 
                 <div class="bg-surface-white rounded-2xl border border-surface-container-high overflow-auto">
-                    <table class="w-full text-sm min-w-[600px]">
+                    <table class="w-full min-w-[820px] text-left text-xs sm:text-sm border-collapse">
                         <thead>
-                            <tr class="bg-surface-container-low border-b border-surface-container-high">
-                                <th class="text-left px-5 py-3 text-on-surface-variant font-semibold text-xs uppercase tracking-wider">User</th>
-                                <th class="text-left px-5 py-3 text-on-surface-variant font-semibold text-xs uppercase tracking-wider">WhatsApp</th>
-                                <th class="text-left px-5 py-3 text-on-surface-variant font-semibold text-xs uppercase tracking-wider">Role & Venue</th>
-                                <th class="text-left px-5 py-3 text-on-surface-variant font-semibold text-xs uppercase tracking-wider">Total Booking</th>
-                                <th class="text-left px-5 py-3 text-on-surface-variant font-semibold text-xs uppercase tracking-wider">Bergabung</th>
-                                <th class="text-left px-5 py-3 text-on-surface-variant font-semibold text-xs uppercase tracking-wider">Aksi</th>
+                            <tr class="bg-slate-50 text-slate-500 font-bold border-b border-slate-200 text-[11px] uppercase tracking-wider">
+                                <th class="text-left px-5 py-3 text-on-surface-variant font-semibold text-xs uppercase tracking-wider whitespace-nowrap">User</th>
+                                <th class="text-left px-5 py-3 text-on-surface-variant font-semibold text-xs uppercase tracking-wider whitespace-nowrap">WhatsApp</th>
+                                <th class="text-left px-5 py-3 text-on-surface-variant font-semibold text-xs uppercase tracking-wider whitespace-nowrap">Role & Venue</th>
+                                <th class="text-left px-5 py-3 text-on-surface-variant font-semibold text-xs uppercase tracking-wider whitespace-nowrap">Total Booking</th>
+                                <th class="text-left px-5 py-3 text-on-surface-variant font-semibold text-xs uppercase tracking-wider whitespace-nowrap">Bergabung</th>
+                                <th class="text-left px-5 py-3 text-on-surface-variant font-semibold text-xs uppercase tracking-wider whitespace-nowrap">Aksi</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-surface-container-high">
+                        <tbody class="divide-y divide-slate-100">
                             @forelse($users as $user)
                             <tr class="hover:bg-surface-container-low/50 transition-colors">
-                                <td class="px-5 py-4">
+                                <td class="px-5 py-3.5 whitespace-nowrap">
                                     <div class="flex items-center gap-3">
                                         <div class="w-9 h-9 rounded-full bg-pitch-surface flex items-center justify-center shrink-0">
                                             <span class="font-bold text-pitch-deep text-sm">{{ strtoupper(substr($user->name, 0, 1)) }}</span>
@@ -125,8 +125,8 @@
                                         </div>
                                     </div>
                                 </td>
-                                <td class="px-5 py-4 text-on-surface-variant text-xs">{{ $user->phone }}</td>
-                                <td class="px-5 py-4">
+                                <td class="px-5 py-3.5 whitespace-nowrap text-on-surface-variant text-xs">{{ $user->phone }}</td>
+                                <td class="px-5 py-3.5 whitespace-nowrap">
                                     <span @class([
                                         'text-[10px] font-bold px-2.5 py-1 rounded-full',
                                         'bg-pitch-surface text-pitch-deep' => $user->role->value === 'customer',
@@ -137,9 +137,9 @@
                                     <p class="text-[10px] text-on-surface-variant mt-0.5 font-medium truncate max-w-[150px]">{{ $user->venue?->name ?? 'Belum ada venue' }}</p>
                                     @endif
                                 </td>
-                                <td class="px-5 py-4 font-semibold text-on-surface">{{ $user->bookings_count }}</td>
-                                <td class="px-5 py-4 text-xs text-on-surface-variant">{{ $user->created_at ? $user->created_at->translatedFormat('d M Y') : '-' }}</td>
-                                <td class="px-5 py-4">
+                                <td class="px-5 py-3.5 whitespace-nowrap font-semibold text-on-surface">{{ $user->bookings_count }}</td>
+                                <td class="px-5 py-3.5 whitespace-nowrap text-xs text-on-surface-variant">{{ $user->created_at ? $user->created_at->translatedFormat('d M Y') : '-' }}</td>
+                                <td class="px-5 py-3.5 whitespace-nowrap">
                                     <div class="flex items-center gap-2 flex-wrap">
                                         <button
                                             type="button"
