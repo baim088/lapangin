@@ -47,9 +47,6 @@
                     >
                         <span class="material-symbols-outlined text-[20px]">{{ $item[0] }}</span>
                         {{ $item[1] }}
-                        @if($item[1] === 'Daftar Booking')
-                        <span class="ml-auto bg-action-orange text-surface-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center">3</span>
-                        @endif
                     </a>
                     @endforeach
                 </div>
@@ -114,9 +111,8 @@
                         <span>{{ $venue->name }}</span>
                     </div>
                     @endif
-                    <button class="relative p-2 rounded-lg hover:bg-surface-container-low text-on-surface-variant">
+                    <button class="p-2 rounded-lg hover:bg-surface-container-low text-on-surface-variant">
                         <span class="material-symbols-outlined text-[22px]">notifications</span>
-                        <span class="absolute top-1 right-1 w-4 h-4 bg-action-orange rounded-full text-[9px] text-surface-white font-bold flex items-center justify-center">3</span>
                     </button>
                 </div>
             </header>

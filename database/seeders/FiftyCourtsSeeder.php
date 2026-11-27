@@ -657,7 +657,7 @@ class FiftyCourtsSeeder extends Seeder
                     'close_time' => '23:00:00',
                     'prime_start_time' => '17:00:00',
                     'prime_end_time' => '23:00:00',
-                    'slot_lock_duration_minutes' => 15,
+                    'slot_lock_duration_minutes' => 10,
                     'status' => 'active',
                 ]
             );

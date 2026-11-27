@@ -43,15 +43,10 @@
                     <a
                         href="{{ route('user.dashboard') }}"
                         @click="activeTab = 'upcoming'"
-                        class="flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-bold transition-all bg-[#f8b710] text-slate-950 shadow-sm"
+                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold transition-all bg-[#f8b710] text-slate-950 shadow-sm"
                     >
-                        <div class="flex items-center gap-3">
-                            <span class="material-symbols-outlined text-[20px]">dashboard</span>
-                            Dashboard &amp; Booking
-                        </div>
-                        @if($upcomingBookings->count() > 0)
-                        <span class="bg-[#0f2444] text-white text-[10px] font-bold px-2 py-0.5 rounded-full">{{ $upcomingBookings->count() }}</span>
-                        @endif
+                        <span class="material-symbols-outlined text-[20px]">dashboard</span>
+                        Dashboard &amp; Booking
                     </a>
 
                     <a
@@ -129,8 +124,7 @@
                             </div>
                         </div>
                         <a href="{{ route('user.cari-lapangan') }}" class="self-start md:self-center inline-flex items-center gap-2 bg-gradient-to-r from-[#f8b710] to-[#f37920] hover:from-[#f37920] hover:to-[#f8b710] text-slate-950 font-bold text-xs sm:text-sm uppercase tracking-wider px-6 py-3 rounded-xl transition-all shadow-md">
-                            <span class="material-symbols-outlined text-[18px]">add_circle</span>
-                            + Booking Lapangan Baru
+                            <span class="material-symbols-outlined text-[18px]">add_circle</span> Booking Lapangan Baru
                         </a>
                     </div>
 
@@ -387,21 +381,6 @@
 
                     {{-- Sidebar Widgets Column --}}
                     <div class="flex flex-col gap-5">
-
-                        {{-- Quick actions card --}}
-                        <div class="bg-surface-white rounded-2xl border border-surface-container-high p-5 flex flex-col gap-4 shadow-xs">
-                            <h3 class="text-xs font-bold text-on-surface uppercase tracking-wider text-pitch-deep">Aksi Cepat</h3>
-                            <div class="flex flex-col gap-1.5">
-                                <a href="{{ route('user.cari-lapangan') }}" class="flex items-center gap-3 p-3 rounded-xl hover:bg-amber-50 hover:text-[#0f2444] transition-colors group">
-                                    <span class="material-symbols-outlined text-on-surface-variant group-hover:text-pitch-emerald text-[20px]">add_circle</span>
-                                    <span class="text-sm font-medium">Booking Lapangan Baru</span>
-                                </a>
-                                <a href="{{ route('kontak') }}" class="flex items-center gap-3 p-3 rounded-xl hover:bg-surface-container-low transition-colors group">
-                                    <span class="material-symbols-outlined text-on-surface-variant text-[20px]">support_agent</span>
-                                    <span class="text-sm font-medium">Hubungi Layanan CS</span>
-                                </a>
-                            </div>
-                        </div>
 
                         {{-- Upcoming reminder card --}}
                         @php $firstUpcoming = $upcomingBookings->first(); @endphp

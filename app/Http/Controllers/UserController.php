@@ -44,8 +44,10 @@ class UserController extends Controller
             ])
             ->sum('paid_amount');
 
-        // 2. Bookings grouped for tabs
-        $upcomingBookings = Booking::with(['items.court', 'venue', 'payment'])
+        // 2. Bookings grouped for tabs (past confirmed/paid bookings automatically move to Riwayat)
+        $today = now()->toDateString();
+
+        $activeAndDoneBookings = Booking::with(['items.court', 'venue', 'payment'])
             ->where('user_id', $user->id)
             ->whereIn('status', [
                 BookingStatus::Pending,
@@ -53,15 +55,31 @@ class UserController extends Controller
                 BookingStatus::DpPaid,
                 BookingStatus::Confirmed,
                 BookingStatus::PaidInFull,
+                BookingStatus::Done,
+                BookingStatus::Completed,
             ])
             ->latest()
             ->get();
 
-        $historyBookings = Booking::with(['items.court', 'venue', 'payment'])
-            ->where('user_id', $user->id)
-            ->whereIn('status', [BookingStatus::Done, BookingStatus::Completed])
-            ->latest()
-            ->get();
+        $historyBookings = $activeAndDoneBookings->filter(function (Booking $booking) use ($today) {
+            if (in_array($booking->status, [BookingStatus::Done, BookingStatus::Completed], true)) {
+                return true;
+            }
+
+            $playDate = $booking->items->first()?->booking_date;
+
+            return $playDate && $playDate < $today && in_array($booking->status, [
+                BookingStatus::DpPaid,
+                BookingStatus::Confirmed,
+                BookingStatus::PaidInFull,
+            ], true);
+        })->values();
+
+        $historyIds = $historyBookings->pluck('id')->all();
+
+        $upcomingBookings = $activeAndDoneBookings->reject(function (Booking $booking) use ($historyIds) {
+            return in_array($booking->id, $historyIds, true);
+        })->values();
 
         $cancelledList = Booking::with(['items.court', 'venue', 'payment'])
             ->where('user_id', $user->id)

@@ -98,7 +98,7 @@ class BookingService
         $dpAmount = $isDp ? (int) round($totalAmount * ($dpPct / 100)) : 0;
         $initialPayAmount = $isDp ? $dpAmount : $totalAmount;
 
-        $expiresAt = $now->copy()->addMinutes($venue->slot_lock_duration_minutes ?? 15);
+        $expiresAt = $now->copy()->addMinutes($venue->slot_lock_duration_minutes ?? 10);
 
         return DB::transaction(function () use (
             $user,

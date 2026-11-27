@@ -57,6 +57,7 @@ Route::prefix('operator')->name('operator.')->middleware(['role:operator,super_a
     Route::get('/dashboard', [OperatorController::class, 'dashboard'])->name('dashboard');
 
     Route::get('/booking', [OperatorController::class, 'bookingList'])->name('booking');
+    Route::post('/booking/checkin', [OperatorController::class, 'checkIn'])->name('booking.checkin');
     Route::get('/booking/export', [OperatorController::class, 'exportCsv'])->name('booking.export');
     Route::post('/booking/{booking}/confirm', [OperatorController::class, 'confirm'])->name('booking.confirm');
     Route::post('/booking/{booking}/reject', [OperatorController::class, 'reject'])->name('booking.reject');

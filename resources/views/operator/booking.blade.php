@@ -26,7 +26,11 @@
         settleMethod: 'cash',
         detailModalOpen: false,
         detailData: {},
+        checkInModalOpen: false,
+        activeMenu: null,
+        menuStyle: '',
         openSettleModal(booking) {
+            this.activeMenu = null;
             this.settleBookingId = booking.id;
             this.settleBookingCode = booking.booking_code;
             this.settleCustomer = booking.customer_name;
@@ -38,8 +42,30 @@
             this.settleModalOpen = true;
         },
         openDetailModal(booking) {
+            this.activeMenu = null;
             this.detailData = booking;
             this.detailModalOpen = true;
+        },
+        toggleActionMenu(event, data) {
+            if (this.activeMenu && this.activeMenu.id === data.id) {
+                this.activeMenu = null;
+                return;
+            }
+            const rect = event.currentTarget.getBoundingClientRect();
+            const top = Math.min(rect.bottom + 6, window.innerHeight - 180);
+            const right = Math.max(16, window.innerWidth - rect.right);
+            this.menuStyle = `top: ${top}px; right: ${right}px;`;
+            this.activeMenu = data;
+        },
+        rejectBooking(id) {
+            this.activeMenu = null;
+            const reason = prompt('Masukkan alasan penolakan booking:');
+            if (!reason) return;
+            const form = document.getElementById('reject-form-' + id);
+            if (form) {
+                form.querySelector('input[name=reason]').value = reason;
+                form.submit();
+            }
         },
         formatRupiah(num) {
             return new Intl.NumberFormat('id-ID').format(num);
@@ -129,6 +155,15 @@
                         {{ $venue->name }}
                     </div>
                     @endif
+
+                    <button
+                        type="button"
+                        @click="checkInModalOpen = true"
+                        class="flex items-center gap-1.5 bg-[#0f2444] hover:bg-[#f37920] text-white font-bold text-xs px-3.5 py-2 rounded-xl transition-colors shadow-xs cursor-pointer"
+                    >
+                        <span class="material-symbols-outlined text-[16px]">qr_code_scanner</span>
+                        <span class="hidden sm:inline">Validasi Check-In</span>
+                    </button>
 
                     <a href="{{ route('operator.booking.export', ['search' => $search, 'status' => $activeFilter, 'venue_id' => $venue->id]) }}" class="flex items-center gap-2 border border-surface-container-high text-on-surface font-semibold text-xs px-3.5 py-2 rounded-xl hover:bg-surface-container-low transition-all">
                         <span class="material-symbols-outlined text-[16px]">download</span>
@@ -228,6 +263,9 @@
                                         'payment_method' => $initialMethodLabel,
                                         'settlement_method' => $settlementMethodLabel,
                                         'status_label' => $b->status->label(),
+                                        'checked_in_at' => $b->checked_in_at ? $b->checked_in_at->format('d M Y H:i') : null,
+                                        'checkin_token' => $b->checkin_token,
+                                        'can_checkin' => in_array($b->status->value, ['paid_in_full', 'confirmed']) && $b->checked_in_at === null,
                                         'notes' => $b->notes ?? '-',
                                         'proof_url' => $initialPayment?->proof_path ? route('booking.proof', $b->id) : null,
                                     ];
@@ -269,6 +307,11 @@
                                             <span class="inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 text-xs font-bold px-2.5 py-1 rounded-full border border-emerald-200">
                                                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Lunas
                                             </span>
+                                            @if($b->checked_in_at)
+                                                <span class="inline-flex items-center gap-1 bg-blue-50 text-blue-700 text-[10px] font-bold px-2 py-0.5 rounded-full border border-blue-200 ml-1">
+                                                    Check-In
+                                                </span>
+                                            @endif
                                             @if($b->settledBy)
                                                 <p class="text-[10px] text-slate-500 mt-0.5">Kasir: {{ $b->settledBy->name }} ({{ strtoupper($b->settlement_method ?? 'CASH') }})</p>
                                             @endif
@@ -288,56 +331,61 @@
                                         @endif
                                     </td>
                                     <td class="px-5 py-3.5 whitespace-nowrap text-right">
-                                        <div class="inline-flex items-center justify-end gap-1.5">
-                                            {{-- Tombol Pelunasan On-site untuk Kasir --}}
+                                        <div class="inline-flex items-center justify-end gap-1">
+                                            {{-- 1 Tombol Aksi Utama (Compact) --}}
                                             @if($b->canBeSettled() || $isDpPaid)
+                                                <button
+                                                    type="button"
+                                                    @click="openSettleModal({
+                                                        id: {{ $b->id }},
+                                                        booking_code: '{{ $b->booking_code }}',
+                                                        customer_name: '{{ addslashes($b->customer_name) }}',
+                                                        court_name: '{{ addslashes($courtName) }}',
+                                                        total_amount: {{ (int)$b->total_amount }},
+                                                        paid_amount: {{ (int)$b->paid_amount }},
+                                                        remaining_amount: {{ (int)$b->remaining_amount }}
+                                                    })"
+                                                    class="inline-flex items-center gap-1 text-[11px] font-bold bg-amber-600 text-white px-2.5 py-1 rounded-md hover:bg-amber-700 transition-colors cursor-pointer"
+                                                >
+                                                    Pelunasan
+                                                </button>
+                                            @elseif(in_array($b->status->value, ['pending', 'pending_payment']))
+                                                <form action="{{ route('operator.booking.confirm', $b->id) }}" method="POST" onsubmit="return confirm('Konfirmasi dan kunci booking ini?')">
+                                                    @csrf
+                                                    <button type="submit" class="inline-flex items-center gap-1 text-[11px] font-bold bg-[#0f2444] text-white px-2.5 py-1 rounded-md hover:bg-[#f37920] transition-colors cursor-pointer">
+                                                        Konfirmasi
+                                                    </button>
+                                                </form>
+                                                <form id="reject-form-{{ $b->id }}" action="{{ route('operator.booking.reject', $b->id) }}" method="POST" class="hidden">
+                                                    @csrf
+                                                    <input type="hidden" name="reason" value="">
+                                                </form>
+                                            @else
+                                                <button
+                                                    type="button"
+                                                    @click="openDetailModal({{ \Illuminate\Support\Js::from($detailPayload) }})"
+                                                    class="inline-flex items-center gap-1 text-[11px] font-semibold text-[#0f2444] hover:text-[#f37920] px-2 py-1 rounded-md hover:bg-slate-100 transition-colors cursor-pointer"
+                                                >
+                                                    Detail
+                                                </button>
+                                            @endif
+
+                                            {{-- Titik Tiga (⋮) tanpa container box --}}
                                             <button
                                                 type="button"
-                                                @click="openSettleModal({
+                                                @click.stop="toggleActionMenu($event, {
                                                     id: {{ $b->id }},
-                                                    booking_code: '{{ $b->booking_code }}',
-                                                    customer_name: '{{ addslashes($b->customer_name) }}',
-                                                    court_name: '{{ addslashes($courtName) }}',
-                                                    total_amount: {{ (int)$b->total_amount }},
-                                                    paid_amount: {{ (int)$b->paid_amount }},
-                                                    remaining_amount: {{ (int)$b->remaining_amount }}
+                                                    is_pending: {{ in_array($b->status->value, ['pending', 'pending_payment']) ? 'true' : 'false' }},
+                                                    can_checkin: {{ $detailPayload['can_checkin'] ? 'true' : 'false' }},
+                                                    checkin_token: {{ \Illuminate\Support\Js::from($b->checkin_token) }},
+                                                    proof_url: {{ \Illuminate\Support\Js::from($detailPayload['proof_url']) }},
+                                                    detail: {{ \Illuminate\Support\Js::from($detailPayload) }}
                                                 })"
-                                                class="inline-flex items-center gap-1 text-xs font-bold bg-amber-600 text-white px-2.5 py-1.5 rounded-lg hover:bg-amber-700 shadow-xs transition-colors cursor-pointer"
+                                                class="p-1 text-slate-500 hover:text-[#0f2444] rounded-md hover:bg-slate-100 transition-colors cursor-pointer"
+                                                title="Aksi lainnya"
+                                                aria-label="Menu Aksi"
                                             >
-                                                <span class="material-symbols-outlined text-[14px]">point_of_sale</span>
-                                                Pelunasan Kasir
-                                            </button>
-                                            @endif
-
-                                            {{-- Konfirmasi / Tolak Verifikasi Bukti --}}
-                                            @if(in_array($b->status->value, ['pending', 'pending_payment']))
-                                            <form action="{{ route('operator.booking.confirm', $b->id) }}" method="POST" onsubmit="return confirm('Konfirmasi dan kunci booking ini?')">
-                                                @csrf
-                                                <button type="submit" class="text-xs font-bold bg-[#0f2444] text-white px-2.5 py-1.5 rounded-lg hover:bg-[#f37920] transition-colors cursor-pointer">
-                                                    Konfirmasi
-                                                </button>
-                                            </form>
-                                            <form action="{{ route('operator.booking.reject', $b->id) }}" method="POST" onsubmit="var reason = prompt('Masukkan alasan penolakan booking:'); if (!reason) return false; this.querySelector('input[name=reason]').value = reason; return true;">
-                                                @csrf
-                                                <input type="hidden" name="reason" value="">
-                                                <button type="submit" class="text-xs font-semibold text-rose-600 border border-rose-200 px-2.5 py-1.5 rounded-lg hover:bg-rose-50 transition-colors cursor-pointer">
-                                                    Tolak
-                                                </button>
-                                            </form>
-                                            @endif
-
-                                            @if($b->payment?->proof_path)
-                                            <a href="{{ route('booking.proof', $b->id) }}" target="_blank" class="text-xs font-semibold text-[#0f2444] border border-slate-200 px-2.5 py-1.5 rounded-lg hover:bg-slate-100 transition-colors">
-                                                Bukti
-                                            </a>
-                                            @endif
-
-                                            <button
-                                                type="button"
-                                                @click="openDetailModal({{ \Illuminate\Support\Js::from($detailPayload) }})"
-                                                class="text-xs font-semibold text-slate-700 border border-slate-200 px-2.5 py-1.5 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer"
-                                            >
-                                                Detail
+                                                <span class="material-symbols-outlined text-[18px]">more_vert</span>
                                             </button>
                                         </div>
                                     </td>
@@ -558,6 +606,113 @@
                     Tutup
                 </button>
             </div>
+        </div>
+    </div>
+
+    {{-- ============ FLOATING ACTION DROPDOWN (⋮) ============ --}}
+    <div
+        x-show="activeMenu !== null"
+        @click.away="activeMenu = null"
+        @keydown.escape.window="activeMenu = null"
+        :style="menuStyle"
+        class="fixed z-50 w-48 bg-white rounded-xl shadow-xl border border-slate-200 py-1.5 text-xs"
+        style="display:none;"
+    >
+        <button
+            type="button"
+            @click="openDetailModal(activeMenu.detail)"
+            class="w-full px-3.5 py-2 text-left text-slate-700 hover:bg-slate-50 hover:text-[#0f2444] font-semibold flex items-center gap-2 cursor-pointer"
+        >
+            <span class="material-symbols-outlined text-[16px] text-slate-400">visibility</span>
+            Detail Booking
+        </button>
+
+        <template x-if="activeMenu && activeMenu.proof_url">
+            <a
+                :href="activeMenu.proof_url"
+                target="_blank"
+                @click="activeMenu = null"
+                class="w-full px-3.5 py-2 text-left text-[#0f2444] hover:bg-slate-50 font-semibold flex items-center gap-2"
+            >
+                <span class="material-symbols-outlined text-[16px] text-emerald-600">receipt</span>
+                Lihat Bukti Transfer
+            </a>
+        </template>
+
+        <template x-if="activeMenu && activeMenu.can_checkin">
+            <form action="{{ route('operator.booking.checkin') }}" method="POST">
+                @csrf
+                <input type="hidden" name="token" :value="activeMenu.checkin_token">
+                <button
+                    type="submit"
+                    class="w-full px-3.5 py-2 text-left text-emerald-700 hover:bg-emerald-50 font-semibold flex items-center gap-2 cursor-pointer"
+                >
+                    <span class="material-symbols-outlined text-[16px]">qr_code_scanner</span>
+                    Validasi Check-In
+                </button>
+            </form>
+        </template>
+
+        <template x-if="activeMenu && activeMenu.is_pending">
+            <button
+                type="button"
+                @click="rejectBooking(activeMenu.id)"
+                class="w-full px-3.5 py-2 text-left text-rose-600 hover:bg-rose-50 font-semibold flex items-center gap-2 cursor-pointer border-t border-slate-100 mt-1 pt-2"
+            >
+                <span class="material-symbols-outlined text-[16px]">cancel</span>
+                Tolak Booking
+            </button>
+        </template>
+    </div>
+
+    {{-- ============ MODAL VALIDASI CHECK-IN QR / TOKEN ============ --}}
+    <div
+        x-show="checkInModalOpen"
+        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs"
+        style="display:none;"
+    >
+        <div @click.away="checkInModalOpen = false" class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 flex flex-col gap-4">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-10 h-10 rounded-xl bg-[#0f2444] text-[#f8b710] flex items-center justify-center">
+                        <span class="material-symbols-outlined text-[22px]">qr_code_scanner</span>
+                    </div>
+                    <div>
+                        <h3 class="font-teko text-2xl font-bold uppercase tracking-wide text-[#0f2444] leading-none">Validasi Check-In</h3>
+                        <p class="text-xs text-slate-500">Scan QR E-Tiket atau masukkan Kode Booking / Token</p>
+                    </div>
+                </div>
+                <button type="button" @click="checkInModalOpen = false" class="text-slate-400 hover:text-slate-700 p-1 cursor-pointer">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+
+            <form action="{{ route('operator.booking.checkin') }}" method="POST" class="flex flex-col gap-4">
+                @csrf
+                <div class="flex flex-col gap-1.5">
+                    <label for="checkin_token_input" class="text-xs font-bold text-slate-700">Token Check-In / Kode Booking</label>
+                    <input
+                        type="text"
+                        id="checkin_token_input"
+                        name="token"
+                        required
+                        autofocus
+                        placeholder="Scan QR atau ketik LPN-2026-XXXX..."
+                        class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 font-mono text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#f8b710] focus:bg-white"
+                    >
+                    <p class="text-[11px] text-slate-500">Sistem akan memverifikasi bahwa booking sudah lunas &amp; sesuai dengan venue Anda.</p>
+                </div>
+
+                <div class="flex items-center justify-end gap-2 pt-1">
+                    <button type="button" @click="checkInModalOpen = false" class="px-4 py-2 text-xs font-bold bg-slate-100 text-slate-700 rounded-xl hover:bg-slate-200 transition-colors cursor-pointer">
+                        Batal
+                    </button>
+                    <button type="submit" class="px-5 py-2 text-xs font-bold bg-[#0f2444] hover:bg-[#f37920] text-white rounded-xl transition-colors cursor-pointer inline-flex items-center gap-1.5">
+                        <span class="material-symbols-outlined text-[16px]">verified</span>
+                        Validasi &amp; Check-In
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 

@@ -43,16 +43,22 @@
                 @endif
             </div>
 
-            {{-- Booking code --}}
-            <div class="bg-pitch-surface border border-pitch-light/30 rounded-2xl px-8 py-5 flex flex-col items-center gap-1 w-full">
-                <span class="text-xs font-semibold text-pitch-deep uppercase tracking-wider">Kode Booking</span>
-                <span class="font-headline text-3xl font-bold text-pitch-deep tracking-wider">{{ $booking->booking_code }}</span>
-                <div class="mt-2 text-center">
-                    <span class="text-[11px] text-on-surface-variant block">Token Check-In (Tunjukkan ke Petugas):</span>
-                    <span class="font-mono text-xs font-bold text-pitch-deep bg-surface-white px-3 py-1 rounded-md border border-pitch-light/30 break-all select-all inline-block mt-0.5">{{ $booking->checkin_token }}</span>
+            {{-- Booking code & Real QR Code --}}
+            <div class="bg-white border border-slate-200 rounded-2xl px-6 py-6 flex flex-col items-center gap-3 w-full shadow-xs">
+                <span class="text-xs font-bold text-[#0f2444] uppercase tracking-wider">Kode Booking</span>
+                <span class="font-teko text-4xl font-bold text-[#0f2444] tracking-wider leading-none">{{ $booking->booking_code }}</span>
+                <div
+                    class="p-2.5 bg-white rounded-xl border border-slate-200 shadow-xs mt-1"
+                    x-data="{ qrSvg: '' }"
+                    x-init="qrSvg = window.renderQrSvg ? window.renderQrSvg('{{ $booking->checkin_token }}', 148) : ''"
+                    x-html="qrSvg"
+                ></div>
+                <div class="text-center w-full">
+                    <span class="text-[11px] text-slate-500 block">Token Check-In (Tunjukkan ke Petugas):</span>
+                    <span class="font-mono text-xs font-bold text-[#0f2444] bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200 break-all select-all inline-block mt-1">{{ $booking->checkin_token }}</span>
                 </div>
-                <span class="text-xs text-pitch-emerald flex items-center gap-1 mt-2">
-                    <span class="material-symbols-outlined text-[13px]">verified</span>
+                <span class="text-xs text-emerald-700 font-semibold flex items-center gap-1 mt-1">
+                    <span class="material-symbols-outlined text-[14px]">verified</span>
                     Tersimpan otomatis di akun Anda
                 </span>
             </div>

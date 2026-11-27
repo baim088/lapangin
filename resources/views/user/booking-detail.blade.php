@@ -234,23 +234,22 @@
                             <span class="text-[10px] font-bold text-pitch-deep bg-pitch-surface px-2.5 py-1 rounded-full uppercase">Check-In</span>
                         </div>
 
-                        {{-- QR / Check-in Box representation --}}
-                        <div class="bg-surface-container-lowest border-2 border-dashed border-surface-container-high rounded-2xl p-6 flex flex-col items-center gap-3">
-                            <div class="w-36 h-36 bg-surface-white rounded-xl border border-surface-container-high p-3 flex items-center justify-center shadow-xs">
-                                <div class="w-full h-full grid grid-cols-7 gap-1">
-                                    @for($r = 0; $r < 7; $r++)
-                                        @for($c = 0; $c < 7; $c++)
-                                            @php
-                                                $isCorner = ($r < 2 && $c < 2) || ($r < 2 && $c > 4) || ($r > 4 && $c < 2);
-                                                $isDark = $isCorner || (($r + $c) % 2 === 0);
-                                            @endphp
-                                            <div class="{{ $isDark ? 'bg-pitch-deep' : 'bg-surface-white' }} rounded-[1px]"></div>
-                                        @endfor
-                                    @endfor
-                                </div>
-                            </div>
-                            <p class="text-xs text-on-surface-variant text-center">Tunjukkan kode QR atau token ini ke petugas lapangan saat check-in</p>
-                            <p class="font-mono text-xs font-bold text-pitch-deep bg-pitch-surface px-3 py-1.5 rounded-lg break-all text-center select-all border border-pitch-light/30">{{ $booking->checkin_token }}</p>
+                        {{-- Real Scannable QR Code & Check-In Token --}}
+                        <div class="bg-slate-50 border-2 border-dashed border-slate-200 rounded-2xl p-6 flex flex-col items-center gap-3">
+                            <div
+                                class="bg-white rounded-2xl border border-slate-200 p-3 flex items-center justify-center shadow-xs"
+                                x-data="{ qrSvg: '' }"
+                                x-init="qrSvg = window.renderQrSvg ? window.renderQrSvg('{{ $booking->checkin_token }}', 164) : ''"
+                                x-html="qrSvg"
+                            ></div>
+                            @if($booking->checked_in_at)
+                                <span class="inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-bold px-3 py-1 rounded-full">
+                                    <span class="material-symbols-outlined text-[14px]">verified</span>
+                                    Sudah Check-In ({{ $booking->checked_in_at->format('d M Y H:i') }})
+                                </span>
+                            @endif
+                            <p class="text-xs text-slate-600 text-center">Tunjukkan kode QR atau token ini ke petugas lapangan saat check-in</p>
+                            <p class="font-mono text-xs font-bold text-[#0f2444] bg-white px-3 py-1.5 rounded-lg break-all text-center select-all border border-slate-200">{{ $booking->checkin_token }}</p>
                         </div>
 
                         {{-- Actions --}}

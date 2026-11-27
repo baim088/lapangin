@@ -213,6 +213,50 @@ class OperatorController extends Controller
     }
 
     /**
+     * Validate e-ticket QR/token or booking code for customer check-in at the venue.
+     */
+    public function checkIn(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'token' => ['required', 'string', 'max:120'],
+        ]);
+
+        $token = trim($validated['token']);
+        ['accessibleVenues' => $accessibleVenues] = $this->resolveVenues($request->user());
+        $venueIds = $accessibleVenues->pluck('id')->all();
+
+        $booking = Booking::with(['items.court', 'venue'])
+            ->whereIn('venue_id', $venueIds)
+            ->where(function ($q) use ($token) {
+                $q->where('checkin_token', $token)
+                    ->orWhere('booking_code', $token);
+            })
+            ->first();
+
+        if (! $booking) {
+            return back()->withErrors(['checkin' => 'Token Check-In atau Kode Booking tidak ditemukan di venue Anda.']);
+        }
+
+        if (in_array($booking->status, [BookingStatus::Cancelled, BookingStatus::Expired, BookingStatus::Pending, BookingStatus::PendingPayment], true)) {
+            return back()->withErrors(['checkin' => "Booking #{$booking->booking_code} belum lunas / sudah dibatalkan, tidak dapat melakukan check-in."]);
+        }
+
+        if ($booking->status === BookingStatus::DpPaid && $booking->remaining_amount > 0) {
+            return back()->withErrors(['checkin' => "Booking #{$booking->booking_code} masih berstatus DP. Harap proses pelunasan Rp ".number_format($booking->remaining_amount, 0, ',', '.').' di kasir terlebih dahulu.']);
+        }
+
+        if ($booking->checked_in_at !== null) {
+            return back()->withErrors(['checkin' => "Booking #{$booking->booking_code} sudah melakukan check-in pada ".$booking->checked_in_at->format('d M Y H:i').'.']);
+        }
+
+        $booking->checked_in_at = Carbon::now();
+        $booking->checked_in_by = $request->user()->id;
+        $booking->save();
+
+        return back()->with('status', "Check-In berhasil! Booking #{$booking->booking_code} ({$booking->customer_name}) tervalidasi.");
+    }
+
+    /**
      * Operator confirms a pending booking for their venue only.
      */
     public function confirm(Booking $booking, Request $request): RedirectResponse
