@@ -249,6 +249,33 @@ class OperatorController extends Controller
             return back()->withErrors(['checkin' => "Booking #{$booking->booking_code} sudah melakukan check-in pada ".$booking->checked_in_at->format('d M Y H:i').'.']);
         }
 
+        // Validate check-in time window: allowed starting 1 hour before play time until session ends
+        $sortedItems = $booking->items->sortBy('start_time');
+        $firstItem = $sortedItems->first();
+        $lastItem = $sortedItems->last();
+
+        if ($firstItem && $lastItem) {
+            $now = Carbon::now();
+            $startDateTime = Carbon::parse($firstItem->booking_date)->setTimeFromTimeString($firstItem->start_time);
+            $endDateTime = Carbon::parse($lastItem->booking_date)->setTimeFromTimeString($lastItem->end_time);
+            if ($lastItem->end_time === '00:00:00') {
+                $endDateTime->addDay();
+            }
+
+            $earliestCheckIn = $startDateTime->copy()->subHour();
+            if ($now->lt($earliestCheckIn)) {
+                return back()->withErrors([
+                    'checkin' => "Belum waktunya check-in. Check-in booking #{$booking->booking_code} baru dibuka mulai ".$earliestCheckIn->translatedFormat('d M Y, H:i').' WIB (1 jam sebelum main).',
+                ]);
+            }
+
+            if ($now->gt($endDateTime)) {
+                return back()->withErrors([
+                    'checkin' => "Jadwal bermain untuk booking #{$booking->booking_code} sudah berakhir pada ".$endDateTime->translatedFormat('d M Y, H:i').' WIB.',
+                ]);
+            }
+        }
+
         $booking->checked_in_at = Carbon::now();
         $booking->checked_in_by = $request->user()->id;
         $booking->save();

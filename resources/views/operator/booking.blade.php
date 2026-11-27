@@ -700,7 +700,7 @@
                         placeholder="Scan QR atau ketik LPN-2026-XXXX..."
                         class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 font-mono text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#f8b710] focus:bg-white"
                     >
-                    <p class="text-[11px] text-slate-500">Sistem akan memverifikasi bahwa booking sudah lunas &amp; sesuai dengan venue Anda.</p>
+                    <p class="text-[11px] text-slate-500">Check-in dibuka mulai <strong>1 jam sebelum jadwal bermain</strong> untuk booking yang sudah lunas di venue Anda.</p>
                 </div>
 
                 <div class="flex items-center justify-end gap-2 pt-1">
