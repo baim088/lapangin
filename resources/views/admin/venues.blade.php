@@ -15,9 +15,12 @@
         <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'" class="fixed inset-y-0 left-0 z-50 w-64 bg-[#0f2444] flex flex-col transition-transform lg:translate-x-0 lg:static lg:z-auto">
             <div class="flex items-center gap-3 px-6 py-5 border-b border-surface-white/10">
                 <img src="{{ asset('images/logo-white.png') }}" alt="Lapangin" class="h-8 w-auto opacity-95">
-                <span class="text-[10px] font-bold text-action-orange uppercase tracking-widest">Super Admin</span>
+                <div>
+                    <span class="text-[10px] font-bold text-action-orange uppercase tracking-widest block">Super Admin</span>
+                </div>
             </div>
             <nav class="flex-1 px-4 py-4 overflow-y-auto">
+                <p class="text-[10px] text-surface-container-highest uppercase tracking-wider px-3 mb-2">Menu Utama</p>
                 <div class="flex flex-col gap-1">
                     @foreach([
                         ['dashboard', 'Dashboard', route('admin.dashboard'), false],
@@ -80,6 +83,33 @@
                     {{ $errors->first() }}
                 </div>
                 @endif
+
+                {{-- Search Bar Venue --}}
+                <div class="mb-5 bg-surface-white rounded-2xl border border-surface-container-high p-4 flex flex-wrap items-center justify-between gap-3">
+                    <form method="GET" action="{{ route('admin.venues') }}" class="flex flex-wrap items-center gap-2.5 flex-1 min-w-64">
+                        <div class="relative flex-1 min-w-56 max-w-lg">
+                            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px]">search</span>
+                            <input
+                                type="text"
+                                name="search"
+                                value="{{ $search ?? '' }}"
+                                placeholder="Cari nama venue, kota, alamat, telepon, atau owner..."
+                                class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-surface-container-high bg-surface-white text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-pitch-emerald"
+                            >
+                        </div>
+                        <button type="submit" class="px-4 py-2.5 rounded-xl bg-[#0f2444] hover:bg-[#f37920] text-white text-xs font-bold transition-colors">
+                            Cari
+                        </button>
+                        @if(!empty($search))
+                        <a href="{{ route('admin.venues') }}" class="px-3.5 py-2.5 rounded-xl border border-surface-container-high text-xs font-semibold text-on-surface-variant hover:bg-surface-container-low transition-colors">
+                            Reset
+                        </a>
+                        @endif
+                    </form>
+                    <span class="text-xs font-semibold text-pitch-deep bg-pitch-surface px-3 py-1.5 rounded-full border border-pitch-light/30">
+                        {{ $venues->count() }} Venue
+                    </span>
+                </div>
 
                 <div class="grid grid-cols-1 gap-5">
                     @forelse($venues as $venue)

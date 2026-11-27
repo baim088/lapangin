@@ -53,7 +53,7 @@
                     </div>
                     <div class="flex-1 min-w-0">
                         <p class="text-xs font-bold text-surface-white truncate">{{ auth()->user()->name }}</p>
-                        <p class="text-[10px] text-surface-container-highest truncate">Super Administrator</p>
+                        <p class="text-[10px] text-surface-container-highest truncate">{{ auth()->user()->email }}</p>
                     </div>
                 </div>
             </div>

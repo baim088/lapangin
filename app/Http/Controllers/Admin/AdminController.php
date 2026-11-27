@@ -272,11 +272,25 @@ class AdminController extends Controller
     }
 
     /**
-     * Display venue list for admin management.
+     * Display venue list for admin management with optional search filter.
      */
-    public function venues(): View
+    public function venues(Request $request): View
     {
-        $venues = Venue::withCount(['courts'])->with('owner')->get();
+        $search = trim((string) $request->query('search', ''));
+
+        $venuesQuery = Venue::withCount(['courts'])->with('owner');
+
+        if ($search !== '') {
+            $venuesQuery->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('city', 'like', "%{$search}%")
+                    ->orWhere('address', 'like', "%{$search}%")
+                    ->orWhere('phone', 'like', "%{$search}%")
+                    ->orWhereHas('owner', fn ($oq) => $oq->where('name', 'like', "%{$search}%"));
+            });
+        }
+
+        $venues = $venuesQuery->get();
 
         $venueStats = [];
         foreach ($venues as $v) {
@@ -306,7 +320,7 @@ class AdminController extends Controller
             ];
         }
 
-        return view('admin.venues', compact('venues', 'venueStats'));
+        return view('admin.venues', compact('venues', 'venueStats', 'search'));
     }
 
     /**
