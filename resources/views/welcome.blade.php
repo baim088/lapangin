@@ -42,7 +42,7 @@
 
 
                         <!-- Main Big Display Headline in Teko -->
-                        <h1 class="font-teko text-6xl sm:text-7xl lg:text-8xl text-white font-bold tracking-tight uppercase leading-[0.92]">
+                        <h1 class="font-teko text-6xl sm:text-7xl lg:text-7xl text-white font-bold tracking-tight uppercase leading-[0.92]">
                             AJAK TIM, <span class="text-[#f8b710]">PILIH JAM,</span><br>
                             LANGSUNG MAIN!
                         </h1>

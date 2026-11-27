@@ -24,10 +24,6 @@
             </a>
 
             <div class="relative z-10 flex flex-col gap-6">
-                <div class="inline-flex items-center gap-2 bg-[#f8b710]/15 border border-[#f8b710]/30 px-3.5 py-1.5 rounded-full w-fit">
-                    <span class="w-2 h-2 rounded-full bg-[#f8b710] animate-pulse"></span>
-                    <span class="text-xs font-bold text-[#f8b710] uppercase tracking-wider">Real-Time Booking System</span>
-                </div>
                 <h1 class="font-teko text-5xl xl:text-6xl text-white font-bold uppercase leading-[0.95] tracking-tight">
                     GABUNG &amp; BOOKING<br>
                     <span class="text-[#f8b710]">ARENA TERBAIK</span><br>
