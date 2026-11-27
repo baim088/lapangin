@@ -133,7 +133,7 @@ class ReportExportService
     }
 
     /**
-     * Render and download a formal text-based PDF report.
+     * Render and download a PDF report (text-based or corporate table layout).
      *
      * @param  array{title?: string, subtitle?: string, scope?: string, filter?: string, printed_by?: string, printed_at?: string}  $meta
      * @param  array<string, string>  $summary
@@ -144,7 +144,8 @@ class ReportExportService
         array $meta,
         array $summary,
         Collection $bookings,
-        bool $includeVenue = false
+        bool $includeVenue = false,
+        string $view = 'exports.report-table-pdf'
     ): Response {
         $entries = $bookings->map(function (Booking $booking) use ($includeVenue): array {
             $row = $this->formatBookingRow($booking);
@@ -155,10 +156,17 @@ class ReportExportService
             return $row;
         })->all();
 
-        $pdf = Pdf::loadView('exports.report-pdf', [
+        $logoDataUri = null;
+        $logoPath = public_path('images/logo.png');
+        if ($view === 'exports.report-table-pdf' && is_file($logoPath)) {
+            $logoDataUri = 'data:image/png;base64,'.base64_encode((string) file_get_contents($logoPath));
+        }
+
+        $pdf = Pdf::loadView($view, [
             'meta' => $meta,
             'summary' => $summary,
             'entries' => $entries,
+            'logoDataUri' => $logoDataUri,
         ])->setPaper('a4', 'portrait');
 
         return $pdf->download($filename);
