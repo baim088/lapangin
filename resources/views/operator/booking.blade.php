@@ -206,6 +206,11 @@
                                     $bookingDate = $b->items->first()?->booking_date ? \Carbon\Carbon::parse($b->items->first()->booking_date)->translatedFormat('d M Y') : '-';
                                     $times = $b->items->pluck('start_time')->map(fn($t) => substr($t, 0, 5))->join(', ');
                                     $isDpPaid = ($b->status->value === 'dp_paid');
+                                    $initialPayment = $b->payments->firstWhere('payment_type', '!=', 'settlement') ?? $b->payment;
+                                    $settlementPayment = $b->payments->firstWhere('payment_type', 'settlement');
+                                    $initialMethodLabel = $initialPayment?->payment_method?->label() ?? '-';
+                                    $settlementMethodLabel = $settlementPayment?->payment_method?->label()
+                                        ?? ($b->settlement_method ? (\App\Enums\PaymentMethod::tryFrom($b->settlement_method)?->label() ?? strtoupper($b->settlement_method)) : null);
                                     $detailPayload = [
                                         'booking_code' => $b->booking_code,
                                         'created_at' => $b->created_at->format('d M Y H:i'),
@@ -219,10 +224,12 @@
                                         'total_amount' => (int) $b->total_amount,
                                         'paid_amount' => (int) $b->paid_amount,
                                         'remaining_amount' => (int) $b->remaining_amount,
-                                        'payment_method' => strtoupper(str_replace('_', ' ', $b->payment?->payment_method?->value ?? '-')),
+                                        'payment_type_label' => $b->isDp() ? 'Down Payment (DP ' . $b->dp_percentage . '%)' : 'Bayar Lunas (100%)',
+                                        'payment_method' => $initialMethodLabel,
+                                        'settlement_method' => $settlementMethodLabel,
                                         'status_label' => $b->status->label(),
                                         'notes' => $b->notes ?? '-',
-                                        'proof_url' => $b->payment?->proof_path ? route('booking.proof', $b->id) : null,
+                                        'proof_url' => $initialPayment?->proof_path ? route('booking.proof', $b->id) : null,
                                     ];
                                 @endphp
                                 <tr class="hover:bg-slate-50/80 transition-colors">
@@ -244,13 +251,11 @@
                                     </td>
                                     <td class="px-5 py-3.5 whitespace-nowrap">
                                         <p class="font-bold text-slate-900">Rp {{ number_format($b->total_amount, 0, ',', '.') }}</p>
-                                        @if($b->isDp())
+                                        @if($b->isDp() && $b->remaining_amount > 0 && !in_array($b->status->value, ['paid_in_full', 'confirmed', 'done', 'completed']))
                                             <span class="inline-block text-[10px] bg-indigo-50 text-indigo-700 font-semibold px-1.5 py-0.5 rounded mt-0.5">
                                                 DP Masuk: Rp {{ number_format($b->paid_amount, 0, ',', '.') }}
                                             </span>
-                                            @if($b->remaining_amount > 0)
-                                                <p class="text-[11px] font-bold text-amber-700 mt-0.5">Sisa: Rp {{ number_format($b->remaining_amount, 0, ',', '.') }}</p>
-                                            @endif
+                                            <p class="text-[11px] font-bold text-amber-700 mt-0.5">Sisa: Rp {{ number_format($b->remaining_amount, 0, ',', '.') }}</p>
                                         @endif
                                     </td>
                                     <td class="px-5 py-3.5 whitespace-nowrap">
@@ -512,9 +517,19 @@
 
             <div class="bg-white border border-slate-200 rounded-xl p-4 text-xs flex flex-col gap-2">
                 <div class="flex justify-between">
-                    <span class="text-slate-500">Metode Pembayaran</span>
-                    <span class="font-bold text-slate-900" x-text="detailData.payment_method"></span>
+                    <span class="text-slate-500">Skema Pembayaran</span>
+                    <span class="font-bold text-slate-900" x-text="detailData.payment_type_label"></span>
                 </div>
+                <div class="flex justify-between">
+                    <span class="text-slate-500">Metode Bayar User (Booking)</span>
+                    <span class="font-bold text-[#0f2444]" x-text="detailData.payment_method"></span>
+                </div>
+                <template x-if="detailData.settlement_method">
+                    <div class="flex justify-between">
+                        <span class="text-slate-500">Metode Pelunasan Kasir</span>
+                        <span class="font-bold text-emerald-700" x-text="detailData.settlement_method"></span>
+                    </div>
+                </template>
                 <div class="flex justify-between">
                     <span class="text-slate-500">Total Tagihan</span>
                     <span class="font-bold text-slate-900" x-text="'Rp ' + formatRupiah(detailData.total_amount || 0)"></span>
