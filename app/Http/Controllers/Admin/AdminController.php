@@ -48,10 +48,14 @@ class AdminController extends Controller
 
         $recentUsers = User::latest()->take(5)->get();
 
-        $venues = Venue::withCount(['courts'])->with('owner')->get();
+        $allVenues = Venue::withCount(['courts'])->with('owner')->get();
+        $operatorCounts = User::whereNotNull('venue_id')
+            ->selectRaw('venue_id, COUNT(*) as total')
+            ->groupBy('venue_id')
+            ->pluck('total', 'venue_id');
 
         $venueStats = [];
-        foreach ($venues as $v) {
+        foreach ($allVenues as $v) {
             $venueBookingsCount = Booking::where('venue_id', $v->id)->count();
             $venueRevenue = (int) Booking::where('venue_id', $v->id)
                 ->whereIn('status', [
@@ -72,8 +76,14 @@ class AdminController extends Controller
             $venueStats[$v->id] = [
                 'bookings_count' => $venueBookingsCount,
                 'revenue' => $venueRevenue,
+                'operators_count' => (int) ($operatorCounts[$v->id] ?? 0),
             ];
         }
+
+        $venues = $allVenues
+            ->sortByDesc(fn (Venue $v) => $venueStats[$v->id]['revenue'] ?? 0)
+            ->take(5)
+            ->values();
 
         return view('admin.dashboard', compact(
             'totalVenues',

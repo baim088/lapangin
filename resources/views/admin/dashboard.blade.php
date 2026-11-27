@@ -131,56 +131,38 @@
                         </div>
                     </div>
 
-                    {{-- Venue Overview --}}
+                    {{-- Venue Overview (Top 5 by GMV) --}}
                     <div class="bg-surface-white rounded-2xl border border-surface-container-high flex flex-col">
                         <div class="flex items-center justify-between p-5 border-b border-surface-container-high">
-                            <h2 class="font-headline text-sm font-bold text-on-surface">Venue Overview</h2>
+                            <div>
+                                <h2 class="font-headline text-sm font-bold text-on-surface">Venue Overview (Top 5 GMV)</h2>
+                            </div>
                             <a href="{{ route('admin.venues') }}" class="text-xs text-pitch-deep font-semibold hover:underline flex items-center gap-1">
-                                Kelola <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+                                Kelola Semua ({{ $totalVenues }}) <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
                             </a>
                         </div>
-                        <div class="p-5 flex flex-col gap-4">
-                            @forelse($venues as $v)
-                            {{-- Venue card --}}
-                            <div class="p-4 bg-surface-container-low rounded-xl border border-surface-container-high flex flex-col gap-4">
-                                <div class="flex items-center justify-between">
-                                    <div>
-                                        <h3 class="text-sm font-bold text-on-surface">{{ $v->name }}</h3>
-                                        <p class="text-xs text-on-surface-variant">{{ $v->city ?? $v->address }}</p>
-                                    </div>
-                                    <span class="text-[10px] font-bold bg-pitch-surface text-pitch-deep px-2.5 py-1 rounded-full flex items-center gap-1">
+                        <div class="flex flex-col divide-y divide-surface-container-high">
+                            @forelse($venues as $idx => $v)
+                            <div class="flex items-center gap-4 px-5 py-3.5 hover:bg-surface-container-low transition-colors">
+                                <div class="w-9 h-9 rounded-full {{ $idx === 0 ? 'bg-[#f8b710]/20 text-[#0f2444]' : 'bg-pitch-surface text-pitch-deep' }} flex items-center justify-center shrink-0">
+                                    <span class="font-bold text-xs">#{{ $idx + 1 }}</span>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-semibold text-on-surface truncate">{{ $v->name }}</p>
+                                    <p class="text-xs text-on-surface-variant truncate">
+                                        {{ $v->city ?? $v->address }} · {{ $v->courts_count }} Lapangan · {{ $venueStats[$v->id]['bookings_count'] ?? 0 }} Booking · {{ $venueStats[$v->id]['operators_count'] ?? 0 }} Operator
+                                    </p>
+                                </div>
+                                <div class="text-right shrink-0">
+                                    <p class="text-xs font-bold text-[#0f2444]">Rp {{ number_format($venueStats[$v->id]['revenue'] ?? 0, 0, ',', '.') }}</p>
+                                    <span class="inline-flex items-center gap-1 text-[10px] font-bold text-pitch-deep mt-0.5">
                                         <span class="w-1.5 h-1.5 rounded-full bg-pitch-emerald"></span> Aktif
                                     </span>
                                 </div>
-                                <div class="grid grid-cols-3 gap-3 text-center">
-                                    <div class="bg-surface-white rounded-lg p-3">
-                                        <div class="font-headline text-lg font-bold text-on-surface">{{ $v->courts_count }}</div>
-                                        <div class="text-[10px] text-on-surface-variant mt-0.5">Lapangan</div>
-                                    </div>
-                                    <div class="bg-surface-white rounded-lg p-3">
-                                        <div class="font-headline text-lg font-bold text-on-surface">{{ \App\Models\User::where('venue_id', $v->id)->count() }}</div>
-                                        <div class="text-[10px] text-on-surface-variant mt-0.5">Operator</div>
-                                    </div>
-                                    <div class="bg-surface-white rounded-lg p-3">
-                                        <div class="font-headline text-lg font-bold text-on-surface">{{ $venueStats[$v->id]['bookings_count'] ?? 0 }}</div>
-                                        <div class="text-[10px] text-on-surface-variant mt-0.5">Booking</div>
-                                    </div>
-                                </div>
-                                <div class="flex flex-col gap-1.5">
-                                    <div class="flex items-center justify-between text-xs">
-                                        <span class="text-on-surface-variant">Total GMV</span>
-                                        <span class="font-bold text-on-surface">Rp {{ number_format($venueStats[$v->id]['revenue'] ?? 0, 0, ',', '.') }}</span>
-                                    </div>
-                                </div>
                             </div>
                             @empty
-                            <p class="text-xs text-on-surface-variant text-center">Belum ada venue terdaftar.</p>
+                            <p class="p-5 text-xs text-on-surface-variant text-center">Belum ada venue terdaftar.</p>
                             @endforelse
-
-                            <a href="{{ route('admin.venues') }}" class="flex items-center justify-center gap-2 border-2 border-dashed border-surface-container-high rounded-xl p-4 text-sm text-on-surface-variant hover:border-pitch-light/40 hover:text-pitch-deep hover:bg-pitch-surface transition-all">
-                                <span class="material-symbols-outlined text-[20px]">domain</span>
-                                Kelola Seluruh Venue
-                            </a>
                         </div>
                     </div>
                 </div>
