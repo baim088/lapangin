@@ -90,12 +90,6 @@
                         <p class="text-xs text-on-surface-variant">Lacak status booking dan arus masuk transaksi dari seluruh venue Anda</p>
                     </div>
                 </div>
-                <div>
-                    <a href="{{ route('owner.booking.export', ['venue_id' => $selectedVenueId]) }}" class="flex items-center gap-2 border border-surface-container-high text-on-surface font-semibold text-xs px-3.5 py-2 rounded-xl hover:bg-surface-container-low transition-all">
-                        <span class="material-symbols-outlined text-[16px]">download</span>
-                        Ekspor CSV
-                    </a>
-                </div>
             </header>
 
             {{-- Page Content --}}
@@ -134,19 +128,26 @@
                         </div>
                     </form>
 
-                    {{-- Search Input --}}
-                    <form method="GET" action="{{ route('owner.booking') }}" class="w-full lg:w-72 relative">
-                        <input type="hidden" name="venue_id" value="{{ $selectedVenueId }}">
-                        <input type="hidden" name="status" value="{{ $activeFilter }}">
-                        <input
-                            type="text"
-                            name="search"
-                            value="{{ $search }}"
-                            placeholder="Cari Kode, Nama, No WA..."
-                            class="w-full text-xs border border-surface-container-high rounded-xl pl-9 pr-4 py-2.5 bg-surface-white text-on-surface focus:ring-2 focus:ring-action-orange"
-                        >
-                        <span class="material-symbols-outlined text-surface-container-highest text-[18px] absolute left-3 top-2.5">search</span>
-                    </form>
+                    {{-- Search Input & Export --}}
+                    <div class="flex flex-wrap items-center gap-2.5 w-full lg:w-auto">
+                        <form method="GET" action="{{ route('owner.booking') }}" class="flex-1 lg:w-72 relative">
+                            <input type="hidden" name="venue_id" value="{{ $selectedVenueId }}">
+                            <input type="hidden" name="status" value="{{ $activeFilter }}">
+                            <input
+                                type="text"
+                                name="search"
+                                value="{{ $search }}"
+                                placeholder="Cari Kode, Nama, No WA..."
+                                class="w-full text-xs border border-surface-container-high rounded-xl pl-9 pr-4 py-2.5 bg-surface-white text-on-surface focus:ring-2 focus:ring-action-orange"
+                            >
+                            <span class="material-symbols-outlined text-surface-container-highest text-[18px] absolute left-3 top-2.5">search</span>
+                        </form>
+
+                        <x-export-dropdown
+                            :csv-url="route('owner.booking.export', ['venue_id' => $selectedVenueId, 'status' => $activeFilter, 'search' => $search, 'format' => 'csv'])"
+                            :pdf-url="route('owner.booking.export', ['venue_id' => $selectedVenueId, 'status' => $activeFilter, 'search' => $search, 'format' => 'pdf'])"
+                        />
+                    </div>
                 </div>
 
                 {{-- Bookings Table --}}

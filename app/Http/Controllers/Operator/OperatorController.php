@@ -20,9 +20,11 @@ use App\Models\User;
 use App\Models\Venue;
 use App\Services\BookingService;
 use App\Services\ExpireStaleBookings;
+use App\Services\ReportExportService;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
@@ -33,6 +35,7 @@ class OperatorController extends Controller
     public function __construct(
         protected BookingService $bookingService,
         protected ExpireStaleBookings $expireStaleBookings,
+        protected ReportExportService $reportExportService,
     ) {}
 
     /**
@@ -488,20 +491,30 @@ class OperatorController extends Controller
     }
 
     /**
-     * Export filtered bookings to CSV for their venue only.
+     * Export filtered bookings to CSV or formal text-based PDF for their venue only.
      */
-    public function exportCsv(Request $request): StreamedResponse
+    public function exportCsv(Request $request): StreamedResponse|Response
     {
-        ['activeVenue' => $venue] = $this->resolveVenues($request->user());
+        $user = $request->user();
+        ['activeVenue' => $venue] = $this->resolveVenues($user);
 
-        $search = $request->query('search', '');
-        $activeFilter = $request->query('status', 'all');
+        $search = (string) $request->query('search', '');
+        $activeFilter = (string) $request->query('status', 'all');
+        $format = strtolower((string) $request->query('format', 'csv'));
 
-        $query = Booking::with(['items.court', 'payment', 'payments', 'settledBy'])
+        $query = Booking::with(['venue', 'items.court', 'payment', 'payments', 'settledBy'])
             ->where('venue_id', $venue->id);
 
         if ($activeFilter !== 'all' && ! empty($activeFilter)) {
-            $query->where('status', $activeFilter);
+            if ($activeFilter === 'pending') {
+                $query->whereIn('status', [BookingStatus::Pending, BookingStatus::PendingPayment]);
+            } elseif ($activeFilter === 'confirmed') {
+                $query->whereIn('status', [BookingStatus::Confirmed, BookingStatus::PaidInFull]);
+            } elseif ($activeFilter === 'done') {
+                $query->whereIn('status', [BookingStatus::Done, BookingStatus::Completed]);
+            } else {
+                $query->where('status', $activeFilter);
+            }
         }
 
         if (! empty($search)) {
@@ -513,43 +526,123 @@ class OperatorController extends Controller
         }
 
         $bookings = $query->latest()->get();
+        $timestamp = now()->format('Ymd-His');
 
-        $headers = [
-            'Content-Type' => 'text/csv',
-            'Content-Disposition' => 'attachment; filename="kasir-booking-'.now()->format('Ymd-His').'.csv"',
-        ];
-
-        $callback = function () use ($bookings) {
-            $handle = fopen('php://output', 'w');
-            fputcsv($handle, ['Kode Booking', 'Nama Pemesan', 'Nomor WhatsApp', 'Email', 'Lapangan', 'Tanggal Main', 'Jam Main', 'Total (Rp)', 'Uang Muka/DP (Rp)', 'Sisa (Rp)', 'Status', 'Metode Bayar', 'Waktu Dibuat']);
-
-            foreach ($bookings as $b) {
-                $courtName = $b->items->first()?->court?->name ?? 'Lapangan';
-                $bookingDate = $b->items->first()?->booking_date ?? '-';
-                $times = $b->items->pluck('start_time')->map(fn ($t) => substr($t, 0, 5))->join(', ');
-                $method = $b->payment?->payment_method?->label() ?? ($b->payment?->payment_method?->value ?? '-');
-
-                fputcsv($handle, [
-                    $b->booking_code,
-                    $b->customer_name,
-                    $b->customer_phone,
-                    $b->customer_email,
-                    $courtName,
-                    $bookingDate,
-                    $times,
-                    $b->total_amount,
-                    $b->paid_amount,
-                    $b->remaining_amount,
-                    $b->status->label(),
-                    $method,
-                    $b->created_at->format('Y-m-d H:i:s'),
-                ]);
+        if ($format === 'pdf') {
+            $filterParts = ['Status: '.($activeFilter === 'all' ? 'Semua' : strtoupper($activeFilter))];
+            if ($search !== '') {
+                $filterParts[] = 'Pencarian: "'.$search.'"';
             }
 
-            fclose($handle);
-        };
+            return $this->reportExportService->exportBookingsPdf(
+                "operator-booking-{$timestamp}.pdf",
+                [
+                    'title' => 'Laporan Daftar Transaksi Booking',
+                    'subtitle' => 'Data reservasi operasional kasir / operator venue',
+                    'scope' => $venue->name,
+                    'filter' => implode(' | ', $filterParts),
+                    'printed_by' => $user->name.' ('.$user->role->label().')',
+                    'printed_at' => now()->translatedFormat('d M Y H:i'),
+                ],
+                $this->reportExportService->buildSummary($bookings),
+                $bookings,
+                false
+            );
+        }
 
-        return response()->stream($callback, 200, $headers);
+        return $this->reportExportService->exportBookingsCsv(
+            "kasir-booking-{$timestamp}.csv",
+            $bookings,
+            false
+        );
+    }
+
+    /**
+     * Export operator financial report for their venue as CSV or formal text-based PDF.
+     */
+    public function exportLaporan(Request $request): StreamedResponse|Response
+    {
+        $user = $request->user();
+        ['activeVenue' => $venue] = $this->resolveVenues($user);
+
+        [
+            'startDate' => $startDate,
+            'endDate' => $endDate,
+            'periodLabel' => $periodLabel,
+        ] = $this->reportExportService->resolvePeriod($request);
+
+        $format = strtolower((string) $request->query('format', 'csv'));
+        $targetVenueIds = [$venue->id];
+
+        $grossRevenue = (int) Booking::whereIn('venue_id', $targetVenueIds)
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->whereNotIn('status', [BookingStatus::Cancelled, BookingStatus::Expired])
+            ->sum('total_amount');
+
+        $dpIncome = (int) Payment::whereHas('booking', fn ($q) => $q->whereIn('venue_id', $targetVenueIds))
+            ->where('payment_type', 'dp')
+            ->where('status', PaymentStatus::Paid)
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->sum('amount');
+
+        $settlementIncome = (int) Payment::whereHas('booking', fn ($q) => $q->whereIn('venue_id', $targetVenueIds))
+            ->where('payment_type', 'settlement')
+            ->where('status', PaymentStatus::Paid)
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->sum('amount');
+
+        $fullPaymentIncome = (int) Payment::whereHas('booking', fn ($q) => $q->whereIn('venue_id', $targetVenueIds))
+            ->where('payment_type', 'full')
+            ->where('status', PaymentStatus::Paid)
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->sum('amount');
+
+        $totalCashIn = $dpIncome + $settlementIncome + $fullPaymentIncome;
+
+        $receivables = (int) Booking::whereIn('venue_id', $targetVenueIds)
+            ->where('status', BookingStatus::DpPaid)
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->sum('remaining_amount');
+
+        $bookings = Booking::with(['venue', 'items.court', 'user', 'payment', 'payments', 'settledBy'])
+            ->whereIn('venue_id', $targetVenueIds)
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->latest()
+            ->get();
+
+        $timestamp = now()->format('Ymd-His');
+
+        if ($format === 'pdf') {
+            $summary = $this->reportExportService->buildSummary($bookings, [
+                'grossRevenue' => $grossRevenue,
+                'dpIncome' => $dpIncome,
+                'settlementIncome' => $settlementIncome,
+                'fullPaymentIncome' => $fullPaymentIncome,
+                'totalCashIn' => $totalCashIn,
+                'receivables' => $receivables,
+            ]);
+
+            return $this->reportExportService->exportBookingsPdf(
+                "operator-laporan-keuangan-{$timestamp}.pdf",
+                [
+                    'title' => 'Laporan Keuangan & Kas Venue',
+                    'subtitle' => 'Rekapitulasi gross revenue, DP, pelunasan on-site, dan piutang',
+                    'scope' => $venue->name,
+                    'filter' => $periodLabel,
+                    'printed_by' => $user->name.' ('.$user->role->label().')',
+                    'printed_at' => now()->translatedFormat('d M Y H:i'),
+                ],
+                $summary,
+                $bookings,
+                false
+            );
+        }
+
+        return $this->reportExportService->exportBookingsCsv(
+            "operator-laporan-keuangan-{$timestamp}.csv",
+            $bookings,
+            false
+        );
     }
 
     /**

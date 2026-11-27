@@ -65,6 +65,7 @@ Route::prefix('operator')->name('operator.')->middleware(['role:operator,super_a
     Route::post('/booking/{booking}/settle', [OperatorController::class, 'settle'])->name('booking.settle');
 
     Route::get('/laporan', [OperatorController::class, 'laporan'])->name('laporan');
+    Route::get('/laporan/export', [OperatorController::class, 'exportLaporan'])->name('laporan.export');
 
     Route::get('/jadwal', [OperatorController::class, 'jadwal'])->name('jadwal');
     Route::post('/jadwal/block', [OperatorController::class, 'blockSlot'])->name('jadwal.block');
@@ -80,6 +81,7 @@ Route::prefix('operator')->name('operator.')->middleware(['role:operator,super_a
 Route::prefix('owner')->name('owner.')->middleware(['role:owner,super_admin'])->group(function () {
     Route::get('/dashboard', [OwnerController::class, 'dashboard'])->name('dashboard');
     Route::get('/laporan', [OwnerController::class, 'laporan'])->name('laporan');
+    Route::get('/laporan/export', [OwnerController::class, 'exportLaporan'])->name('laporan.export');
     Route::get('/booking', [OwnerController::class, 'bookingList'])->name('booking');
     Route::get('/booking/export', [OwnerController::class, 'exportCsv'])->name('booking.export');
     Route::get('/lapangan', [OwnerController::class, 'lapangan'])->name('lapangan');
@@ -89,6 +91,7 @@ Route::prefix('owner')->name('owner.')->middleware(['role:owner,super_admin'])->
 Route::prefix('admin')->name('admin.')->middleware(['role:super_admin'])->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
     Route::get('/laporan', [AdminController::class, 'laporan'])->name('laporan');
+    Route::get('/laporan/export', [AdminController::class, 'exportLaporan'])->name('laporan.export');
 
     Route::get('/venues', [AdminController::class, 'venues'])->name('venues');
     Route::put('/venues/{venue}', [AdminController::class, 'updateVenue'])->name('venues.update');

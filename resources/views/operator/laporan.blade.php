@@ -229,15 +229,21 @@
                 </div>
 
                 {{-- Table Rincian Transaksi --}}
-                <div class="bg-surface-white rounded-2xl border border-surface-container-high overflow-hidden shadow-xs">
-                    <div class="p-5 border-b border-surface-container-high flex items-center justify-between">
+                <div class="bg-surface-white rounded-2xl border border-surface-container-high shadow-xs">
+                    <div class="p-5 border-b border-surface-container-high flex flex-wrap items-center justify-between gap-3">
                         <div>
                             <h3 class="font-headline text-base font-bold text-on-surface">Rincian Transaksi Keuangan</h3>
                             <p class="text-xs text-on-surface-variant">Daftar booking pada {{ $periodLabel }}</p>
                         </div>
-                        <span class="text-xs font-semibold text-pitch-deep bg-pitch-surface px-3 py-1 rounded-full border border-pitch-light/30">
-                            {{ $reportBookings->total() }} Transaksi
-                        </span>
+                        <div class="flex items-center gap-2.5">
+                            <span class="text-xs font-semibold text-pitch-deep bg-pitch-surface px-3 py-1 rounded-full border border-pitch-light/30">
+                                {{ $reportBookings->total() }} Transaksi
+                            </span>
+                            <x-export-dropdown
+                                :csv-url="route('operator.laporan.export', ['period' => $period, 'venue_id' => $venue->id, 'start_date' => request('start_date', $startDate->toDateString()), 'end_date' => request('end_date', $endDate->toDateString()), 'format' => 'csv'])"
+                                :pdf-url="route('operator.laporan.export', ['period' => $period, 'venue_id' => $venue->id, 'start_date' => request('start_date', $startDate->toDateString()), 'end_date' => request('end_date', $endDate->toDateString()), 'format' => 'pdf'])"
+                            />
+                        </div>
                     </div>
 
                     <div class="overflow-x-auto">

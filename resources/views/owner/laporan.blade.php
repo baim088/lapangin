@@ -90,12 +90,6 @@
                         <p class="text-xs text-on-surface-variant">Transparansi arus kas riil, DP masuk, pelunasan di lokasi, dan sisa piutang</p>
                     </div>
                 </div>
-                <div class="flex items-center gap-3">
-                    <a href="{{ route('owner.booking.export', ['venue_id' => $selectedVenueId]) }}" class="flex items-center gap-2 border border-surface-container-high text-on-surface font-semibold text-xs px-3.5 py-2 rounded-xl hover:bg-surface-container-low transition-all">
-                        <span class="material-symbols-outlined text-[16px]">download</span>
-                        Ekspor CSV
-                    </a>
-                </div>
             </header>
 
             {{-- Page Content --}}
@@ -274,12 +268,16 @@
                 {{-- ======================================================== --}}
                 {{-- 3. DETAILED TRANSACTIONS TABLE --}}
                 {{-- ======================================================== --}}
-                <div class="bg-surface-white rounded-2xl border border-surface-container-high shadow-xs overflow-hidden flex flex-col">
-                    <div class="p-5 border-b border-surface-container-high flex items-center justify-between">
+                <div class="bg-surface-white rounded-2xl border border-surface-container-high shadow-xs flex flex-col">
+                    <div class="p-5 border-b border-surface-container-high flex flex-wrap items-center justify-between gap-3">
                         <div>
                             <h2 class="font-headline text-base font-bold text-on-surface">Rincian Transaksi Booking Periode Ini</h2>
                             <p class="text-xs text-on-surface-variant">Audit trail pembayaran, petugas kasir pemroses, dan status pelunasan</p>
                         </div>
+                        <x-export-dropdown
+                            :csv-url="route('owner.laporan.export', ['venue_id' => $selectedVenueId, 'period' => $period, 'start_date' => request('start_date', $startDate->toDateString()), 'end_date' => request('end_date', $endDate->toDateString()), 'format' => 'csv'])"
+                            :pdf-url="route('owner.laporan.export', ['venue_id' => $selectedVenueId, 'period' => $period, 'start_date' => request('start_date', $startDate->toDateString()), 'end_date' => request('end_date', $endDate->toDateString()), 'format' => 'pdf'])"
+                        />
                     </div>
 
                     <div class="overflow-x-auto">

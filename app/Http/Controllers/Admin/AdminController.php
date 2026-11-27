@@ -13,13 +13,19 @@ use App\Models\Booking;
 use App\Models\Payment;
 use App\Models\User;
 use App\Models\Venue;
+use App\Services\ReportExportService;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class AdminController extends Controller
 {
+    public function __construct(
+        protected ReportExportService $reportExportService,
+    ) {}
     /**
      * Display Super Admin overview dashboard with global KPIs and platform health.
      */
@@ -173,6 +179,86 @@ class AdminController extends Controller
             'receivables',
             'reportBookings'
         ));
+    }
+
+    /**
+     * Export platform global financial report to CSV or formal text-based PDF.
+     */
+    public function exportLaporan(Request $request): StreamedResponse|Response
+    {
+        $user = $request->user();
+        $selectedVenueId = (string) $request->query('venue_id', 'all');
+        $format = strtolower((string) $request->query('format', 'csv'));
+
+        [
+            'startDate' => $startDate,
+            'endDate' => $endDate,
+            'periodLabel' => $periodLabel,
+        ] = $this->reportExportService->resolvePeriod($request);
+
+        $bookingQuery = Booking::query()->whereBetween('created_at', [$startDate, $endDate]);
+        $paymentQuery = Payment::query()->where('status', PaymentStatus::Paid)->whereBetween('created_at', [$startDate, $endDate]);
+
+        if ($selectedVenueId !== 'all' && is_numeric($selectedVenueId)) {
+            $bookingQuery->where('venue_id', (int) $selectedVenueId);
+            $paymentQuery->whereHas('booking', fn ($q) => $q->where('venue_id', (int) $selectedVenueId));
+        }
+
+        $grossRevenue = (int) (clone $bookingQuery)
+            ->whereNotIn('status', [BookingStatus::Cancelled, BookingStatus::Expired])
+            ->sum('total_amount');
+
+        $dpIncome = (int) (clone $paymentQuery)->where('payment_type', 'dp')->sum('amount');
+        $settlementIncome = (int) (clone $paymentQuery)->where('payment_type', 'settlement')->sum('amount');
+        $fullPaymentIncome = (int) (clone $paymentQuery)->where('payment_type', 'full')->sum('amount');
+        $totalCashIn = $dpIncome + $settlementIncome + $fullPaymentIncome;
+
+        $receivables = (int) (clone $bookingQuery)
+            ->where('status', BookingStatus::DpPaid)
+            ->sum('remaining_amount');
+
+        $bookings = (clone $bookingQuery)
+            ->with(['venue', 'items.court', 'user', 'payment', 'payments', 'settledBy'])
+            ->latest()
+            ->get();
+
+        $timestamp = now()->format('Ymd-His');
+
+        if ($format === 'pdf') {
+            $scopeLabel = ($selectedVenueId !== 'all' && is_numeric($selectedVenueId))
+                ? (Venue::find((int) $selectedVenueId)?->name ?? 'Venue Terpilih')
+                : 'Semua Venue (Global Platform)';
+
+            $summary = $this->reportExportService->buildSummary($bookings, [
+                'grossRevenue' => $grossRevenue,
+                'dpIncome' => $dpIncome,
+                'settlementIncome' => $settlementIncome,
+                'fullPaymentIncome' => $fullPaymentIncome,
+                'totalCashIn' => $totalCashIn,
+                'receivables' => $receivables,
+            ]);
+
+            return $this->reportExportService->exportBookingsPdf(
+                "admin-laporan-global-{$timestamp}.pdf",
+                [
+                    'title' => 'Rekapitulasi Keuangan Global Platform',
+                    'subtitle' => 'Monitoring transaksi multi-venue platform LapangIn',
+                    'scope' => $scopeLabel,
+                    'filter' => $periodLabel,
+                    'printed_by' => $user->name.' ('.$user->role->label().')',
+                    'printed_at' => now()->translatedFormat('d M Y H:i'),
+                ],
+                $summary,
+                $bookings,
+                true
+            );
+        }
+
+        return $this->reportExportService->exportBookingsCsv(
+            "admin-laporan-global-{$timestamp}.csv",
+            $bookings,
+            true
+        );
     }
 
     /**

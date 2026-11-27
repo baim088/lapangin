@@ -164,11 +164,6 @@
                         <span class="material-symbols-outlined text-[16px]">qr_code_scanner</span>
                         <span class="hidden sm:inline">Validasi Check-In</span>
                     </button>
-
-                    <a href="{{ route('operator.booking.export', ['search' => $search, 'status' => $activeFilter, 'venue_id' => $venue->id]) }}" class="flex items-center gap-2 border border-surface-container-high text-on-surface font-semibold text-xs px-3.5 py-2 rounded-xl hover:bg-surface-container-low transition-all">
-                        <span class="material-symbols-outlined text-[16px]">download</span>
-                        Export CSV
-                    </a>
                 </div>
             </header>
 
@@ -201,21 +196,28 @@
                         @endif
                     </form>
 
-                    {{-- Status filter --}}
-                    <div class="flex flex-wrap gap-1 bg-surface-container-low p-1 rounded-xl">
-                        @foreach([
-                            'all' => 'Semua',
-                            'dp_paid' => 'DP Terbayar',
-                            'confirmed' => 'Lunas',
-                            'pending' => 'Menunggu',
-                            'done' => 'Selesai',
-                            'cancelled' => 'Dibatalkan'
-                        ] as $key => $label)
-                        <a
-                            href="{{ route('operator.booking', ['status' => $key, 'search' => $search, 'venue_id' => $venue->id]) }}"
-                            class="text-xs px-3 py-1.5 rounded-lg transition-all font-medium {{ $activeFilter === $key ? 'bg-surface-white text-pitch-deep shadow-sm font-bold' : 'text-on-surface-variant hover:text-on-surface' }}"
-                        >{{ $label }}</a>
-                        @endforeach
+                    {{-- Status filter & Export --}}
+                    <div class="flex flex-wrap items-center gap-2.5">
+                        <div class="flex flex-wrap gap-1 bg-surface-container-low p-1 rounded-xl">
+                            @foreach([
+                                'all' => 'Semua',
+                                'dp_paid' => 'DP Terbayar',
+                                'confirmed' => 'Lunas',
+                                'pending' => 'Menunggu',
+                                'done' => 'Selesai',
+                                'cancelled' => 'Dibatalkan'
+                            ] as $key => $label)
+                            <a
+                                href="{{ route('operator.booking', ['status' => $key, 'search' => $search, 'venue_id' => $venue->id]) }}"
+                                class="text-xs px-3 py-1.5 rounded-lg transition-all font-medium {{ $activeFilter === $key ? 'bg-surface-white text-pitch-deep shadow-sm font-bold' : 'text-on-surface-variant hover:text-on-surface' }}"
+                            >{{ $label }}</a>
+                            @endforeach
+                        </div>
+
+                        <x-export-dropdown
+                            :csv-url="route('operator.booking.export', ['search' => $search, 'status' => $activeFilter, 'venue_id' => $venue->id, 'format' => 'csv'])"
+                            :pdf-url="route('operator.booking.export', ['search' => $search, 'status' => $activeFilter, 'venue_id' => $venue->id, 'format' => 'pdf'])"
+                        />
                     </div>
                 </div>
 
