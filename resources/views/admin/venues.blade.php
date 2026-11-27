@@ -107,7 +107,7 @@
                         @endif
                     </form>
                     <span class="text-xs font-semibold text-pitch-deep bg-pitch-surface px-3 py-1.5 rounded-full border border-pitch-light/30">
-                        {{ $venues->count() }} Venue
+                        {{ $venues->total() }} Venue
                     </span>
                 </div>
 
@@ -171,6 +171,12 @@
                     <p class="p-8 text-center text-xs text-on-surface-variant">Belum ada venue terdaftar.</p>
                     @endforelse
                 </div>
+
+                @if($venues->hasPages())
+                <div class="mt-6">
+                    {{ $venues->links() }}
+                </div>
+                @endif
             </main>
         </div>
     </div>

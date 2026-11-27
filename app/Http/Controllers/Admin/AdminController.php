@@ -49,32 +49,45 @@ class AdminController extends Controller
         $recentUsers = User::latest()->take(5)->get();
 
         $allVenues = Venue::withCount(['courts'])->with('owner')->get();
-        $operatorCounts = User::whereNotNull('venue_id')
+        $venueIds = $allVenues->pluck('id')->all();
+
+        $operatorCounts = User::whereIn('venue_id', $venueIds)
             ->selectRaw('venue_id, COUNT(*) as total')
+            ->groupBy('venue_id')
+            ->pluck('total', 'venue_id');
+
+        $bookingCountsByVenue = Booking::whereIn('venue_id', $venueIds)
+            ->selectRaw('venue_id, COUNT(*) as total')
+            ->groupBy('venue_id')
+            ->pluck('total', 'venue_id');
+
+        $paidRevenueByVenue = Booking::whereIn('venue_id', $venueIds)
+            ->whereIn('status', [
+                BookingStatus::Confirmed,
+                BookingStatus::PaidInFull,
+                BookingStatus::DpPaid,
+                BookingStatus::Done,
+                BookingStatus::Completed,
+            ])
+            ->selectRaw('venue_id, SUM(paid_amount) as total')
+            ->groupBy('venue_id')
+            ->pluck('total', 'venue_id');
+
+        $fallbackRevenueByVenue = Booking::whereIn('venue_id', $venueIds)
+            ->whereIn('status', [BookingStatus::Confirmed, BookingStatus::PaidInFull, BookingStatus::Done, BookingStatus::Completed])
+            ->selectRaw('venue_id, SUM(total_amount) as total')
             ->groupBy('venue_id')
             ->pluck('total', 'venue_id');
 
         $venueStats = [];
         foreach ($allVenues as $v) {
-            $venueBookingsCount = Booking::where('venue_id', $v->id)->count();
-            $venueRevenue = (int) Booking::where('venue_id', $v->id)
-                ->whereIn('status', [
-                    BookingStatus::Confirmed,
-                    BookingStatus::PaidInFull,
-                    BookingStatus::DpPaid,
-                    BookingStatus::Done,
-                    BookingStatus::Completed,
-                ])
-                ->sum('paid_amount');
-
+            $venueRevenue = (int) ($paidRevenueByVenue[$v->id] ?? 0);
             if ($venueRevenue === 0) {
-                $venueRevenue = (int) Booking::where('venue_id', $v->id)
-                    ->whereIn('status', [BookingStatus::Confirmed, BookingStatus::PaidInFull, BookingStatus::Done, BookingStatus::Completed])
-                    ->sum('total_amount');
+                $venueRevenue = (int) ($fallbackRevenueByVenue[$v->id] ?? 0);
             }
 
             $venueStats[$v->id] = [
-                'bookings_count' => $venueBookingsCount,
+                'bookings_count' => (int) ($bookingCountsByVenue[$v->id] ?? 0),
                 'revenue' => $venueRevenue,
                 'operators_count' => (int) ($operatorCounts[$v->id] ?? 0),
             ];
@@ -290,33 +303,48 @@ class AdminController extends Controller
             });
         }
 
-        $venues = $venuesQuery->get();
+        $venues = $venuesQuery->paginate(10)->withQueryString();
+        $venueIds = $venues->pluck('id')->all();
+
+        $bookingCountsByVenue = Booking::whereIn('venue_id', $venueIds)
+            ->selectRaw('venue_id, COUNT(*) as total')
+            ->groupBy('venue_id')
+            ->pluck('total', 'venue_id');
+
+        $paidRevenueByVenue = Booking::whereIn('venue_id', $venueIds)
+            ->whereIn('status', [
+                BookingStatus::Confirmed,
+                BookingStatus::PaidInFull,
+                BookingStatus::DpPaid,
+                BookingStatus::Done,
+                BookingStatus::Completed,
+            ])
+            ->selectRaw('venue_id, SUM(paid_amount) as total')
+            ->groupBy('venue_id')
+            ->pluck('total', 'venue_id');
+
+        $fallbackRevenueByVenue = Booking::whereIn('venue_id', $venueIds)
+            ->whereIn('status', [BookingStatus::Confirmed, BookingStatus::PaidInFull, BookingStatus::Done, BookingStatus::Completed])
+            ->selectRaw('venue_id, SUM(total_amount) as total')
+            ->groupBy('venue_id')
+            ->pluck('total', 'venue_id');
+
+        $userCountsByVenue = User::whereIn('venue_id', $venueIds)
+            ->selectRaw('venue_id, COUNT(*) as total')
+            ->groupBy('venue_id')
+            ->pluck('total', 'venue_id');
 
         $venueStats = [];
         foreach ($venues as $v) {
-            $venueBookingsCount = Booking::where('venue_id', $v->id)->count();
-            $venueRevenue = (int) Booking::where('venue_id', $v->id)
-                ->whereIn('status', [
-                    BookingStatus::Confirmed,
-                    BookingStatus::PaidInFull,
-                    BookingStatus::DpPaid,
-                    BookingStatus::Done,
-                    BookingStatus::Completed,
-                ])
-                ->sum('paid_amount');
-
+            $venueRevenue = (int) ($paidRevenueByVenue[$v->id] ?? 0);
             if ($venueRevenue === 0) {
-                $venueRevenue = (int) Booking::where('venue_id', $v->id)
-                    ->whereIn('status', [BookingStatus::Confirmed, BookingStatus::PaidInFull, BookingStatus::Done, BookingStatus::Completed])
-                    ->sum('total_amount');
+                $venueRevenue = (int) ($fallbackRevenueByVenue[$v->id] ?? 0);
             }
 
-            $venueUsersCount = User::where('venue_id', $v->id)->count();
-
             $venueStats[$v->id] = [
-                'bookings_count' => $venueBookingsCount,
+                'bookings_count' => (int) ($bookingCountsByVenue[$v->id] ?? 0),
                 'revenue' => $venueRevenue,
-                'users_count' => $venueUsersCount,
+                'users_count' => (int) ($userCountsByVenue[$v->id] ?? 0),
             ];
         }
 
