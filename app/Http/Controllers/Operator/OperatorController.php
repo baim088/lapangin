@@ -139,8 +139,18 @@ class OperatorController extends Controller
         $closeHour = (int) substr($venue->close_time, 0, 2);
         $totalOperatingHours = max(1, $closeHour - $openHour);
 
-        // Occupancy per court today
+        // Occupancy per court today (single grouped query to avoid N+1)
         $courts = Court::where('venue_id', $venue->id)->get();
+        $slotCountsByCourt = CourtSlot::whereIn('court_id', $courts->pluck('id'))
+            ->whereDate('booking_date', $today)
+            ->where(function ($q) use ($now) {
+                $q->whereNull('locked_until')
+                    ->orWhere('locked_until', '>', $now);
+            })
+            ->selectRaw('court_id, COUNT(*) as total')
+            ->groupBy('court_id')
+            ->pluck('total', 'court_id');
+
         $courtOccupancies = [];
         foreach ($courts as $court) {
             if ($court->status === CourtStatus::Maintenance) {
@@ -153,13 +163,7 @@ class OperatorController extends Controller
                 continue;
             }
 
-            $bookedSlotsCount = CourtSlot::where('court_id', $court->id)
-                ->whereDate('booking_date', $today)
-                ->where(function ($q) use ($now) {
-                    $q->whereNull('locked_until')
-                        ->orWhere('locked_until', '>', $now);
-                })
-                ->count();
+            $bookedSlotsCount = (int) ($slotCountsByCourt[$court->id] ?? 0);
 
             $rate = min(100, (int) round(($bookedSlotsCount / $totalOperatingHours) * 100));
             $courtOccupancies[] = [
@@ -362,7 +366,7 @@ class OperatorController extends Controller
         $search = $request->query('search', '');
         $activeFilter = $request->query('status', 'all');
 
-        $query = Booking::with(['items.court', 'user', 'payment', 'payments', 'settledBy'])
+        $query = Booking::with(['venue', 'items.court', 'user', 'payment', 'payments', 'settledBy'])
             ->where('venue_id', $venue->id);
 
         if ($activeFilter !== 'all' && ! empty($activeFilter)) {

@@ -135,7 +135,12 @@
                         {{-- Thumbnail --}}
                         <div class="relative h-44 bg-surface-container-low flex items-center justify-center overflow-hidden">
                             @if($court->thumbnail)
-                            <img src="{{ asset('storage/' . $court->thumbnail) }}" alt="{{ $court->name }}" class="w-full h-full object-cover">
+                            <x-lazy-image
+                                :src="asset('storage/' . $court->thumbnail)"
+                                :alt="$court->name"
+                                :eager="$loop->index < 3"
+                                class="w-full h-full object-cover"
+                            />
                             @else
                             <div class="w-full h-full flex items-center justify-center text-on-surface-variant/40 flex-col gap-2">
                                 <span class="material-symbols-outlined text-4xl">stadium</span>

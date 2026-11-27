@@ -91,28 +91,43 @@ class OwnerController extends Controller
             ->where('status', PaymentStatus::Paid)
             ->sum('amount');
 
-        // Venue Cards with stats
+        // Venue Cards with stats (grouped queries to avoid N+1 per venue)
+        $bookingCountsByVenue = Booking::whereIn('venue_id', $venueIds)
+            ->selectRaw('venue_id, COUNT(*) as total')
+            ->groupBy('venue_id')
+            ->pluck('total', 'venue_id');
+
+        $paidRevenueByVenue = Booking::whereIn('venue_id', $venueIds)
+            ->whereNotIn('status', [BookingStatus::Cancelled, BookingStatus::Expired])
+            ->selectRaw('venue_id, SUM(paid_amount) as total')
+            ->groupBy('venue_id')
+            ->pluck('total', 'venue_id');
+
+        $fallbackRevenueByVenue = Booking::whereIn('venue_id', $venueIds)
+            ->whereIn('status', [BookingStatus::Confirmed, BookingStatus::PaidInFull, BookingStatus::Done, BookingStatus::Completed])
+            ->selectRaw('venue_id, SUM(total_amount) as total')
+            ->groupBy('venue_id')
+            ->pluck('total', 'venue_id');
+
+        $receivablesByVenue = Booking::whereIn('venue_id', $venueIds)
+            ->where('status', BookingStatus::DpPaid)
+            ->selectRaw('venue_id, SUM(remaining_amount) as total')
+            ->groupBy('venue_id')
+            ->pluck('total', 'venue_id');
+
         $venueCards = [];
         foreach ($venues as $v) {
-            $vBookingsCount = Booking::where('venue_id', $v->id)->count();
-            $vRevenue = (int) Booking::where('venue_id', $v->id)
-                ->whereNotIn('status', [BookingStatus::Cancelled, BookingStatus::Expired])
-                ->sum('paid_amount');
+            $vRevenue = (int) ($paidRevenueByVenue[$v->id] ?? 0);
             if ($vRevenue === 0) {
-                $vRevenue = (int) Booking::where('venue_id', $v->id)
-                    ->whereIn('status', [BookingStatus::Confirmed, BookingStatus::PaidInFull, BookingStatus::Done, BookingStatus::Completed])
-                    ->sum('total_amount');
+                $vRevenue = (int) ($fallbackRevenueByVenue[$v->id] ?? 0);
             }
-            $vReceivables = (int) Booking::where('venue_id', $v->id)
-                ->where('status', BookingStatus::DpPaid)
-                ->sum('remaining_amount');
 
             $venueCards[] = [
                 'venue' => $v,
-                'courts_count' => $v->courts_count ?? $v->courts()->count(),
-                'bookings_count' => $vBookingsCount,
+                'courts_count' => $v->courts_count ?? 0,
+                'bookings_count' => (int) ($bookingCountsByVenue[$v->id] ?? 0),
                 'revenue' => $vRevenue,
-                'receivables' => $vReceivables,
+                'receivables' => (int) ($receivablesByVenue[$v->id] ?? 0),
             ];
         }
 
