@@ -10,7 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="bg-[#f8f9fa] font-body text-slate-800 antialiased selection:bg-[#f8b710] selection:text-slate-950" x-data="{ countdown: {{ $countdown }}, init() { setInterval(() => { if(this.countdown > 0) this.countdown--; }, 1000); }, formatTime(s) { return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0'); } }">
+<body class="bg-[#f8f9fa] font-body text-slate-800 antialiased selection:bg-[#f8b710] selection:text-slate-950" x-data="{ countdown: {{ (int) $countdown }}, init() { setInterval(() => { if(this.countdown > 0) this.countdown--; }, 1000); }, formatTime(s) { const sec = Math.max(0, Math.floor(s)); return String(Math.floor(sec/60)).padStart(2,'0')+':'+String(sec%60).padStart(2,'0'); } }">
     <x-user-shell active="dashboard" title="Konfirmasi Pembayaran" :subtitle="'Kode Booking #' . $booking->booking_code">
 
     <main class="w-full pb-24">

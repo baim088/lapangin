@@ -125,8 +125,8 @@ class BookingController extends Controller
 
         $now = Carbon::now();
         $countdown = 0;
-        if ($booking->status === BookingStatus::Pending && $booking->expires_at) {
-            $countdown = max(0, $now->diffInSeconds($booking->expires_at, false));
+        if (in_array($booking->status, [BookingStatus::Pending, BookingStatus::PendingPayment], true) && $booking->expires_at) {
+            $countdown = (int) max(0, floor($now->diffInSeconds($booking->expires_at, false)));
         }
 
         return view('booking.konfirmasi', compact('booking', 'countdown'));
