@@ -10,7 +10,24 @@
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="bg-[#f8f9fa] font-body text-slate-800 antialiased" x-data="{ sidebarOpen: false }">
+<body
+    class="bg-[#f8f9fa] font-body text-slate-800 antialiased"
+    x-data="{
+        sidebarOpen: false,
+        showAddModal: false,
+        showEditModal: false,
+        editName: '',
+        editCategory: 'futsal',
+        editSurface: '',
+        editPriceRegular: '',
+        editPricePrime: '',
+        editOpenTime: '{{ substr($currentVenue->open_time, 0, 5) }}',
+        editCloseTime: '{{ substr($currentVenue->close_time, 0, 5) }}',
+        editPrimeStart: '{{ substr($currentVenue->prime_start_time, 0, 5) }}',
+        editPrimeEnd: '{{ substr($currentVenue->prime_end_time, 0, 5) }}',
+        editActionUrl: ''
+    }"
+>
 
     <div class="flex min-h-screen">
         {{-- ============ SIDEBAR OWNER ============ --}}
@@ -90,7 +107,7 @@
                         <p class="text-xs text-on-surface-variant">Daftar lapangan dan tarif per jam untuk setiap venue milik Anda</p>
                     </div>
                 </div>
-                <div>
+                <div class="flex items-center gap-3">
                     @if($venues->count() > 1)
                     <form method="GET" action="{{ route('owner.lapangan') }}">
                         <select name="venue_id" onchange="this.form.submit()" class="text-xs font-bold border border-surface-container-high rounded-xl px-3.5 py-2 bg-surface-white text-on-surface focus:ring-2 focus:ring-action-orange">
@@ -100,15 +117,37 @@
                         </select>
                     </form>
                     @else
-                    <div class="px-3.5 py-1.5 rounded-full bg-pitch-surface border border-pitch-light/30 text-pitch-deep text-xs font-bold">
+                    <div class="hidden sm:block px-3.5 py-1.5 rounded-full bg-pitch-surface border border-pitch-light/30 text-pitch-deep text-xs font-bold">
                         {{ $currentVenue->name }}
                     </div>
                     @endif
+                    <button
+                        type="button"
+                        @click="showAddModal = true"
+                        class="flex items-center gap-1.5 bg-[#0f2444] hover:bg-[#f37920] text-white font-bold text-xs px-4 py-2.5 rounded-xl transition-colors shadow-xs"
+                    >
+                        <span class="material-symbols-outlined text-[18px]">add_circle</span>
+                        <span>Tambah Lapangan</span>
+                    </button>
                 </div>
             </header>
 
             {{-- Page Content --}}
             <main class="flex-1 p-6 overflow-auto flex flex-col gap-6">
+
+                @if(session('status'))
+                <div class="p-4 bg-pitch-surface border border-pitch-light/40 rounded-xl text-sm font-semibold text-pitch-deep flex items-center gap-2">
+                    <span class="material-symbols-outlined text-pitch-emerald text-[20px]">check_circle</span>
+                    <span>{{ session('status') }}</span>
+                </div>
+                @endif
+
+                @if($errors->any())
+                <div class="p-4 bg-error-container/20 border border-error/30 rounded-xl text-sm font-semibold text-error flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[20px]">error</span>
+                    <span>{{ $errors->first() }}</span>
+                </div>
+                @endif
 
                 {{-- Venue Info Banner --}}
                 <div class="bg-surface-white rounded-2xl border border-surface-container-high p-6 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -118,6 +157,11 @@
                         <p class="text-xs text-on-surface-variant flex items-center gap-1 mt-1">
                             <span class="material-symbols-outlined text-[15px]">location_on</span>
                             {{ $currentVenue->address }}, {{ $currentVenue->city }}
+                        </p>
+                        <p class="text-[11px] text-pitch-deep font-semibold mt-1.5">
+                            Jam Operasional: {{ substr($currentVenue->open_time, 0, 5) }} - {{ substr($currentVenue->close_time, 0, 5) }} WIB
+                            &nbsp;&bull;&nbsp;
+                            Jam Prime: {{ substr($currentVenue->prime_start_time, 0, 5) }} - {{ substr($currentVenue->prime_end_time, 0, 5) }} WIB
                         </p>
                     </div>
                     <div class="flex items-center gap-3">
@@ -162,33 +206,61 @@
                         {{-- Court Details --}}
                         <div class="p-5 flex-1 flex flex-col justify-between">
                             <div>
-                                <h3 class="font-headline text-lg font-bold text-on-surface">{{ $court->name }}</h3>
-                                <p class="text-xs text-on-surface-variant mt-1 line-clamp-2">{{ $court->description ?? 'Lapangan standar kompetisi terbaik dengan fasilitas lengkap.' }}</p>
+                                <div class="flex items-start justify-between gap-2">
+                                    <h3 class="font-headline text-lg font-bold text-on-surface">{{ $court->name }}</h3>
+                                    <span class="text-[11px] text-on-surface-variant font-medium shrink-0">{{ $court->surface_type }}</span>
+                                </div>
 
-                                <div class="mt-4 pt-3 border-t border-surface-container-high/80 flex items-center justify-between">
+                                <div class="mt-3 pt-3 border-t border-surface-container-high/80 grid grid-cols-2 gap-3">
                                     <div>
-                                        <span class="text-[10px] text-on-surface-variant uppercase block font-semibold">Tarif Sewa</span>
+                                        <span class="text-[10px] text-on-surface-variant uppercase block font-semibold">Jam Normal</span>
                                         <div class="text-sm font-extrabold text-pitch-emerald">
-                                            Rp {{ number_format($court->price_per_hour, 0, ',', '.') }} <span class="text-[10px] font-normal text-on-surface-variant">/ jam</span>
+                                            Rp {{ number_format($court->price_regular, 0, ',', '.') }} <span class="text-[10px] font-normal text-on-surface-variant">/jam</span>
+                                        </div>
+                                        <div class="text-[10px] text-on-surface-variant mt-0.5">
+                                            {{ substr($currentVenue->open_time, 0, 5) }} - {{ substr($currentVenue->prime_start_time, 0, 5) }} WIB
                                         </div>
                                     </div>
                                     <div class="text-right">
-                                        <span class="text-[10px] text-on-surface-variant uppercase block font-semibold">Jam Operasional</span>
-                                        <div class="text-xs font-bold text-on-surface">
-                                            {{ substr($court->open_time, 0, 5) }} - {{ substr($court->close_time, 0, 5) }} WIB
+                                        <span class="text-[10px] text-action-orange uppercase block font-semibold">Jam Prime</span>
+                                        <div class="text-sm font-extrabold text-on-surface">
+                                            Rp {{ number_format($court->price_prime, 0, ',', '.') }} <span class="text-[10px] font-normal text-on-surface-variant">/jam</span>
+                                        </div>
+                                        <div class="text-[10px] text-on-surface-variant mt-0.5">
+                                            {{ substr($currentVenue->prime_start_time, 0, 5) }} - {{ substr($currentVenue->prime_end_time, 0, 5) }} WIB
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="mt-5 pt-4 border-t border-surface-container-high flex items-center justify-between text-xs text-on-surface-variant">
-                                <div class="flex items-center gap-1 font-semibold text-on-surface">
-                                    <span class="material-symbols-outlined text-[16px] text-pitch-emerald">receipt_long</span>
-                                    <span>{{ $court->booking_items_count }} kali dibooking</span>
+                            <div class="mt-4 pt-3 border-t border-surface-container-high flex flex-col gap-3">
+                                <div class="flex items-center justify-between text-xs text-on-surface-variant">
+                                    <div class="flex items-center gap-1 font-semibold text-on-surface">
+                                        <span class="material-symbols-outlined text-[16px] text-pitch-emerald">receipt_long</span>
+                                        <span>{{ $court->booking_items_count }} kali dibooking</span>
+                                    </div>
+                                    <a href="{{ route('lapangan.detail', $court->slug) }}" target="_blank" class="text-action-orange font-bold hover:underline flex items-center gap-0.5">
+                                        Lihat Publik <span class="material-symbols-outlined text-[14px]">open_in_new</span>
+                                    </a>
                                 </div>
-                                <a href="{{ route('lapangan.detail', $court->slug) }}" target="_blank" class="text-action-orange font-bold hover:underline flex items-center gap-0.5">
-                                    Lihat Publik <span class="material-symbols-outlined text-[14px]">open_in_new</span>
-                                </a>
+                                <div class="flex items-center gap-2">
+                                    <button
+                                        type="button"
+                                        @click="editName = '{{ addslashes($court->name) }}'; editCategory = '{{ $court->sport_category->value }}'; editSurface = '{{ addslashes($court->surface_type) }}'; editPriceRegular = '{{ $court->price_regular }}'; editPricePrime = '{{ $court->price_prime }}'; editOpenTime = '{{ substr($currentVenue->open_time, 0, 5) }}'; editCloseTime = '{{ substr($currentVenue->close_time, 0, 5) }}'; editPrimeStart = '{{ substr($currentVenue->prime_start_time, 0, 5) }}'; editPrimeEnd = '{{ substr($currentVenue->prime_end_time, 0, 5) }}'; editActionUrl = '{{ route('owner.lapangan.update', $court->id) }}'; showEditModal = true"
+                                        class="flex-1 py-2 px-3 rounded-xl border border-slate-200 text-xs font-bold text-[#0f2444] hover:bg-slate-50 transition-colors flex items-center justify-center gap-1"
+                                    >
+                                        <span class="material-symbols-outlined text-[15px]">edit</span>
+                                        Edit
+                                    </button>
+                                    <form action="{{ route('owner.lapangan.toggle-status', $court->id) }}" method="POST" class="flex-1" onsubmit="return confirm('Ubah status operasional lapangan ini?')">
+                                        @csrf
+                                        @method('PATCH')
+                                        <button type="submit" class="w-full py-2 px-3 rounded-xl text-xs font-bold transition-colors flex items-center justify-center gap-1 {{ $court->status->value === 'active' ? 'bg-amber-50 text-amber-800 hover:bg-amber-100 border border-amber-200' : 'bg-emerald-50 text-emerald-800 hover:bg-emerald-100 border border-emerald-200' }}">
+                                            <span class="material-symbols-outlined text-[15px]">{{ $court->status->value === 'active' ? 'build' : 'check_circle' }}</span>
+                                            {{ $court->status->value === 'active' ? 'Maintenance' : 'Aktifkan' }}
+                                        </button>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -207,6 +279,158 @@
                 @endif
 
             </main>
+        </div>
+    </div>
+
+    {{-- Modal Tambah Lapangan + Jam Operasional & Prime --}}
+    <div x-show="showAddModal" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4" style="display:none;">
+        <div @click.away="showAddModal = false" class="bg-white rounded-2xl w-full max-w-xl p-6 shadow-2xl border border-slate-200 flex flex-col gap-5 max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div>
+                    <h2 class="font-teko text-2xl font-bold uppercase tracking-wide text-[#0f2444] leading-none">Tambah Lapangan Baru</h2>
+                    <p class="text-xs text-slate-500 mt-0.5">Venue: <strong>{{ $currentVenue->name }}</strong></p>
+                </div>
+                <button type="button" @click="showAddModal = false" class="text-slate-400 hover:text-slate-700 p-1">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            <form action="{{ route('owner.lapangan.store') }}" method="POST" class="flex flex-col gap-4">
+                @csrf
+                <input type="hidden" name="venue_id" value="{{ $currentVenue->id }}">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                    <div class="sm:col-span-2 flex flex-col gap-1">
+                        <label class="text-xs font-bold text-slate-700">Nama Lapangan</label>
+                        <input type="text" name="name" required placeholder="Contoh: Futsal Arena C" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#f8b710]">
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <label class="text-xs font-bold text-slate-700">Jenis Olahraga</label>
+                        <select name="sport_category" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#f8b710]">
+                            <option value="futsal">Futsal</option>
+                            <option value="badminton">Badminton</option>
+                            <option value="mini_soccer">Mini Soccer</option>
+                            <option value="padel">Padel</option>
+                        </select>
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <label class="text-xs font-bold text-slate-700">Jenis Permukaan</label>
+                        <input type="text" name="surface_type" required placeholder="Karpet Vinyl / Rumput Sintetis" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#f8b710]">
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <label class="text-xs font-bold text-slate-700">Harga Jam Normal (Rp/jam)</label>
+                        <input type="number" name="price_regular" required min="1000" placeholder="120000" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#f8b710]">
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <label class="text-xs font-bold text-slate-700">Harga Jam Prime (Rp/jam)</label>
+                        <input type="number" name="price_prime" required min="1000" placeholder="200000" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#f8b710]">
+                    </div>
+                </div>
+
+                <div class="bg-slate-50 rounded-xl p-4 border border-slate-200 flex flex-col gap-3">
+                    <div>
+                        <h3 class="text-xs font-bold text-[#0f2444] uppercase tracking-wider">Pengaturan Jam Operasional &amp; Prime Time Venue</h3>
+                        <p class="text-[11px] text-slate-500 mt-0.5">Jam di luar rentang Prime Time otomatis memakai tarif <strong>Jam Normal</strong>.</p>
+                    </div>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                        <div class="flex flex-col gap-1">
+                            <label class="text-[11px] font-bold text-slate-700">Jam Buka</label>
+                            <input type="time" name="open_time" value="{{ substr($currentVenue->open_time, 0, 5) }}" required class="w-full px-2.5 py-2 rounded-lg border border-slate-200 bg-white text-xs focus:outline-none focus:ring-2 focus:ring-[#f8b710]">
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <label class="text-[11px] font-bold text-slate-700">Jam Tutup</label>
+                            <input type="time" name="close_time" value="{{ substr($currentVenue->close_time, 0, 5) }}" required class="w-full px-2.5 py-2 rounded-lg border border-slate-200 bg-white text-xs focus:outline-none focus:ring-2 focus:ring-[#f8b710]">
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <label class="text-[11px] font-bold text-[#f37920]">Mulai Jam Prime</label>
+                            <input type="time" name="prime_start_time" value="{{ substr($currentVenue->prime_start_time, 0, 5) }}" required class="w-full px-2.5 py-2 rounded-lg border border-slate-200 bg-white text-xs focus:outline-none focus:ring-2 focus:ring-[#f8b710]">
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <label class="text-[11px] font-bold text-[#f37920]">Selesai Jam Prime</label>
+                            <input type="time" name="prime_end_time" value="{{ substr($currentVenue->prime_end_time, 0, 5) }}" required class="w-full px-2.5 py-2 rounded-lg border border-slate-200 bg-white text-xs focus:outline-none focus:ring-2 focus:ring-[#f8b710]">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex gap-3 pt-1">
+                    <button type="button" @click="showAddModal = false" class="flex-1 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 hover:bg-slate-50">Batal</button>
+                    <button type="submit" class="flex-1 py-2.5 rounded-xl bg-[#0f2444] hover:bg-[#f37920] text-white font-bold text-xs transition-colors">Simpan Lapangan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {{-- Modal Edit Lapangan + Jam Operasional & Prime --}}
+    <div x-show="showEditModal" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4" style="display:none;">
+        <div @click.away="showEditModal = false" class="bg-white rounded-2xl w-full max-w-xl p-6 shadow-2xl border border-slate-200 flex flex-col gap-5 max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div>
+                    <h2 class="font-teko text-2xl font-bold uppercase tracking-wide text-[#0f2444] leading-none">Edit Lapangan &amp; Jam Operasional</h2>
+                    <p class="text-xs text-slate-500 mt-0.5">Venue: <strong>{{ $currentVenue->name }}</strong></p>
+                </div>
+                <button type="button" @click="showEditModal = false" class="text-slate-400 hover:text-slate-700 p-1">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            <form :action="editActionUrl" method="POST" class="flex flex-col gap-4">
+                @csrf
+                @method('PUT')
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                    <div class="sm:col-span-2 flex flex-col gap-1">
+                        <label class="text-xs font-bold text-slate-700">Nama Lapangan</label>
+                        <input type="text" name="name" x-model="editName" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#f8b710]">
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <label class="text-xs font-bold text-slate-700">Jenis Olahraga</label>
+                        <select name="sport_category" x-model="editCategory" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#f8b710]">
+                            <option value="futsal">Futsal</option>
+                            <option value="badminton">Badminton</option>
+                            <option value="mini_soccer">Mini Soccer</option>
+                            <option value="padel">Padel</option>
+                        </select>
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <label class="text-xs font-bold text-slate-700">Jenis Permukaan</label>
+                        <input type="text" name="surface_type" x-model="editSurface" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#f8b710]">
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <label class="text-xs font-bold text-slate-700">Harga Jam Normal (Rp/jam)</label>
+                        <input type="number" name="price_regular" x-model="editPriceRegular" required min="1000" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#f8b710]">
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <label class="text-xs font-bold text-slate-700">Harga Jam Prime (Rp/jam)</label>
+                        <input type="number" name="price_prime" x-model="editPricePrime" required min="1000" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#f8b710]">
+                    </div>
+                </div>
+
+                <div class="bg-slate-50 rounded-xl p-4 border border-slate-200 flex flex-col gap-3">
+                    <div>
+                        <h3 class="text-xs font-bold text-[#0f2444] uppercase tracking-wider">Pengaturan Jam Operasional &amp; Prime Time Venue</h3>
+                        <p class="text-[11px] text-slate-500 mt-0.5">Jam di luar rentang Prime Time otomatis memakai tarif <strong>Jam Normal</strong>.</p>
+                    </div>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                        <div class="flex flex-col gap-1">
+                            <label class="text-[11px] font-bold text-slate-700">Jam Buka</label>
+                            <input type="time" name="open_time" x-model="editOpenTime" required class="w-full px-2.5 py-2 rounded-lg border border-slate-200 bg-white text-xs focus:outline-none focus:ring-2 focus:ring-[#f8b710]">
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <label class="text-[11px] font-bold text-slate-700">Jam Tutup</label>
+                            <input type="time" name="close_time" x-model="editCloseTime" required class="w-full px-2.5 py-2 rounded-lg border border-slate-200 bg-white text-xs focus:outline-none focus:ring-2 focus:ring-[#f8b710]">
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <label class="text-[11px] font-bold text-[#f37920]">Mulai Jam Prime</label>
+                            <input type="time" name="prime_start_time" x-model="editPrimeStart" required class="w-full px-2.5 py-2 rounded-lg border border-slate-200 bg-white text-xs focus:outline-none focus:ring-2 focus:ring-[#f8b710]">
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <label class="text-[11px] font-bold text-[#f37920]">Selesai Jam Prime</label>
+                            <input type="time" name="prime_end_time" x-model="editPrimeEnd" required class="w-full px-2.5 py-2 rounded-lg border border-slate-200 bg-white text-xs focus:outline-none focus:ring-2 focus:ring-[#f8b710]">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex gap-3 pt-1">
+                    <button type="button" @click="showEditModal = false" class="flex-1 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 hover:bg-slate-50">Batal</button>
+                    <button type="submit" class="flex-1 py-2.5 rounded-xl bg-[#0f2444] hover:bg-[#f37920] text-white font-bold text-xs transition-colors">Perbarui Lapangan</button>
+                </div>
+            </form>
         </div>
     </div>
 

@@ -90,7 +90,6 @@
                             ['calendar_month', 'Kelola Jadwal', route('operator.jadwal'), false],
                             ['receipt_long', 'Daftar Booking', route('operator.booking'), true],
                             ['bar_chart', 'Laporan Keuangan', route('operator.laporan'), false],
-                            ['stadium', 'Kelola Lapangan', route('operator.lapangan'), false],
                         ];
                     @endphp
                     @foreach($navItems as $item)

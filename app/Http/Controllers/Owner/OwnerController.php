@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\Owner;
 
 use App\Enums\BookingStatus;
+use App\Enums\CourtStatus;
 use App\Enums\PaymentStatus;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Owner\StoreCourtRequest;
+use App\Http\Requests\Owner\UpdateCourtRequest;
 use App\Models\Booking;
 use App\Models\Court;
 use App\Models\Payment;
@@ -12,9 +15,11 @@ use App\Models\User;
 use App\Models\Venue;
 use App\Services\ReportExportService;
 use Carbon\Carbon;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -324,6 +329,92 @@ class OwnerController extends Controller
             ->paginate(10);
 
         return view('owner.lapangan', compact('venues', 'currentVenue', 'courts'));
+    }
+
+    /**
+     * Store a new court and update venue operating & prime hours for the selected owned venue.
+     */
+    public function storeCourt(StoreCourtRequest $request): RedirectResponse
+    {
+        $user = $request->user();
+        ['accessibleVenues' => $venues] = $this->resolveOwnerVenues($user);
+
+        $venueId = (int) $request->validated('venue_id');
+        $venue = $venues->firstWhere('id', $venueId);
+        abort_if(! $venue, 403, 'Akses ditolak: Anda tidak memiliki akses ke venue ini.');
+
+        $slug = Str::slug($request->validated('name'));
+        if (Court::where('slug', $slug)->exists()) {
+            $slug .= '-'.Str::random(4);
+        }
+
+        Court::create([
+            'venue_id' => $venue->id,
+            'name' => $request->validated('name'),
+            'slug' => $slug,
+            'sport_category' => $request->validated('sport_category'),
+            'surface_type' => $request->validated('surface_type'),
+            'price_regular' => $request->validated('price_regular'),
+            'price_prime' => $request->validated('price_prime'),
+            'status' => CourtStatus::Active,
+        ]);
+
+        $venue->update([
+            'open_time' => $request->validated('open_time').':00',
+            'close_time' => $request->validated('close_time').':00',
+            'prime_start_time' => $request->validated('prime_start_time').':00',
+            'prime_end_time' => $request->validated('prime_end_time').':00',
+        ]);
+
+        return back()->with('status', 'Lapangan baru serta jam operasional & prime venue berhasil disimpan.');
+    }
+
+    /**
+     * Update court configuration and venue operating & prime hours for an owned venue.
+     */
+    public function updateCourt(Court $court, UpdateCourtRequest $request): RedirectResponse
+    {
+        $user = $request->user();
+        ['accessibleVenues' => $venues] = $this->resolveOwnerVenues($user);
+
+        $venue = $venues->firstWhere('id', (int) $court->venue_id);
+        abort_if(! $venue, 403, 'Akses ditolak: Lapangan ini bukan milik venue Anda.');
+
+        $court->update([
+            'name' => $request->validated('name'),
+            'sport_category' => $request->validated('sport_category'),
+            'surface_type' => $request->validated('surface_type'),
+            'price_regular' => $request->validated('price_regular'),
+            'price_prime' => $request->validated('price_prime'),
+        ]);
+
+        $venue->update([
+            'open_time' => $request->validated('open_time').':00',
+            'close_time' => $request->validated('close_time').':00',
+            'prime_start_time' => $request->validated('prime_start_time').':00',
+            'prime_end_time' => $request->validated('prime_end_time').':00',
+        ]);
+
+        return back()->with('status', "Data lapangan {$court->name} & jam operasional berhasil diperbarui.");
+    }
+
+    /**
+     * Toggle court operational status (Active / Maintenance) for an owned venue.
+     */
+    public function toggleCourtStatus(Court $court, Request $request): RedirectResponse
+    {
+        $user = $request->user();
+        ['accessibleVenues' => $venues] = $this->resolveOwnerVenues($user);
+
+        abort_if(! $venues->contains('id', (int) $court->venue_id), 403, 'Akses ditolak: Lapangan ini bukan milik venue Anda.');
+
+        $newStatus = $court->status === CourtStatus::Active ? CourtStatus::Maintenance : CourtStatus::Active;
+        $court->status = $newStatus;
+        $court->save();
+
+        $label = $newStatus === CourtStatus::Active ? 'diaktifkan kembali' : 'dialihkan ke mode perawatan (maintenance)';
+
+        return back()->with('status', "Lapangan {$court->name} berhasil {$label}.");
     }
 
     /**

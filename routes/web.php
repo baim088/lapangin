@@ -70,11 +70,6 @@ Route::prefix('operator')->name('operator.')->middleware(['role:operator,super_a
     Route::get('/jadwal', [OperatorController::class, 'jadwal'])->name('jadwal');
     Route::post('/jadwal/block', [OperatorController::class, 'blockSlot'])->name('jadwal.block');
     Route::delete('/jadwal/unblock/{id}', [OperatorController::class, 'unblockSlot'])->name('jadwal.unblock');
-
-    Route::get('/lapangan', [OperatorController::class, 'lapangan'])->name('lapangan');
-    Route::post('/lapangan', [OperatorController::class, 'storeCourt'])->name('lapangan.store');
-    Route::put('/lapangan/{court}', [OperatorController::class, 'updateCourt'])->name('lapangan.update');
-    Route::patch('/lapangan/{court}/toggle-status', [OperatorController::class, 'toggleCourtStatus'])->name('lapangan.toggle-status');
 });
 
 // === OWNER / PEMILIK VENUE ROUTES ===
@@ -85,6 +80,9 @@ Route::prefix('owner')->name('owner.')->middleware(['role:owner,super_admin'])->
     Route::get('/booking', [OwnerController::class, 'bookingList'])->name('booking');
     Route::get('/booking/export', [OwnerController::class, 'exportCsv'])->name('booking.export');
     Route::get('/lapangan', [OwnerController::class, 'lapangan'])->name('lapangan');
+    Route::post('/lapangan', [OwnerController::class, 'storeCourt'])->name('lapangan.store');
+    Route::put('/lapangan/{court}', [OwnerController::class, 'updateCourt'])->name('lapangan.update');
+    Route::patch('/lapangan/{court}/toggle-status', [OwnerController::class, 'toggleCourtStatus'])->name('lapangan.toggle-status');
 });
 
 // === ADMIN ROUTES ===

@@ -10,8 +10,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Operator\BlockSlotRequest;
 use App\Http\Requests\Operator\CancelBookingRequest;
 use App\Http\Requests\Operator\RejectBookingRequest;
-use App\Http\Requests\Operator\StoreCourtRequest;
-use App\Http\Requests\Operator\UpdateCourtRequest;
 use App\Models\Booking;
 use App\Models\Court;
 use App\Models\CourtSlot;
@@ -749,84 +747,5 @@ class OperatorController extends Controller
         $slot->delete();
 
         return back()->with('status', 'Blokir slot berhasil dibuka.');
-    }
-
-    /**
-     * Display court list for their venue only.
-     */
-    public function lapangan(Request $request): View
-    {
-        ['activeVenue' => $venue, 'accessibleVenues' => $accessibleVenues] = $this->resolveVenues($request->user());
-
-        $courts = Court::where('venue_id', $venue->id)
-            ->withCount(['bookingItems'])
-            ->latest()
-            ->paginate(10);
-
-        return view('operator.lapangan', compact('venue', 'accessibleVenues', 'courts'));
-    }
-
-    /**
-     * Store new court for their venue only.
-     */
-    public function storeCourt(StoreCourtRequest $request): RedirectResponse
-    {
-        ['activeVenue' => $venue] = $this->resolveVenues($request->user());
-
-        $slug = Str::slug($request->validated('name'));
-        if (Court::where('slug', $slug)->exists()) {
-            $slug .= '-'.Str::random(4);
-        }
-
-        Court::create([
-            'venue_id' => $venue->id,
-            'name' => $request->validated('name'),
-            'slug' => $slug,
-            'sport_type' => $request->validated('sport_type'),
-            'floor_type' => $request->validated('floor_type'),
-            'is_indoor' => $request->validated('is_indoor'),
-            'price_regular' => $request->validated('price_regular'),
-            'price_prime' => $request->validated('price_prime'),
-            'status' => CourtStatus::Active,
-        ]);
-
-        return back()->with('status', 'Lapangan baru berhasil ditambahkan.');
-    }
-
-    /**
-     * Update court configuration for their venue only.
-     */
-    public function updateCourt(Court $court, UpdateCourtRequest $request): RedirectResponse
-    {
-        ['activeVenue' => $venue] = $this->resolveVenues($request->user());
-        abort_if((int) $court->venue_id !== (int) $venue->id, 403, 'Akses ditolak: Lapangan ini bukan milik venue Anda.');
-
-        $court->update([
-            'name' => $request->validated('name'),
-            'sport_type' => $request->validated('sport_type'),
-            'floor_type' => $request->validated('floor_type'),
-            'is_indoor' => $request->validated('is_indoor'),
-            'price_regular' => $request->validated('price_regular'),
-            'price_prime' => $request->validated('price_prime'),
-        ]);
-
-        return back()->with('status', "Data lapangan {$court->name} berhasil diperbarui.");
-    }
-
-    /**
-     * Toggle court operational status for their venue only.
-     */
-    public function toggleCourtStatus(Court $court, Request $request): RedirectResponse
-    {
-        ['activeVenue' => $venue] = $this->resolveVenues($request->user());
-        abort_if((int) $court->venue_id !== (int) $venue->id, 403, 'Akses ditolak: Lapangan ini bukan milik venue Anda.');
-
-        $newStatus = $court->status === CourtStatus::Active ? CourtStatus::Maintenance : CourtStatus::Active;
-        $court->status = $newStatus;
-        $court->save();
-
-        $label = $newStatus === CourtStatus::Active ? 'diaktifkan kembali' : 'dialihkan ke mode perawatan (maintenance)';
-
-        return back()->with('status', "Lapangan {$court->name} berhasil {$label}.");
     }
 }

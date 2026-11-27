@@ -27,7 +27,6 @@
                         ['calendar_month', 'Kelola Jadwal', route('operator.jadwal'), true],
                         ['receipt_long', 'Daftar Booking', route('operator.booking'), false],
                         ['bar_chart', 'Laporan Keuangan', route('operator.laporan'), false],
-                        ['stadium', 'Kelola Lapangan', route('operator.lapangan'), false],
                     ] as $item)
                     <a href="{{ $item[2] }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all {{ $item[3] ? 'bg-[#f8b710] text-slate-950 font-bold shadow-sm' : 'text-slate-300 hover:text-white hover:bg-white/5' }}">
                         <span class="material-symbols-outlined text-[20px]">{{ $item[0] }}</span>
