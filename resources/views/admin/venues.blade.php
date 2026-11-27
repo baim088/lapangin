@@ -32,10 +32,6 @@
                     @endforeach
                 </div>
                 <div class="mt-6 pt-4 border-t border-surface-white/10 flex flex-col gap-1">
-                    <a href="{{ route('operator.dashboard') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all">
-                        <span class="material-symbols-outlined text-[20px]">manage_accounts</span>
-                        Lihat Panel Operator
-                    </a>
                     <form action="{{ route('logout') }}" method="POST">
                         @csrf
                         <button type="submit" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all text-left">
@@ -132,10 +128,6 @@
                             </div>
                         </div>
                         <div class="flex gap-2 items-center flex-wrap">
-                            <a href="{{ route('operator.dashboard') }}" class="flex items-center gap-1.5 text-xs font-semibold text-pitch-deep border border-pitch-light/40 px-3 py-2 rounded-lg hover:bg-pitch-surface transition-colors">
-                                <span class="material-symbols-outlined text-[14px]">manage_accounts</span>
-                                Panel Operator
-                            </a>
                             <button
                                 type="button"
                                 @click="editVenueId = '{{ $venue->id }}'; editName = '{{ addslashes($venue->name) }}'; editAddress = '{{ addslashes($venue->address) }}'; editPhone = '{{ addslashes($venue->phone) }}'; editEmail = '{{ addslashes($venue->email ?? '') }}'; editOpenTime = '{{ substr($venue->open_time, 0, 5) }}'; editCloseTime = '{{ substr($venue->close_time, 0, 5) }}'; editPrimeStart = '{{ substr($venue->prime_start_time, 0, 5) }}'; editPrimeEnd = '{{ substr($venue->prime_end_time, 0, 5) }}'; editLockDuration = {{ $venue->slot_lock_duration_minutes }}; editActionUrl = '{{ route('admin.venues.update', $venue->id) }}'; showEditModal = true"
