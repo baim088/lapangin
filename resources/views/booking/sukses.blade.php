@@ -50,7 +50,7 @@
                 <div
                     class="p-2.5 bg-white rounded-xl border border-slate-200 shadow-xs mt-1"
                     x-data="{ qrSvg: '' }"
-                    x-init="qrSvg = window.renderQrSvg ? window.renderQrSvg('{{ $booking->checkin_token }}', 148) : ''"
+                    x-init="window.renderQrSvg && window.renderQrSvg('{{ $booking->checkin_token }}', 148).then(svg => qrSvg = svg)"
                     x-html="qrSvg"
                 ></div>
                 <div class="text-center w-full">

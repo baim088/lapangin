@@ -9,6 +9,8 @@
                 <img 
                     src="{{ asset('images/logo-white.png') }}" 
                     alt="Lapangin" 
+                    fetchpriority="high"
+                    decoding="async"
                     class="h-9 sm:h-10 w-auto object-contain hover:opacity-90 transition-opacity"
                 >
             </a>

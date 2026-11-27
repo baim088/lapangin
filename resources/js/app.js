@@ -1,7 +1,10 @@
 import Alpine from 'alpinejs';
-import { renderQrSvg } from './qrcode';
 
 window.Alpine = Alpine;
-window.renderQrSvg = renderQrSvg;
+
+window.renderQrSvg = async (text, size = 148) => {
+    const { renderQrSvg } = await import('./qrcode');
+    return renderQrSvg(text, size);
+};
 
 Alpine.start();

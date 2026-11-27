@@ -76,7 +76,7 @@
                             <p class="text-[11px] text-slate-500">NMID : ID1026641928837</p>
                         </div>
                         <div class="p-3 bg-white rounded-2xl border-2 border-slate-200 shadow-sm">
-                            <img src="{{ asset('images/qris-barcode.png') }}" alt="QRIS Barcode LapangIn" class="w-52 h-52 object-contain mx-auto">
+                            <img src="{{ asset('images/qris-barcode.png') }}" alt="QRIS Barcode LapangIn" loading="lazy" decoding="async" class="w-52 h-52 object-contain mx-auto">
                         </div>
                     @endif
 

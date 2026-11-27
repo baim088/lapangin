@@ -239,7 +239,7 @@
                             <div
                                 class="bg-white rounded-2xl border border-slate-200 p-3 flex items-center justify-center shadow-xs"
                                 x-data="{ qrSvg: '' }"
-                                x-init="qrSvg = window.renderQrSvg ? window.renderQrSvg('{{ $booking->checkin_token }}', 164) : ''"
+                                x-init="window.renderQrSvg && window.renderQrSvg('{{ $booking->checkin_token }}', 164).then(svg => qrSvg = svg)"
                                 x-html="qrSvg"
                             ></div>
                             @if($booking->checked_in_at)

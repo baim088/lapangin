@@ -185,11 +185,12 @@
                         <div>
                             <!-- Compact Thumbnail -->
                             <div class="relative aspect-[4/3] bg-slate-900 overflow-hidden">
-                                <img 
-                                    src="{{ asset($imagePath) }}" 
-                                    alt="{{ $court->name }}"
+                                <x-lazy-image
+                                    :src="asset($imagePath)"
+                                    :alt="$court->name"
+                                    :eager="$loop->index < 3"
                                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                                >
+                                />
                                 <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/15 pointer-events-none"></div>
                                 <span class="absolute top-2.5 left-2.5 bg-[#f8b710] text-slate-950 text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow">
                                     {{ $sportLabel }}

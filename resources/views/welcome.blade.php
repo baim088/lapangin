@@ -152,7 +152,10 @@
                                     x-transition:enter-start="opacity-0 scale-105"
                                     x-transition:enter-end="opacity-100 scale-100"
                                     :src="slide.img" 
-                                    :alt="slide.court" 
+                                    :alt="slide.court"
+                                    :fetchpriority="idx === 0 ? 'high' : 'auto'"
+                                    :loading="idx === 0 ? 'eager' : 'lazy'"
+                                    decoding="async"
                                     class="absolute inset-0 w-full h-full object-cover"
                                 >
                             </template>
@@ -299,11 +302,12 @@
                         <div class="group bg-surface-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-slate-200 flex flex-col justify-between">
                             <div>
                                 <div class="relative aspect-video overflow-hidden">
-                                    <img 
-                                        src="{{ asset($fc['img']) }}" 
-                                        alt="{{ $cName }}"
+                                    <x-lazy-image
+                                        :src="asset($fc['img'])"
+                                        :alt="$cName"
+                                        :eager="$loop->index < 3"
                                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                                    >
+                                    />
                                     <span class="absolute top-3 left-3 bg-[#f8b710] text-slate-950 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow">
                                         {{ $fc['label'] }}
                                     </span>
@@ -833,6 +837,9 @@
                             <img 
                                 src="https://images.unsplash.com/photo-1554068865-24cecd4e34b8?auto=format&fit=crop&w=700&q=80" 
                                 alt="Kemang Padel Club - Panoramic 1" 
+                                loading="lazy"
+                                decoding="async"
+                                onerror="this.onerror=null; this.src='{{ asset('images/courts/futsal.jpg') }}';"
                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                             >
                             <span class="absolute top-3 left-3 bg-[#f8b710] text-slate-950 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shadow">
@@ -867,6 +874,9 @@
                             <img 
                                 src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=700&q=80" 
                                 alt="Cilandak Town Minisoccer" 
+                                loading="lazy"
+                                decoding="async"
+                                onerror="this.onerror=null; this.src='{{ asset('images/courts/futsal.jpg') }}';"
                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                             >
                             <span class="absolute top-3 left-3 bg-[#f8b710] text-slate-950 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shadow">
@@ -901,6 +911,9 @@
                             <img 
                                 src="https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?auto=format&fit=crop&w=700&q=80" 
                                 alt="Senayan Executive Badminton" 
+                                loading="lazy"
+                                decoding="async"
+                                onerror="this.onerror=null; this.src='{{ asset('images/courts/futsal.jpg') }}';"
                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                             >
                             <span class="absolute top-3 left-3 bg-[#f8b710] text-slate-950 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shadow">
@@ -935,6 +948,9 @@
                             <img 
                                 src="https://images.unsplash.com/photo-1526676037777-05a232554f77?auto=format&fit=crop&w=700&q=80" 
                                 alt="PIK 1 Coastal Padel" 
+                                loading="lazy"
+                                decoding="async"
+                                onerror="this.onerror=null; this.src='{{ asset('images/courts/futsal.jpg') }}';"
                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                             >
                             <span class="absolute top-3 left-3 bg-[#f8b710] text-slate-950 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shadow">
@@ -969,6 +985,9 @@
                             <img 
                                 src="https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&w=700&q=80" 
                                 alt="Tebet Green Futsal" 
+                                loading="lazy"
+                                decoding="async"
+                                onerror="this.onerror=null; this.src='{{ asset('images/courts/futsal.jpg') }}';"
                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                             >
                             <span class="absolute top-3 left-3 bg-[#f8b710] text-slate-950 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shadow">
@@ -1003,6 +1022,9 @@
                             <img 
                                 src="https://images.unsplash.com/photo-1529900245534-47fbf46b403d?auto=format&fit=crop&w=700&q=80" 
                                 alt="Cibubur Kickoff Minisoccer" 
+                                loading="lazy"
+                                decoding="async"
+                                onerror="this.onerror=null; this.src='{{ asset('images/courts/futsal.jpg') }}';"
                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                             >
                             <span class="absolute top-3 left-3 bg-[#f8b710] text-slate-950 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shadow">
@@ -1037,6 +1059,9 @@
                             <img 
                                 src="https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?auto=format&fit=crop&w=700&q=80" 
                                 alt="Kedoya Padel & Racquet" 
+                                loading="lazy"
+                                decoding="async"
+                                onerror="this.onerror=null; this.src='{{ asset('images/courts/futsal.jpg') }}';"
                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                             >
                             <span class="absolute top-3 left-3 bg-[#f8b710] text-slate-950 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shadow">
@@ -1071,6 +1096,9 @@
                             <img 
                                 src="https://images.unsplash.com/photo-1613918108466-292b78a8ef95?auto=format&fit=crop&w=700&q=80" 
                                 alt="Rawamangun Badminton Hall" 
+                                loading="lazy"
+                                decoding="async"
+                                onerror="this.onerror=null; this.src='{{ asset('images/courts/futsal.jpg') }}';"
                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                             >
                             <span class="absolute top-3 left-3 bg-[#f8b710] text-slate-950 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shadow">

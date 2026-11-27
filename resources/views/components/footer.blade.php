@@ -8,6 +8,8 @@
                     <img 
                         src="{{ asset('images/logo-white.png') }}" 
                         alt="Lapangin" 
+                        loading="lazy"
+                        decoding="async"
                         class="h-10 w-auto object-contain opacity-95"
                     >
                 </a>
